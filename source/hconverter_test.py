@@ -1,4 +1,4 @@
-from hconverter import Converter
+from hconverter import Converter, Transaction
 import unittest
 from mt940.models import Amount
 from mt940.models import Date
@@ -8,7 +8,17 @@ class ConverterTest(unittest.TestCase):
     def setUp(self):
         self.converter = Converter
 
-    def test_convert_example1(self):
+    def test_convertToLedger_example1(self):
+        transaction=Transaction(Date(2017,11,1), Amount('44', 'D', 'EUR'), "details")
+        
+        result=self.converter.transactionToLedger(transaction,"assets:cash","expenses:electricity")
+
+        self.assertIn("2017/11/01", result)
+        self.assertIn("expenses:electricity", result)
+        self.assertIn("assets:cash", result)
+        self.assertIn("€-44", result)
+
+    def test_convertToTransaction_example1(self):
         '''should correctly convert electric bill to transaction'''
         expectedDate = Date(2017, 11, 1)
         expectedAmount = Amount('44', 'D', 'EUR')

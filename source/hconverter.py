@@ -1,6 +1,13 @@
 import re
 
-class Converter:
+class Converter:    
+    @staticmethod
+    def transactionToLedger(transaction, source, target):
+        dateLine=transaction.date.strftime("%Y/%m/%d")+" spent money"+"\n"
+        sourceLine=" "+source+"\n"
+        targetLine=" "+target+"        €"+str(transaction.amount.amount)+"\n"
+        return dateLine+targetLine+sourceLine
+    
     @staticmethod
     def hbciDataToTransaction(hbciData):
         amount = hbciData["amount"]
@@ -12,10 +19,10 @@ class Converter:
             "+") + 1:]
         transactionDetails = stringAfterLastPlus.replace("\n", "")
 
-        return Transaction(amount, date, transactionDetails)
+        return Transaction(date, amount, transactionDetails)
 
 class Transaction:
-    def __init__(self, amount, date, transactionDetails):
+    def __init__(self, date, amount, transactionDetails):
         self.amount=amount
         self.date=date
         self.transactionDetails=transactionDetails
