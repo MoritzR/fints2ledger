@@ -14,7 +14,7 @@ RUN mkdir /app && \
     tar -zxf ${PYFINTS_TAR_FILE} -C /app && \
     ls /app && \
     python /app/${PYFINTS_FOLDER}/setup.py install && \
-    pip install pickledb
+    pip install tinydb
 
 VOLUME "/source"
 
