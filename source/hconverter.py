@@ -10,11 +10,11 @@ class Converter:
     
     @staticmethod
     def hbciDataToTransaction(hbciData):
-        amount = hbciData["amount"]
-        date = hbciData["date"]
+        amount = hbciData.data["amount"]
+        date = hbciData.data["date"]
         # self.transactionDetails=hbciData["transaction_details"]
         stringWithoutQuestionsMarks = re.sub(
-            r"\?[0-9][0-9]", "", hbciData["transaction_details"])
+            r"\?[0-9][0-9]", "", hbciData.data["transaction_details"])
         stringAfterLastPlus = stringWithoutQuestionsMarks[stringWithoutQuestionsMarks.rfind(
             "+") + 1:]
         transactionDetails = stringAfterLastPlus.replace("\n", "")

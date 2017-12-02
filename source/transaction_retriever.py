@@ -1,4 +1,5 @@
 from tinydb import TinyDB
+from hconverter import Converter
 
 
 class TRetriever:
@@ -7,12 +8,14 @@ class TRetriever:
         self.accountnumber = accountnumber
         self.db = db
 
-    def get_statements(self, start_date, end_date):
+    def get_transactions(self, start_date, end_date):
         accounts = self.client.get_sepa_accounts()
 
         account = self.__find_matching_account(accounts, self.accountnumber)
 
-        return self.client.get_statement(account, start_date, end_date).map(lambda transaction: Transaction(transaction.data))
+        statements = self.client.get_statement(account, start_date, end_date)
+        print("**statements: ", statements)
+        return list(map(lambda transaction: Converter.hbciDataToTransaction(transaction), statements))
 
     def save_transaction(self, transaction):
         insert = {
