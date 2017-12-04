@@ -1,4 +1,4 @@
-from tinydb import TinyDB
+from tinydb import TinyDB, Query
 from hconverter import Converter
 
 
@@ -25,9 +25,12 @@ class TRetriever:
             "amount": float(transaction.amount.amount),
             "currency": "€" if transaction.amount.currency == "EUR" else transaction.amount.currency,
             "details": transaction.details,
+            "originalDetails": transaction.originalDetails,
             "classified": False
         }
-        self.db.insert(insert)
+        entry = Query()
+        if len(self.db.search(entry.originalDetails==transaction.originalDetails))==0:
+            self.db.insert(insert)
 
     def __find_matching_account(self, accounts, accountnumber):
         for account in accounts:
