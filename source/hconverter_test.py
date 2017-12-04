@@ -9,7 +9,7 @@ class ConverterTest(unittest.TestCase):
         self.converter = Converter
 
     def test_convertToLedger_example1(self):
-        transaction=Transaction(Date(2017,11,1), Amount('44', 'D', 'EUR'), "details")
+        transaction=Transaction(Date(2017,11,1), Amount('44', 'D', 'EUR'), "details", "orignalDetails")
         
         result=self.converter.transactionToLedger(transaction,"assets:cash","expenses:electricity")
 

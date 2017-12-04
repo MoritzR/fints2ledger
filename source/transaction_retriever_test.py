@@ -53,7 +53,7 @@ class TRetrieverTest(unittest.TestCase):
 
         self.assertEqual(result[0].date, expectedDate)
         self.assertEqual(result[0].amount, expectedAmount)
-        self.assertEqual(result[0].transactionDetails, expectedDetails)
+        self.assertEqual(result[0].details, expectedDetails)
 
     def test_saves_transactions_to_database_as_unclassified(self):
         expectedInsert = {
@@ -68,7 +68,7 @@ class TRetrieverTest(unittest.TestCase):
         dbMock = Mock()
         retriever = TRetriever(Mock(), Mock(), db=dbMock)
         transaction = Transaction(Date(2017, 1, 1), Amount(
-            "44.5", "D", "EUR"), "some details")
+            "44.5", "D", "EUR"), "some details", "some original details")
 
         retriever.save_transaction(transaction)
 

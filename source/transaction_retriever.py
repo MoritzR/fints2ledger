@@ -24,7 +24,7 @@ class TRetriever:
             "day": int(transaction.date.day),
             "amount": float(transaction.amount.amount),
             "currency": "€" if transaction.amount.currency == "EUR" else transaction.amount.currency,
-            "details": transaction.transactionDetails,
+            "details": transaction.details,
             "classified": False
         }
         self.db.insert(insert)
