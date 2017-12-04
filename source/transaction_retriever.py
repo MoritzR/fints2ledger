@@ -15,7 +15,7 @@ class TRetriever:
 
         statements = self.client.get_statement(account, start_date, end_date)
         print("**statements: ", statements)
-        return list(map(lambda transaction: Converter.hbciDataToTransaction(transaction), statements))
+        return list(map(lambda transaction: Converter.hbciDataToTransaction(transaction.data), statements))
 
     def save_transaction(self, transaction):
         insert = {

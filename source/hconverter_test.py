@@ -43,7 +43,7 @@ class ConverterTest(unittest.TestCase):
 
         self.assertEqual(expectedDate, result.date)
         self.assertEqual(expectedAmount, result.amount)
-        self.assertEqual(expectedDetails, result.transactionDetails)
+        self.assertEqual(expectedDetails, result.details)
 
 if __name__ == '__main__':
     unittest.main()
