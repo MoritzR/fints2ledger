@@ -8,6 +8,11 @@ class TRetriever:
         self.accountnumber = accountnumber
         self.db = db
 
+    def retrieve_and_save(self, start_date, end_date):
+        transactions = self.get_transactions(start_date, end_date)
+        for transaction in transactions:
+            self.save_transaction(transaction)
+
     def get_transactions(self, start_date, end_date):
         accounts = self.client.get_sepa_accounts()
 
@@ -29,7 +34,7 @@ class TRetriever:
             "classified": False
         }
         entry = Query()
-        if len(self.db.search(entry.originalDetails==transaction.originalDetails))==0:
+        if len(self.db.search(entry.originalDetails == transaction.originalDetails)) == 0:
             self.db.insert(insert)
 
     def __find_matching_account(self, accounts, accountnumber):
