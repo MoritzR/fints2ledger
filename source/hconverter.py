@@ -36,7 +36,19 @@ class HbciConverter:
         transactionDetails = stringAfterLastPlus.replace("\n", "")
 
         return Transaction(date, amount, transactionDetails, originalDetails)
-    
+
+    @staticmethod
+    def databaseEntryToTransaction(databaseEntry):
+        numberAmount = databaseEntry["amount"]
+        amount = Amount(str(abs(numberAmount)),
+                        "D" if numberAmount < 0 else "C", "€")
+        date = Date(databaseEntry["year"],
+                    databaseEntry["month"], databaseEntry["day"])
+        originalDetails = databaseEntry["originalDetails"]
+        transactionDetails = databaseEntry["details"]
+
+        return Transaction(date, amount, transactionDetails, originalDetails)
+
 
 class Transaction:
     def __init__(self, date, amount, details, originalDetails):

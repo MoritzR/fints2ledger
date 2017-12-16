@@ -38,6 +38,35 @@ class ConverterTest(unittest.TestCase):
         self.dbMock.update.assert_called_with(
             self.ledgerConverter.markAsClassified, transactionQuery.originalDetails == originalDetails)
 
+    def test_convertDatabaseEntryToTransaction(self):
+        year = 2022
+        month = 10
+        day = 3
+        amount = 10.5
+        details = "details"
+        originalDetails = "original details"
+        databaseEntry = {
+            "year": year,
+            "month": month,
+            "day": day,
+            "amount": amount,
+            "currency": "€",
+            "details": details,
+            "originalDetails": originalDetails,
+            "classified": False
+        }
+
+        transaction = Transaction(Date(2017, 11, 1), Amount(
+            '44', 'D', 'EUR'), "details", originalDetails)
+
+        result = self.hbciConverter.databaseEntryToTransaction(databaseEntry)
+
+        self.assertEqual(year, result.date.year)
+        self.assertEqual(month, result.date.month)
+        self.assertEqual(day, result.date.day)
+        self.assertEqual(details, result.details)
+        self.assertEqual(originalDetails, result.originalDetails)
+
     def test_convertToTransaction_example1(self):
         '''should correctly convert electric bill to transaction'''
         expectedDate = Date(2017, 11, 1)
