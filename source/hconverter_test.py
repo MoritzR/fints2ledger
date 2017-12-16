@@ -1,17 +1,22 @@
-from hconverter import Converter, Transaction
+from hconverter import HbciConverter, LedgerConverter, Transaction
 import unittest
+from unittest.mock import Mock
 from mt940.models import Amount
 from mt940.models import Date
 
 
+
 class ConverterTest(unittest.TestCase):
     def setUp(self):
-        self.converter = Converter
+        self.hbciConverter = HbciConverter
+
+        self.dbMock = Mock()
+        self.ledgerConverter = LedgerConverter(self.dbMock)
 
     def test_convertToLedger_example1(self):
         transaction=Transaction(Date(2017,11,1), Amount('44', 'D', 'EUR'), "details", "orignalDetails")
         
-        result=self.converter.transactionToLedger(transaction,"assets:cash","expenses:electricity", "spent money")
+        result=self.ledgerConverter.transactionToLedger(transaction,"assets:cash","expenses:electricity", "spent money")
 
         self.assertIn("2017/11/01", result)
         self.assertIn("expenses:electricity", result)
@@ -39,7 +44,7 @@ class ConverterTest(unittest.TestCase):
             "transaction_details": "005?00Lastschrifteinzug?10006220?20EREF+004568581456?21MREF+01200\n700145817001?22CRED+DE5600500000727403?23SVWZ+Abschlagsanforderun\ng S?24trom44,00/ 200100703297/ Bl?25ubblubstr. 6?30FVGRJNKC753?31\nDE87543551800005456782?32GASAG AG"
         }
 
-        result = self.converter.hbciDataToTransaction(hbciData)
+        result = self.hbciConverter.hbciDataToTransaction(hbciData)
 
         self.assertEqual(expectedDate, result.date)
         self.assertEqual(expectedAmount, result.amount)

@@ -1,9 +1,10 @@
 import re
 
-
-class Converter:
-    @staticmethod
-    def transactionToLedger(transaction, source, target, reason):
+class LedgerConverter:
+    def __init__(self, db):
+        self.db = db
+    
+    def transactionToLedger(self, transaction, source, target, reason):
         dateLine = transaction.date.strftime(
             "%Y/%m/%d") + " "+ reason + "\n"
         sourceLine = " " + source + "\n"
@@ -11,6 +12,7 @@ class Converter:
             str(transaction.amount.amount) + "\n"
         return dateLine + targetLine + sourceLine
 
+class HbciConverter:
     @staticmethod
     def hbciDataToTransaction(hbciData):
         amount = hbciData["amount"]
