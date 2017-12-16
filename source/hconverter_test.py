@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import Mock
 from mt940.models import Amount
 from mt940.models import Date
-
+from tinydb import Query, operations
 
 
 class ConverterTest(unittest.TestCase):
@@ -14,14 +14,29 @@ class ConverterTest(unittest.TestCase):
         self.ledgerConverter = LedgerConverter(self.dbMock)
 
     def test_convertToLedger_example1(self):
-        transaction=Transaction(Date(2017,11,1), Amount('44', 'D', 'EUR'), "details", "orignalDetails")
-        
-        result=self.ledgerConverter.transactionToLedger(transaction,"assets:cash","expenses:electricity", "spent money")
+        transaction = Transaction(Date(2017, 11, 1), Amount(
+            '44', 'D', 'EUR'), "details", "orignalDetails")
+
+        result = self.ledgerConverter.transactionToLedger(
+            transaction, "assets:cash", "expenses:electricity", "spent money")
 
         self.assertIn("2017/11/01", result)
         self.assertIn("expenses:electricity", result)
         self.assertIn("assets:cash", result)
         self.assertIn("€-44", result)
+
+    def test_convertToLedger_marksAsConvertedIfFound(self):
+        ''' The converter should mark processed transactions as classified in the database'''
+        originalDetails = "originalDetails"
+        transaction = Transaction(Date(2017, 11, 1), Amount(
+            '44', 'D', 'EUR'), "details", originalDetails)
+
+        self.ledgerConverter.transactionToLedger(
+            transaction, "assets:cash", "expenses:electricity", "spent money")
+
+        transactionQuery = Query()
+        self.dbMock.update.assert_called_with(
+            self.ledgerConverter.markAsClassified, transactionQuery.originalDetails == originalDetails)
 
     def test_convertToTransaction_example1(self):
         '''should correctly convert electric bill to transaction'''
@@ -31,7 +46,7 @@ class ConverterTest(unittest.TestCase):
         hbciData = {
             "status": "D",
             "funds_code": None,
-            "amount": expectedAmount ,
+            "amount": expectedAmount,
             "id": "NMSC",
             "customer_reference": "NONREF",
             "bank_reference": None,
@@ -49,6 +64,7 @@ class ConverterTest(unittest.TestCase):
         self.assertEqual(expectedDate, result.date)
         self.assertEqual(expectedAmount, result.amount)
         self.assertEqual(expectedDetails, result.details)
+
 
 if __name__ == '__main__':
     unittest.main()
