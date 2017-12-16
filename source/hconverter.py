@@ -3,9 +3,9 @@ import re
 
 class Converter:
     @staticmethod
-    def transactionToLedger(transaction, source, target):
+    def transactionToLedger(transaction, source, target, reason):
         dateLine = transaction.date.strftime(
-            "%Y/%m/%d") + " spent money" + "\n"
+            "%Y/%m/%d") + " "+ reason + "\n"
         sourceLine = " " + source + "\n"
         targetLine = " " + target + "        €" + \
             str(transaction.amount.amount) + "\n"

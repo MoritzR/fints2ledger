@@ -11,7 +11,7 @@ class ConverterTest(unittest.TestCase):
     def test_convertToLedger_example1(self):
         transaction=Transaction(Date(2017,11,1), Amount('44', 'D', 'EUR'), "details", "orignalDetails")
         
-        result=self.converter.transactionToLedger(transaction,"assets:cash","expenses:electricity")
+        result=self.converter.transactionToLedger(transaction,"assets:cash","expenses:electricity", "spent money")
 
         self.assertIn("2017/11/01", result)
         self.assertIn("expenses:electricity", result)
