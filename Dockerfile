@@ -19,6 +19,3 @@ RUN mkdir /app && \
 VOLUME "/source"
 
 WORKDIR /source
-
-# docker run --rm -v "c:/Users/morit/Documents/ContinuousLearning/docker/source:/source" pyfints python source/test.py
-# docker build -t pyfints .
