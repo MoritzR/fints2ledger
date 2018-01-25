@@ -13,8 +13,7 @@ RUN mkdir /app && \
     mkdir /source && \
     tar -zxf ${PYFINTS_TAR_FILE} -C /app && \
     ls /app && \
-    python /app/${PYFINTS_FOLDER}/setup.py install && \
-    pip install tinydb
+    python /app/${PYFINTS_FOLDER}/setup.py install
 
 VOLUME "/source"
 

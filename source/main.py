@@ -1,8 +1,7 @@
 from transaction_retriever import TRetriever
 from mt940.models import Date
 from fints.client import FinTS3PinTanClient
-from tinydb import TinyDB, Query
-from ledger_writer import Classifier
+from csv_converter import CsvConverter
 import configparser
 
 '''
@@ -25,19 +24,11 @@ def retrieveAndSave():
     )
 
     retriever = TRetriever(client, fintsConfig["account"])
+    converter = CsvConverter()
     today = Date.today()
-    retriever.retrieve_and_save(Date(2017,12,18), Date.today())
+    csv = "\n".join(map(lambda transaction: converter.convert(transaction), retriever.get_hbci_transactions(Date(2017,12,18), Date.today())))
+    with open('transaction.csv', 'w') as f:
+        f.write(csv)
 
 retrieveAndSave()
-
-classifier = Classifier()
-
-for transaction in classifier.load_unclassified():
-    
-    print(transaction)
-    source = "assets:bank"
-    target = "expenses:"+input("Expenses account: ")
-    reason = transaction.details
-
-    classifier.add_to_ledger(transaction, source, target, reason)
 

@@ -55,48 +55,5 @@ class TRetrieverTest(unittest.TestCase):
         self.assertEqual(result[0].amount, expectedAmount)
         self.assertEqual(result[0].details, expectedDetails)
 
-    def test_saves_transactions_to_database_as_unclassified(self):
-        expectedInsert = {
-            "year": 2017,
-            "month": 1,
-            "day": 1,
-            "amount": -44.5,
-            "currency": "€",
-            "details": "some details",
-            "originalDetails": "some original details",
-            "classified": False
-        }
-        dbMock = Mock()
-        dbMock.search.return_value = []
-        retriever = TRetriever(Mock(), Mock(), db=dbMock)
-        transaction = Transaction(Date(2017, 1, 1), Amount(
-            "44.5", "D", "EUR"), "some details", "some original details")
-
-        retriever.save_transaction(transaction)
-
-        dbMock.insert.assert_called_with(expectedInsert)
-
-    def test_does_not_save_transactions_to_database_when_already_present(self):
-            expectedInsert = {
-                "year": 2017,
-                "month": 1,
-                "day": 1,
-                "amount": -44.5,
-                "currency": "€",
-                "details": "some details",
-                "originalDetails": "some original details",
-                "classified": False
-            }
-            dbMock = Mock()
-            dbMock.search.return_value = [expectedInsert] #db search returns this value
-            retriever = TRetriever(Mock(), Mock(), db=dbMock)
-            transaction = Transaction(Date(2017, 1, 1), Amount(
-                "44.5", "D", "EUR"), "some details", "some original details")
-
-            retriever.save_transaction(transaction)
-
-            assert not dbMock.insert.called
-
-
 if __name__ == '__main__':
     unittest.main()
