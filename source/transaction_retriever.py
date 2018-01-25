@@ -22,6 +22,15 @@ class TRetriever:
         print("**statements: ", statements)
         return list(map(lambda transaction: HbciConverter.hbciDataToTransaction(transaction.data), statements))
 
+    def get_hbci_transactions(self, start_date, end_date):
+        accounts = self.client.get_sepa_accounts()
+
+        account = self.__find_matching_account(accounts, self.accountnumber)
+
+        statements = self.client.get_statement(account, start_date, end_date)
+        print("**statements: ", statements)
+        return statements
+
     def save_transaction(self, transaction):
         insert = {
             "year": int(transaction.date.year),
