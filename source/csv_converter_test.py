@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import Mock
 from csv_converter import CsvConverter
 from mt940.models import Amount, Date
 
@@ -19,8 +20,10 @@ class ConverterTest(unittest.TestCase):
             "posting_text": expected_posting_text,
             "purpose": expected_purpose
         }
+        hbciData = Mock()
+        hbciData.data = fintsTransaction
 
-        csv_result = self.csvConverter.convert(fintsTransaction)
+        csv_result = self.csvConverter.convert(hbciData)
         entries=csv_result.split(",")
 
         self.assertIn(expected_purpose, entries)
