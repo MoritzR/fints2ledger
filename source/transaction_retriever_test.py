@@ -1,7 +1,6 @@
 import unittest
 from unittest.mock import Mock
 from transaction_retriever import TRetriever
-from hconverter import Transaction
 from mt940.models import Date, Amount
 
 
@@ -23,7 +22,7 @@ class TRetrieverTest(unittest.TestCase):
         clientMock.get_statement.return_value = []
         retriever = TRetriever(clientMock, selectedAccount)
 
-        retriever.get_transactions(startDate, endDate)
+        retriever.get_hbci_transactions(startDate, endDate)
 
         clientMock.get_statement.assert_called_with(
             account1Mock, startDate, endDate)
@@ -49,7 +48,7 @@ class TRetrieverTest(unittest.TestCase):
         clientMock.get_statement.return_value = [hbciData]
         retriever = TRetriever(clientMock, selectedAccount)
 
-        result = retriever.get_transactions(Date(2017, 2, 2), Date(2017, 3, 3))
+        result = retriever.get_hbci_transactions(Date(2017, 2, 2), Date(2017, 3, 3))
 
         self.assertEqual(result[0].date, expectedDate)
         self.assertEqual(result[0].amount, expectedAmount)
