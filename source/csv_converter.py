@@ -1,4 +1,7 @@
 class CsvConverter:
+    def __init__(self, separator):
+        self.separator = separator
+
     def convert(self, transaction):
         hbciData = transaction.data
 
@@ -8,5 +11,10 @@ class CsvConverter:
         posting_text = hbciData["posting_text"]
         applicant_name = hbciData["applicant_name"]
         purpose = hbciData["purpose"]
-        print([date, amount, currency, applicant_name, posting_text, purpose])
-        return ",".join([date, amount, currency, applicant_name, posting_text, purpose])
+        return self.separator.join(
+            [date,
+             amount,
+             currency,
+             applicant_name,
+             posting_text,
+             purpose])
