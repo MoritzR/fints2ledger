@@ -11,7 +11,7 @@ DEFAULT_TEMPLATE = """\
     {credit_account:<60}    {currency} {credit}
 """
 
-PROMT_FOR_INPUT = [
+DEFAULT_PROMPTS = [
     "credit_account",
     "debit_account"
 ]
@@ -20,7 +20,8 @@ MD5_REGEX = r"((md5sum:) (.*))"
 
 
 class LedgerWriter:
-    def __init__(self):
+    def __init__(self, prompts=DEFAULT_PROMPTS):
+        self.prompts = prompts
         self.existing_md5_entries = []
         self.autocomplete_files = {}
         self.autocomplete_entries = {}
@@ -51,8 +52,11 @@ class LedgerWriter:
 
         input_value = input("\n"+input_key+": ").strip()
 
-        if input_value not in existing_entries:
-            self.autocomplete_entries[input_key] += (input_value)
+        if input_value=="s":
+            return None
+
+        if input_value and input_value not in existing_entries:
+            self.autocomplete_entries[input_key] += [input_value]
             if input_key in self.autocomplete_files:
                 with open(self.autocomplete_files[input_key], "a") as file:
                     file.write(input_value)
@@ -73,8 +77,14 @@ class LedgerWriter:
             return None
 
         print(json.dumps(data, indent=1))
-        input_dict = {key: self.prompt_for_input(
-            key) for key in PROMT_FOR_INPUT}
+        input_dict = {}
+        for input_key in self.prompts:
+            input_value = self.prompt_for_input(input_key)
+            if input_value==None:
+                return None
+            if input_value:
+                input_dict[input_key] = input_value
+
         data.update(input_dict)
 
         data.update({
