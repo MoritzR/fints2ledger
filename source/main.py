@@ -5,6 +5,7 @@ from csv_converter import CsvConverter
 import configparser
 from ledger_writer import LedgerWriter
 import csv
+import os
 
 '''
 This requires a "application.config" file in the same folder, according to the following format:
@@ -41,14 +42,16 @@ def convertToLedger():
     writer = LedgerWriter()
     with open('transactions.ledger', 'r') as existing_journal:
         writer.with_existing_journal(existing_journal.readlines())
+    
+    accounts_file = 'resources/autocomplete/accounts.txt'
+    if not os.path.exists(accounts_file):
+        with open(accounts_file, 'w'): pass
+    writer.with_autocomplete_file("debit_account", accounts_file)
+    writer.with_autocomplete_file("credit_account", accounts_file)
 
     with open('transaction.csv') as csvfile, open('transactions.ledger', 'a') as ledger_journal:
         reader = csv.DictReader(csvfile, delimiter=";")
         for row in reader:
-            row.update({
-                "debit_account": "test:debit",
-                "credit_account": "test:credit"
-            })
             entry = writer.journal_entry(row)
             if entry:
                 ledger_journal.write(entry)

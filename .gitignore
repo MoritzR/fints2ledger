@@ -1,6 +1,7 @@
 application.config
 *.ledger
 *.csv
+resources/
 
 **/__pycache__
 build
