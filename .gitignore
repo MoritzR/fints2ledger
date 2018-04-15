@@ -1,4 +1,5 @@
 application.config
+*.ledger
 *.csv
 
 **/__pycache__
