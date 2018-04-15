@@ -2,6 +2,15 @@ class CsvConverter:
     def __init__(self, separator):
         self.separator = separator
 
+    def get_headline(self):
+        return self.separator.join(
+            ["date",
+             "amount",
+             "currency",
+             "payee",
+             "posting",
+             "purpose"])
+
     def convert(self, transaction):
         hbciData = transaction.data
 
