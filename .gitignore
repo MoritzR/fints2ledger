@@ -1,0 +1,8 @@
+application.config
+
+**/__pycache__
+build
+dist
+fints2ledger.egg-info
+
+.vscode
