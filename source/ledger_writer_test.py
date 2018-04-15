@@ -12,7 +12,8 @@ class LedgerWriterTest(unittest.TestCase):
 
     def test_write_to_ledger(self):
         expected_entry="""\
-2018/03/19 someone someone some kind of credit
+2018/03/19 someone some kind of credit some description
+    ; md5sum: e7224d45e6102ad5cb5fc7587ffee349
     debit_account                                                   EUR 535.0
     credit_account                                                  EUR -535.0
 """
