@@ -1,4 +1,5 @@
 application.config
+*.csv
 
 **/__pycache__
 build
