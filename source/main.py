@@ -39,6 +39,9 @@ def retrieveAndSave():
 
 def convertToLedger():
     writer = LedgerWriter()
+    with open('transactions.ledger', 'r') as existing_journal:
+        writer.with_existing_journal(existing_journal.readlines())
+
     with open('transaction.csv') as csvfile, open('transactions.ledger', 'a') as ledger_journal:
         reader = csv.DictReader(csvfile, delimiter=";")
         for row in reader:
@@ -47,8 +50,9 @@ def convertToLedger():
                 "credit_account": "test:credit"
             })
             entry = writer.journal_entry(row)
-            ledger_journal.write(entry)
-            ledger_journal.write("\n")
+            if entry:
+                ledger_journal.write(entry)
+                ledger_journal.write("\n")
 
 
 retrieveAndSave()
