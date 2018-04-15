@@ -7,19 +7,28 @@ from ledger_writer import LedgerWriter
 
 class LedgerWriterTest(unittest.TestCase):
     def setUp(self):
-        self.writer = LedgerWriter(";")
-        self.maxDiff=None
+        self.writer = LedgerWriter()
+        self.maxDiff = None
 
     def test_write_to_ledger(self):
-        expected_entry="""\
+        expected_entry = """\
 2018/03/19 someone some kind of credit some description
     ; md5sum: e7224d45e6102ad5cb5fc7587ffee349
-    debit_account                                                   EUR 535.0
-    credit_account                                                  EUR -535.0
+    test:debit                                                      EUR 535.0
+    test:credit                                                     EUR -535.0
 """
-        csv_line="2018/03/19;535;EUR;someone;some kind of credit;some description"
+        data = {
+            "date": "2018/03/19",
+            "amount": "535",
+            "currency": "EUR",
+            "payee": "someone",
+            "posting": "some kind of credit",
+            "purpose": "some description",
+            "debit_account": "test:debit",
+            "credit_account": "test:credit"
+        }
 
-        actual_entry = self.writer.journal_entry(csv_line, "credit_account", "debit_account")
+        actual_entry = self.writer.journal_entry(data)
 
         self.assertEquals(expected_entry, actual_entry)
 
