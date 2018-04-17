@@ -7,7 +7,7 @@ from fints2ledger.ledger_writer import LedgerWriter
 
 class LedgerWriterTest(unittest.TestCase):
     def setUp(self):
-        self.writer = LedgerWriter()
+        self.writer = LedgerWriter(prompts=[])
         self.maxDiff = None
 
     def test_write_to_ledger(self):
