@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import Mock
-from csv_converter import CsvConverter
+from fints2ledger.csv_converter import CsvConverter
 from mt940.models import Amount, Date
 
 

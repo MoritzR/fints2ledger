@@ -10,11 +10,11 @@ ADD https://github.com/raphaelm/python-fints/archive/${PYFINTS_TAR_FILE} /
 
 
 RUN mkdir /app && \
-    mkdir /source && \
+    mkdir /fints2ledger && \
     tar -zxf ${PYFINTS_TAR_FILE} -C /app && \
     ls /app && \
     python /app/${PYFINTS_FOLDER}/setup.py install
 
-VOLUME "/source"
+VOLUME "/fints2ledger"
 
-WORKDIR /source
+WORKDIR /fints2ledger

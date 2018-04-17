@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import Mock
-from csv_converter import CsvConverter
+from fints2ledger.csv_converter import CsvConverter
 from mt940.models import Amount, Date
-from ledger_writer import LedgerWriter
+from fints2ledger.ledger_writer import LedgerWriter
 
 
 class LedgerWriterTest(unittest.TestCase):

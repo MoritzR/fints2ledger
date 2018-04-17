@@ -1,6 +1,6 @@
 import hashlib
 import re
-from autocomplete import Completer
+from fints2ledger.autocomplete import Completer
 import readline
 import json
 

@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import Mock
-from transaction_retriever import TRetriever
+from fints2ledger.transaction_retriever import TRetriever
 from mt940.models import Date, Amount
 
 
