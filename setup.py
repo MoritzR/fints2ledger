@@ -10,6 +10,7 @@ setup(name='fints2ledger',
           'mt-940',
           'fints'
       ],
+      setup_requires = ['green'],
       packages=['fints2ledger'],
       dependency_links=['https://github.com/raphaelm/python-fints/tarball/master/#egg=fints-0.2.1'],
       zip_safe=False)
