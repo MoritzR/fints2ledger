@@ -41,8 +41,6 @@ class TRetrieverTest(unittest.TestCase):
 
         result = retriever.get_hbci_transactions(Date(2017, 2, 2), Date(2017, 3, 3))
 
-        print(result)
-
         self.assertEqual(result[0], hbciData)
 
 if __name__ == '__main__':
