@@ -29,17 +29,8 @@ class TRetrieverTest(unittest.TestCase):
 
     def test_calls_returns_correct_transaction(self):
         '''retrieved should return a transaction with data, amount and details from the hcbi data'''
-        expectedDate = Date(2017, 1, 1)
-        expectedDetails = "some details"
-        expectedAmount = Amount("44", "D", "EUR")
         selectedAccount = "selected account"
         hbciData = Mock()
-        data = {
-            "amount": expectedAmount,
-            "date": expectedDate,
-            "transaction_details": expectedDetails
-        }
-        hbciData.data = data
 
         clientMock = Mock()
         account1Mock = Mock()
@@ -50,9 +41,9 @@ class TRetrieverTest(unittest.TestCase):
 
         result = retriever.get_hbci_transactions(Date(2017, 2, 2), Date(2017, 3, 3))
 
-        self.assertEqual(result[0].date, expectedDate)
-        self.assertEqual(result[0].amount, expectedAmount)
-        self.assertEqual(result[0].details, expectedDetails)
+        print(result)
+
+        self.assertEqual(result[0], hbciData)
 
 if __name__ == '__main__':
     unittest.main()

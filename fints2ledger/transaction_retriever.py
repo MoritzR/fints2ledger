@@ -8,10 +8,7 @@ class TRetriever:
 
         account = self.__find_matching_account(accounts, self.accountnumber)
 
-        statements = self.client.get_statement(account, start_date, end_date)
-        for s in statements:
-            print(s.data)
-        return statements
+        return self.client.get_statement(account, start_date, end_date)
 
     def __find_matching_account(self, accounts, accountnumber):
         for account in accounts:
