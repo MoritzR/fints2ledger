@@ -1,7 +1,6 @@
 certifi==2018.4.16
 chardet==3.0.4
 fints==0.2.1
-fints2ledger==0.1
 idna==2.6
 mt-940==4.11.0
 pkg-resources==0.0.0
