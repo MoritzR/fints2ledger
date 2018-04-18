@@ -6,12 +6,19 @@ setup(name='fints2ledger',
       url='https://github.com/MoritzR/fints2ledger',
       author='Moritz Rumpf',
       license='MIT',
+
+      entry_points={
+          'console_scripts': ['fints2ledger=fints2ledger.main:main'],
+      },
+
       install_requires=[
           'mt-940',
           'fints',
           'PyYAML'
       ],
-      setup_requires = ['green'],
+      setup_requires=['green'],
       packages=['fints2ledger'],
-      dependency_links=['https://github.com/raphaelm/python-fints/tarball/master/#egg=fints-0.2.1'],
-      zip_safe=False)
+      dependency_links=[
+          'https://github.com/raphaelm/python-fints/tarball/master/#egg=fints-0.2.1'],
+      zip_safe=False
+      )

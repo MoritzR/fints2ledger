@@ -61,9 +61,14 @@ def convertToLedger(config):
                 ledger_journal.write(entry)
                 ledger_journal.write("\n")
 
-config = {}
-with open("config.yml") as config_file:
-    config = yaml.load(config_file.read())
+def main():
+    config = {}
+    with open("config.yml") as config_file:
+        config = yaml.load(config_file.read())
 
-retrieveAndSave(config["fints"])
-convertToLedger(config["ledger"])
+    retrieveAndSave(config["fints"])
+    convertToLedger(config["ledger"])
+
+
+if __name__ == '__main__':
+    main()

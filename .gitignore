@@ -4,6 +4,7 @@ config.yml
 *.auto
 
 **/__pycache__
+.eggs
 build
 dist
 fints2ledger.egg-info
