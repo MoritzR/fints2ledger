@@ -2,3 +2,36 @@
 [![Build Status](https://travis-ci.org/MoritzR/fints2ledger.svg?branch=master)](https://travis-ci.org/MoritzR/fints2ledger)
 
 A tool for downloading transactions from FinTS banking APIs and sorting them into a [ledger journal](http://hledger.org/).
+
+## Install
+
+```
+python setup.py install
+```
+
+Create a `config.yml` file with the following contens and replace values in the fints category:
+```
+fints:
+  blz: <your bank's BLZ>
+  account: <your account number>
+  password: <your banking password>
+  endpoint: <your bank fints endpoint> # e.g.: https://fints.ing-diba.de/fints/ for ING-Diba
+
+ledger:
+  prompts: 
+    - credit_account
+    - debit_account
+  autocomplete:
+    accounts:
+      - credit_account
+      - debit_account
+  defaults:
+    debit_account: assets:bank:checking
+```
+
+## Usage
+Run 
+```
+fints2ledger
+```
+This will download the transactions from the last year and tries to convert them to a ledger journal.
