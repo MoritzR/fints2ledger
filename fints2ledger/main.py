@@ -35,8 +35,8 @@ def retrieveAndSave(fintsConfig):
         f.write(csv_output)
 
 
-def convertToLedger():
-    writer = LedgerWriter(prompts=["credit_account", "debit_account"])
+def convertToLedger(config):
+    writer = LedgerWriter(prompts=config["prompts"])
     with open('transactions.ledger', 'r') as existing_journal:
         writer.with_existing_journal(existing_journal.readlines())
 
@@ -63,4 +63,4 @@ with open("config.yml") as config_file:
     config = yaml.load(config_file.read())
 
 retrieveAndSave(config["fints"])
-convertToLedger()
+convertToLedger(config["ledger"])
