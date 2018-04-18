@@ -53,9 +53,8 @@ def convertToLedger(config):
     with open('transaction.csv') as csvfile, open('transactions.ledger', 'a') as ledger_journal:
         reader = csv.DictReader(csvfile, delimiter=";")
         for row in reader:
-            row.update({
-                "debit_account": "assets:bank:checking"
-            })
+            if "defaults" in config:
+                row.update(config["defaults"])
             entry = writer.journal_entry(row)
             if entry:
                 ledger_journal.write(entry)
