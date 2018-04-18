@@ -2,7 +2,7 @@ from fints2ledger.transaction_retriever import TRetriever
 from mt940.models import Date
 from fints.client import FinTS3PinTanClient
 from fints2ledger.csv_converter import CsvConverter
-import configparser
+import yaml
 from fints2ledger.ledger_writer import LedgerWriter
 import csv
 import os
@@ -17,10 +17,7 @@ endpoint = <your bank fints endpoint>
 '''
 
 
-def retrieveAndSave():
-    config = configparser.ConfigParser()
-    config.read('application.config')
-    fintsConfig = config["FINTS"]
+def retrieveAndSave(fintsConfig):
     client = FinTS3PinTanClient(
         fintsConfig["blz"],  # Your bank's BLZ
         fintsConfig["account"],  # your account number
@@ -61,6 +58,9 @@ def convertToLedger():
                 ledger_journal.write(entry)
                 ledger_journal.write("\n")
 
+config = {}
+with open("config.yml") as config_file:
+    config = yaml.load(config_file.read())
 
-retrieveAndSave()
+retrieveAndSave(config["fints"])
 convertToLedger()

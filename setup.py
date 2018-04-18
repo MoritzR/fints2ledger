@@ -8,7 +8,8 @@ setup(name='fints2ledger',
       license='MIT',
       install_requires=[
           'mt-940',
-          'fints'
+          'fints',
+          'PyYAML'
       ],
       setup_requires = ['green'],
       packages=['fints2ledger'],

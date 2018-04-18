@@ -1,4 +1,4 @@
-application.config
+config.yml
 *.ledger
 *.csv
 resources/
