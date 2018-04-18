@@ -1,7 +1,7 @@
 config.yml
 *.ledger
 *.csv
-resources/
+accounts.txt
 
 **/__pycache__
 build

@@ -40,7 +40,7 @@ def convertToLedger(config):
     with open('transactions.ledger', 'r') as existing_journal:
         writer.with_existing_journal(existing_journal.readlines())
 
-    accounts_file = 'resources/autocomplete/accounts.txt'
+    accounts_file = 'accounts.txt'
     if not os.path.exists(accounts_file):
         with open(accounts_file, 'w'):
             pass
