@@ -37,8 +37,9 @@ def retrieveAndSave(fintsConfig):
 
 def convertToLedger(config):
     writer = LedgerWriter(prompts=config["prompts"])
-    with open('transactions.ledger', 'r') as existing_journal:
-        writer.with_existing_journal(existing_journal.readlines())
+    if os.path.exists('transactions.ledger'):
+        with open('transactions.ledger', 'r') as existing_journal:
+            writer.with_existing_journal(existing_journal.readlines())
     
     if "autocomplete" in config:
         for autocomplete_file in config["autocomplete"]:
