@@ -8,12 +8,12 @@ import csv
 import os
 
 '''
-This requires a "application.config" file in the same folder, according to the following format:
-[FINTS]
-blz = <your bank's BLZ>
-account = <your account number>
-password = <your banking password>
-endpoint = <your bank fints endpoint>
+This requires a "config.yml" file in the same folder, according to the following format:
+fints:
+  blz: <your bank's BLZ>
+  account: <your account number>
+  password: <your banking password>
+  endpoint: <your bank fints endpoint>
 '''
 
 
