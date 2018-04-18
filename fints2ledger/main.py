@@ -39,13 +39,16 @@ def convertToLedger(config):
     writer = LedgerWriter(prompts=config["prompts"])
     with open('transactions.ledger', 'r') as existing_journal:
         writer.with_existing_journal(existing_journal.readlines())
-
-    accounts_file = 'accounts.txt'
-    if not os.path.exists(accounts_file):
-        with open(accounts_file, 'w'):
-            pass
-    writer.with_autocomplete_file("credit_account", accounts_file)
-    writer.with_autocomplete_file("debit_account", accounts_file)
+    
+    if "autocomplete" in config:
+        for autocomplete_file in config["autocomplete"]:
+            for autocomplete_key in config["autocomplete"][autocomplete_file]:
+                file_with_extension = autocomplete_file + ".auto" #add extension to have a grouping for autocomplete files
+                # create file if non-existent
+                if not os.path.exists(file_with_extension):
+                    with open(file_with_extension, 'w'):
+                        pass
+                writer.with_autocomplete_file(autocomplete_key, file_with_extension)
 
     with open('transaction.csv') as csvfile, open('transactions.ledger', 'a') as ledger_journal:
         reader = csv.DictReader(csvfile, delimiter=";")
