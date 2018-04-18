@@ -27,8 +27,9 @@ def retrieveAndSave(fintsConfig):
 
     retriever = TRetriever(client, fintsConfig["account"])
     converter = CsvConverter(";")
+    today = Date.today()
     csv_output = "\n".join(map(lambda transaction: converter.convert(
-        transaction), retriever.get_hbci_transactions(Date(2018, 3, 25), Date.today())))
+        transaction), retriever.get_hbci_transactions(Date(today.year-1, today.month, today.day), Date.today())))
     with open('transaction.csv', 'w') as f:
         f.write(converter.get_headline())
         f.write("\n")
@@ -40,16 +41,18 @@ def convertToLedger(config):
     if os.path.exists('transactions.ledger'):
         with open('transactions.ledger', 'r') as existing_journal:
             writer.with_existing_journal(existing_journal.readlines())
-    
+
     if "autocomplete" in config:
         for autocomplete_file in config["autocomplete"]:
             for autocomplete_key in config["autocomplete"][autocomplete_file]:
-                file_with_extension = autocomplete_file + ".auto" #add extension to have a grouping for autocomplete files
+                # add extension to have a grouping for autocomplete files
+                file_with_extension = autocomplete_file + ".auto"
                 # create file if non-existent
                 if not os.path.exists(file_with_extension):
                     with open(file_with_extension, 'w'):
                         pass
-                writer.with_autocomplete_file(autocomplete_key, file_with_extension)
+                writer.with_autocomplete_file(
+                    autocomplete_key, file_with_extension)
 
     with open('transaction.csv') as csvfile, open('transactions.ledger', 'a') as ledger_journal:
         reader = csv.DictReader(csvfile, delimiter=";")
@@ -60,6 +63,7 @@ def convertToLedger(config):
             if entry:
                 ledger_journal.write(entry)
                 ledger_journal.write("\n")
+
 
 def main():
     config = {}
