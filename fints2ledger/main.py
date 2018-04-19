@@ -6,6 +6,7 @@ import yaml
 from fints2ledger.ledger_writer import LedgerWriter
 import csv
 import os
+import argparse
 
 '''
 This requires a "config.yml" file in the same folder, according to the following format:
@@ -66,12 +67,22 @@ def convertToLedger(config):
 
 
 def main():
+    parser = argparse.ArgumentParser(
+        description='Converting transactions from fints apis to ledger.')
+    parser.add_argument('--no-csv', dest='convert_to_csv', action='store_const',
+                        const=False, default=True,   help='exclude conversion from fints to csv (default: not excluded)')
+    parser.add_argument('--no-ledger', dest='convert_to_ledger', action='store_const',
+                        const=False, default=True,   help='exclude conversion from csv to ledger (default: not excluded)')
+    args = parser.parse_args()
+
     config = {}
     with open("config.yml") as config_file:
         config = yaml.load(config_file.read())
 
-    retrieveAndSave(config["fints"])
-    convertToLedger(config["ledger"])
+    if args.convert_to_csv:
+        retrieveAndSave(config["fints"])
+    if args.convert_to_ledger:
+        convertToLedger(config["ledger"])
 
 
 if __name__ == '__main__':
