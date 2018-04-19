@@ -3,6 +3,8 @@ import re
 from fints2ledger.autocomplete import Completer
 import readline
 import json
+import os
+from fints2ledger.config import Config
 
 DEFAULT_PROMPTS = [
     "credit_account",
@@ -58,9 +60,10 @@ class LedgerWriter:
         return input_value
 
     def journal_entry(self, data):
-        template = ""
-        with open("template.txt", "r") as template_file:
-            template = template_file.read()
+        template = Config.DEFAULT_TEMPLATE
+        if os.path.exists("template.txt"):
+            with open("template.txt", "r") as template_file:
+                template = template_file.read()
 
         md5 = hashlib.md5()
         md5.update(data["date"].encode("UTF-8"))

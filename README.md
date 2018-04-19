@@ -35,3 +35,23 @@ Run
 fints2ledger
 ```
 This will download the transactions from the last year and tries to convert them to a ledger journal.
+
+A list of available command line arguments:
+```
+usage: fints2ledger [-h] [--no-csv] [--no-ledger] [--csv-file CSVFILE]
+                    [--ledger-file LEDGERFILE]
+
+Converting transactions from fints apis to ledger.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --no-csv              exclude conversion from fints to csv (default: not
+                        excluded)
+  --no-ledger           exclude conversion from csv to ledger (default: not
+                        excluded)fints2ledger -h
+  --csv-file CSVFILE    file to store/load csv transactions to/from (default:
+                        transactions.csv)
+  --ledger-file LEDGERFILE
+                        file to store ledger entries to (default:
+                        ledger.journal)
+```
