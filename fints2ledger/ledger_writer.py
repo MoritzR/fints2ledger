@@ -4,13 +4,6 @@ from fints2ledger.autocomplete import Completer
 import readline
 import json
 
-DEFAULT_TEMPLATE = """\
-{date} {payee} {posting} {purpose}
-    ; md5sum: {md5sum}
-    {debit_account:<60}    {currency} {debit}
-    {credit_account:<60}    {currency} {credit}
-"""
-
 DEFAULT_PROMPTS = [
     "credit_account",
     "debit_account"
@@ -65,7 +58,9 @@ class LedgerWriter:
         return input_value
 
     def journal_entry(self, data):
-        template = DEFAULT_TEMPLATE
+        template = ""
+        with open("template.txt", "r") as template_file:
+            template = template_file.read()
 
         md5 = hashlib.md5()
         md5.update(data["date"].encode("UTF-8"))

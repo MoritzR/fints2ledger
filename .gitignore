@@ -2,6 +2,7 @@ config.yml
 *.ledger
 *.csv
 *.auto
+template.txt
 
 **/__pycache__
 .eggs
