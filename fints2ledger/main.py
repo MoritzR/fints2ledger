@@ -2,11 +2,11 @@ from fints2ledger.transaction_retriever import TRetriever
 from mt940.models import Date
 from fints.client import FinTS3PinTanClient
 from fints2ledger.csv_converter import CsvConverter
-import yaml
 from fints2ledger.ledger_writer import LedgerWriter
 import csv
 import os
 import argparse
+from fints2ledger.config import Config
 
 '''
 This requires a "config.yml" file in the same folder, according to the following format:
@@ -75,9 +75,9 @@ def main():
                         const=False, default=True,   help='exclude conversion from csv to ledger (default: not excluded)')
     args = parser.parse_args()
 
-    config = {}
-    with open("config.yml") as config_file:
-        config = yaml.load(config_file.read())
+    config_setup = Config()
+    config_setup.setup_files()
+    config = config_setup.get_config()
 
     if args.convert_to_csv:
         retrieveAndSave(config["fints"])
