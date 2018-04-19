@@ -55,3 +55,15 @@ optional arguments:
                         file to store ledger entries to (default:
                         ledger.journal)
 ```
+
+### Template File
+A template file with the name `template.txt' will be automaticall generated. It will be user to create the ledger entries.
+It looks something like
+```
+{date} {payee} {posting} {purpose}
+    ; md5sum: {md5sum}
+    {debit_account:<60}    {currency} {debit}
+    {credit_account:<60}    {currency} {credit}
+    
+```
+Each name inside curly brackets can specify a value that can come from either a named csv column, a default value (from the `config.yml`) or an input prompt (also from the `config.yml`).
