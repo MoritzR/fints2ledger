@@ -9,7 +9,7 @@ A tool for downloading transactions from FinTS banking APIs and sorting them int
 python setup.py install
 ```
 
-Create a `config.yml` file with the following contens and replace values in the fints category:
+Create a `config.yml` file with the following contents and replace values in the fints category:
 ```
 fints:
   blz: <your bank's BLZ>
@@ -57,7 +57,7 @@ optional arguments:
 ```
 
 ### Template File
-A template file with the name `template.txt' will be automaticall generated. It will be user to create the ledger entries.
+A template file with the name `template.txt` will be automaticall generated. It will be user to create the ledger entries.
 It looks something like
 ```
 {date} {payee} {posting} {purpose}
