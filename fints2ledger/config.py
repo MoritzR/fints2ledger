@@ -17,7 +17,8 @@ class Config:
             },
             "defaults": {
                 "debit_account": "assets:bank:checking"
-            }
+            },
+            "md5": ["date", "payee", "purpose", "amount"]
         }
     }
 

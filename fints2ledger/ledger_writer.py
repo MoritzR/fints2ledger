@@ -15,8 +15,9 @@ MD5_REGEX = r"((md5sum:) (.*))"
 
 
 class LedgerWriter:
-    def __init__(self, prompts=DEFAULT_PROMPTS):
-        self.prompts = prompts
+    def __init__(self, config):
+        self.prompts = config["ledger"]["prompts"] if "prompts" in config["ledger"] else []
+        self.config = config
         self.existing_md5_entries = []
         self.autocomplete_files = {}
         self.autocomplete_entries = {}
@@ -47,7 +48,7 @@ class LedgerWriter:
 
         input_value = input("\n"+input_key+": ").strip()
 
-        if input_value=="s":
+        if input_value == "s":
             return None
 
         if input_value and input_value not in existing_entries:
@@ -65,20 +66,20 @@ class LedgerWriter:
             with open("template.txt", "r") as template_file:
                 template = template_file.read()
 
-        md5 = hashlib.md5()
-        md5.update(data["date"].encode("UTF-8"))
-        md5.update(data["payee"].encode("UTF-8"))
-        md5.update(data["purpose"].encode("UTF-8"))
-        md5.update(data["amount"].encode("UTF-8"))
-        md5digest = md5.hexdigest()
-        if md5digest in self.existing_md5_entries:
-            return None
+        md5digest = None
+        if "md5" in self.config["ledger"]:
+            md5 = hashlib.md5()
+            for entry in self.config["ledger"]["md5"]:
+                md5.update(data[entry].encode("UTF-8"))
+            md5digest = md5.hexdigest()
+            if md5digest in self.existing_md5_entries:
+                return None
 
         print(json.dumps(data, indent=1))
         input_dict = {}
         for input_key in self.prompts:
             input_value = self.prompt_for_input(input_key)
-            if input_value==None:
+            if input_value == None:
                 return None
             if input_value:
                 input_dict[input_key] = input_value

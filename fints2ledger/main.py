@@ -38,7 +38,7 @@ def retrieveAndSave(config):
 
 
 def convertToLedger(config):
-    writer = LedgerWriter(prompts=config["ledger"]["prompts"])
+    writer = LedgerWriter(config)
     if os.path.exists(config["files"]["ledger_file"]):
         with open(config["files"]["ledger_file"], 'r') as existing_journal:
             writer.with_existing_journal(existing_journal.readlines())
