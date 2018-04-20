@@ -10,6 +10,7 @@ python setup.py install
 ```
 
 Create a `config.yml` file with the following contents and replace values in the fints category:
+(This file will also be atomatically created if missing)
 ```
 fints:
   blz: <your bank's BLZ>
@@ -27,6 +28,11 @@ ledger:
       - debit_account
   defaults:
     debit_account: assets:bank:checking
+  md5:
+    - date
+    - payee
+    - purpose
+    - amount
 ```
 
 ## Usage
