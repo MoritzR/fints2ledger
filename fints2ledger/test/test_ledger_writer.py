@@ -2,13 +2,13 @@ import unittest
 from unittest.mock import Mock
 from fints2ledger.csv_converter import CsvConverter
 from mt940.models import Amount, Date
-from fints2ledger.ledger_writer import LedgerWriter
+from fints2ledger.ledger_converter import LedgerConverter
 
 
-class LedgerWriterTest(unittest.TestCase):
+class LedgerConverterTest(unittest.TestCase):
     def setUp(self):
         config = {"ledger": {"md5": ["date", "payee", "purpose", "amount"]}}
-        self.writer = LedgerWriter(config)
+        self.writer = LedgerConverter(config)
         self.maxDiff = None
 
     def test_write_to_ledger(self):

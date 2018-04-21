@@ -14,7 +14,7 @@ DEFAULT_PROMPTS = [
 MD5_REGEX = r"((md5sum:) (.*))"
 
 
-class LedgerWriter:
+class LedgerConverter:
     def __init__(self, config):
         self.prompts = config["ledger"]["prompts"] if "prompts" in config["ledger"] else []
         self.config = config

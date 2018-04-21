@@ -2,7 +2,7 @@ from fints2ledger.transaction_retriever import TRetriever
 from mt940.models import Date
 from fints.client import FinTS3PinTanClient
 from fints2ledger.csv_converter import CsvConverter
-from fints2ledger.ledger_writer import LedgerWriter
+from fints2ledger.ledger_converter import LedgerConverter
 import csv
 import os
 import argparse
@@ -42,7 +42,7 @@ def retrieveAndSave(config):
 
 
 def convertToLedger(config):
-    writer = LedgerWriter(config)
+    writer = LedgerConverter(config)
     if os.path.exists(config["files"]["ledger_file"]):
         with open(config["files"]["ledger_file"], 'r') as existing_journal:
             writer.with_existing_journal(existing_journal.readlines())
