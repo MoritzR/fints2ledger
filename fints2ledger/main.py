@@ -16,9 +16,6 @@ fints:
   endpoint: <your bank fints endpoint>
 '''
 
-def date_string_to_mt940_date(date_string):
-    parts = date_string.split("/")
-    return Date(year=parts[0], month=parts[1], day=parts[2])
 
 def convertToLedger(config):
     writer = LedgerConverter(config)
@@ -67,7 +64,7 @@ def main():
     args = parser.parse_args()
     command_line_config = {
         "fints": {
-            "start": date_string_to_mt940_date(args.start) if args.start else Date(Date.today().year-1, Date.today().month, Date.today().day),
+            "start": utils.date_string_to_mt940_date(args.start) if args.start else Date(Date.today().year-1, Date.today().month, Date.today().day),
             "csv_separator": args.separator
         },
         "files": {
