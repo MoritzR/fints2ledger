@@ -84,7 +84,7 @@ Each name inside curly brackets can specify a value that can come from either a 
 With the argument `--no-csv` the program will not create a csv file with banking transactions itself (default ist fints -> csv -> ledger).
 Instead, it will convert directly from a csv file to ledger. This is useful when all transactions have already been downloaded or when converting from another source than FinTS to ledger.
 
-The csv file must provide a headline which names the columns. The column names are then used to fill the value in the template file.
+The csv file must provide a headline which names the columns. The column names are then used to fill the values in the template file.
 Example:
 ```
 date;amount;currency;payee;posting;purpose
