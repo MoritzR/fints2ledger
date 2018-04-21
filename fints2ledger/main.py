@@ -1,12 +1,10 @@
-from fints2ledger.transaction_retriever import TRetriever
 from mt940.models import Date
-from fints.client import FinTS3PinTanClient
-from fints2ledger.csv_converter import CsvConverter
 from fints2ledger.ledger_converter import LedgerConverter
 import csv
 import os
 import argparse
 from fints2ledger.config import Config
+from fints2ledger.fints2csv import Fints2Csv
 import fints2ledger.utils as utils
 
 '''
@@ -21,25 +19,6 @@ fints:
 def date_string_to_mt940_date(date_string):
     parts = date_string.split("/")
     return Date(year=parts[0], month=parts[1], day=parts[2])
-
-
-def retrieveAndSave(config):
-    client = FinTS3PinTanClient(
-        config["fints"]["blz"],  # Your bank's BLZ
-        config["fints"]["account"],  # your account number
-        config["fints"]["password"],
-        config["fints"]["endpoint"]  # e.g. 'https://fints.ing-diba.de/fints/'
-    )
-
-    retriever = TRetriever(client, config["fints"]["account"])
-    converter = CsvConverter(config["fints"]["csv_separator"])
-    csv_output = "\n".join(map(lambda transaction: converter.convert(
-        transaction), retriever.get_hbci_transactions(config["fints"]["start"], Date.today())))
-    with open(config["files"]["csv_file"], 'w') as f:
-        f.write(converter.get_headline())
-        f.write("\n")
-        f.write(csv_output)
-
 
 def convertToLedger(config):
     writer = LedgerConverter(config)
@@ -104,7 +83,7 @@ def main():
     config = utils.update_dict(config, command_line_config)
 
     if args.convert_to_csv:
-        retrieveAndSave(config)
+        Fints2Csv(config).retrieveAndSave()
     if args.convert_to_ledger:
         convertToLedger(config)
 
