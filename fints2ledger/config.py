@@ -55,13 +55,13 @@ class Config:
                             const=False, default=True,   help='exclude conversion from fints to csv (default: not excluded)')
         parser.add_argument('--no-ledger', dest='convert_to_ledger', action='store_const',
                             const=False, default=True,   help='exclude conversion from csv to ledger (default: not excluded)')
-        parser.add_argument('--csv-file', "-c", dest='csvfile', action='store',
+        parser.add_argument('--csv-file', dest='csvfile', action='store',
                             default="transactions.csv",   help='file to store/load csv transactions to/from (default: transactions.csv)')
-        parser.add_argument('--ledger-file', "-l", dest='ledgerfile', action='store',
+        parser.add_argument('--ledger-file', dest='ledgerfile', action='store',
                             default="journal.ledger",   help='file to store ledger entries to (default: ledger.journal)')
-        parser.add_argument('--start', "-s", dest='start', action='store',
+        parser.add_argument('--date', dest='start', action='store',
                             default=None,   help='start date to pull the FinTS entires from (fromat: 2017/12/31 or 17/12/31, default: last year)')
-        parser.add_argument('--separator', "-p", dest='separator', action='store',
+        parser.add_argument('--separator', dest='separator', action='store',
                             default=";",   help='character used as separator in csv file (default: ;)')
         args = parser.parse_args()
         command_line_config = {
