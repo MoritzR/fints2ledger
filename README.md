@@ -79,3 +79,15 @@ It looks something like
     
 ```
 Each name inside curly brackets can specify a value that can come from either a named csv column, a default value (from the `config.yml`) or an input prompt (also from the `config.yml`).
+
+### Converting from csv to ledger without requesting a FinTS API
+With the argument `--no-csv` the program will not create a csv file with banking transactions itself (default ist fints -> csv -> ledger).
+Instead, it will convert directly from a csv file to ledger. This is useful when all transactions have already been downloaded or when converting from another source than FinTS to ledger.
+
+The csv file must provide a headline which names the columns. The column names are then used to fill the value in the template file.
+Example:
+```
+date;amount;currency;payee;posting;purpose
+2017/04/26;167.31;EUR;Billy, Bill;bonus;for vacation
+2017/04/27;-130;EUR;John, Smith;debit entry;monthly electricity payment
+```
