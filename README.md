@@ -55,14 +55,16 @@ optional arguments:
                         excluded)
   --no-ledger           exclude conversion from csv to ledger (default: not
                         excluded)
-  --csv-file CSVFILE    file to store/load csv transactions to/from (default:
+  --csv-file CSVFILE, -c CSVFILE
+                        file to store/load csv transactions to/from (default:
                         transactions.csv)
-  --ledger-file LEDGERFILE
+  --ledger-file LEDGERFILE, -l LEDGERFILE
                         file to store ledger entries to (default:
                         ledger.journal)
-  --start START         start date to pull the FinTS entires from (fromat:
+  --start START, -s START
+                        start date to pull the FinTS entires from (fromat:
                         2017/12/31 or 17/12/31, default: last year)
-  --separator SEPARATOR
+  --separator SEPARATOR, -p SEPARATOR
                         character used as separator in csv file (default: ;)
 ```
 
