@@ -1,10 +1,8 @@
 from mt940.models import Date
-from fints2ledger.ledger_converter import LedgerConverter
-import csv
-import os
 import argparse
 from fints2ledger.config import Config
 from fints2ledger.fints2csv import Fints2Csv
+from fints2ledger.csv2ledger import Csv2Ledger
 import fints2ledger.utils as utils
 
 '''
@@ -15,35 +13,6 @@ fints:
   password: <your banking password>
   endpoint: <your bank fints endpoint>
 '''
-
-
-def convertToLedger(config):
-    writer = LedgerConverter(config)
-    if os.path.exists(config["files"]["ledger_file"]):
-        with open(config["files"]["ledger_file"], 'r') as existing_journal:
-            writer.with_existing_journal(existing_journal.readlines())
-
-    if "autocomplete" in config["ledger"]:
-        for autocomplete_file in config["ledger"]["autocomplete"]:
-            for autocomplete_key in config["ledger"]["autocomplete"][autocomplete_file]:
-                # add extension to have a grouping for autocomplete files
-                file_with_extension = autocomplete_file + ".auto"
-                # create file if non-existent
-                if not os.path.exists(file_with_extension):
-                    with open(file_with_extension, 'w'):
-                        pass
-                writer.with_autocomplete_file(
-                    autocomplete_key, file_with_extension)
-
-    with open(config["files"]["csv_file"]) as csvfile, open(config["files"]["ledger_file"], 'a') as ledger_journal:
-        reader = csv.DictReader(csvfile, delimiter=config["fints"]["csv_separator"])
-        for row in reader:
-            if "defaults" in config["ledger"]:
-                row.update(config["ledger"]["defaults"])
-            entry = writer.journal_entry(row)
-            if entry:
-                ledger_journal.write(entry)
-                ledger_journal.write("\n")
 
 
 def main():
@@ -82,7 +51,7 @@ def main():
     if args.convert_to_csv:
         Fints2Csv(config).retrieveAndSave()
     if args.convert_to_ledger:
-        convertToLedger(config)
+        Csv2Ledger(config).convertToLedger()
 
 
 if __name__ == '__main__':
