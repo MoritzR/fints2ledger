@@ -7,7 +7,7 @@ import csv
 import os
 import argparse
 from fints2ledger.config import Config
-import collections
+import fints2ledger.utils as utils
 
 '''
 This requires a "config.yml" file in the same folder, according to the following format:
@@ -17,16 +17,6 @@ fints:
   password: <your banking password>
   endpoint: <your bank fints endpoint>
 '''
-
-
-def update(d, u):
-    for k, v in u.items():
-        if isinstance(v, collections.Mapping):
-            d[k] = update(d.get(k, {}), v)
-        else:
-            d[k] = v
-    return d
-
 
 def date_string_to_mt940_date(date_string):
     parts = date_string.split("/")
@@ -111,7 +101,7 @@ def main():
     config_setup.setup_files()
     config = config_setup.get_config()
 
-    config = update(config, command_line_config)
+    config = utils.update_dict(config, command_line_config)
 
     if args.convert_to_csv:
         retrieveAndSave(config)
