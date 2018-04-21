@@ -9,5 +9,6 @@ template.txt
 build
 dist
 fints2ledger.egg-info
+.coverage
 
 .vscode
