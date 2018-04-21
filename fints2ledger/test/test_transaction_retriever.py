@@ -43,5 +43,18 @@ class TRetrieverTest(unittest.TestCase):
 
         self.assertEqual(result[0], hbciData)
 
+    def test_raise_error_without_matching_account(self):
+        '''should raise an exception when the account can not be found online'''
+        clientMock = Mock()
+        account1Mock = Mock()
+        account1Mock.accountnumber = "some account"
+        clientMock.get_sepa_accounts.return_value = [account1Mock]
+        retriever = TRetriever(clientMock, "selected account")
+
+        with self.assertRaises(Exception) as context:
+            retriever.get_hbci_transactions(Date(2017, 2, 2), Date(2017, 3, 3))
+
+        self.assertIn("Could not find a matching account", str(context.exception))
+
 if __name__ == '__main__':
     unittest.main()
