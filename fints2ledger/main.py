@@ -42,7 +42,7 @@ def retrieveAndSave(config):
     )
 
     retriever = TRetriever(client, config["fints"]["account"])
-    converter = CsvConverter(";")
+    converter = CsvConverter(config["fints"]["csv_separator"])
     csv_output = "\n".join(map(lambda transaction: converter.convert(
         transaction), retriever.get_hbci_transactions(config["fints"]["start"], Date.today())))
     with open(config["files"]["csv_file"], 'w') as f:
@@ -70,7 +70,7 @@ def convertToLedger(config):
                     autocomplete_key, file_with_extension)
 
     with open(config["files"]["csv_file"]) as csvfile, open(config["files"]["ledger_file"], 'a') as ledger_journal:
-        reader = csv.DictReader(csvfile, delimiter=";")
+        reader = csv.DictReader(csvfile, delimiter=config["fints"]["csv_separator"])
         for row in reader:
             if "defaults" in config["ledger"]:
                 row.update(config["ledger"]["defaults"])
@@ -93,10 +93,13 @@ def main():
                         default="journal.ledger",   help='file to store ledger entries to (default: ledger.journal)')
     parser.add_argument('--start', dest='start', action='store',
                         default=None,   help='start date to pull the FinTS entires from (fromat: 2017/12/31 or 17/12/31, default: last year)')
+    parser.add_argument('--separator', dest='separator', action='store',
+                        default=";",   help='character used as separator in csv file (default: ;)')
     args = parser.parse_args()
     command_line_config = {
         "fints": {
-            "start": date_string_to_mt940_date(args.start) if args.start else Date(Date.today().year-1, Date.today().month, Date.today().day)
+            "start": date_string_to_mt940_date(args.start) if args.start else Date(Date.today().year-1, Date.today().month, Date.today().day),
+            "csv_separator": args.separator
         },
         "files": {
             "csv_file": args.csvfile,

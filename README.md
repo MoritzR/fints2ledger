@@ -62,6 +62,8 @@ optional arguments:
                         ledger.journal)
   --start START         start date to pull the FinTS entires from (fromat:
                         2017/12/31 or 17/12/31, default: last year)
+  --separator SEPARATOR
+                        character used as separator in csv file (default: ;)
 ```
 
 ### Template File
