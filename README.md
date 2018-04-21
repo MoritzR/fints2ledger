@@ -3,6 +3,8 @@
 
 A tool for downloading transactions from FinTS banking APIs and sorting them into a [ledger journal](http://hledger.org/).
 
+[pyfints](https://github.com/raphaelm/python-fints) is used to download the transactions. A list of compatible banks can be found there. This tool was tested with ing-diba only.
+
 ## Install
 
 ```
