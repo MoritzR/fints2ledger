@@ -54,12 +54,14 @@ optional arguments:
   --no-csv              exclude conversion from fints to csv (default: not
                         excluded)
   --no-ledger           exclude conversion from csv to ledger (default: not
-                        excluded)fints2ledger -h
+                        excluded)
   --csv-file CSVFILE    file to store/load csv transactions to/from (default:
                         transactions.csv)
   --ledger-file LEDGERFILE
                         file to store ledger entries to (default:
                         ledger.journal)
+  --start START         start date to pull the FinTS entires from (fromat:
+                        2017/12/31 or 17/12/31, default: last year)
 ```
 
 ### Template File

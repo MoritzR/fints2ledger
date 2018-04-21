@@ -7,6 +7,7 @@ import csv
 import os
 import argparse
 from fints2ledger.config import Config
+import collections
 
 '''
 This requires a "config.yml" file in the same folder, according to the following format:
@@ -16,6 +17,20 @@ fints:
   password: <your banking password>
   endpoint: <your bank fints endpoint>
 '''
+
+
+def update(d, u):
+    for k, v in u.items():
+        if isinstance(v, collections.Mapping):
+            d[k] = update(d.get(k, {}), v)
+        else:
+            d[k] = v
+    return d
+
+
+def date_string_to_mt940_date(date_string):
+    parts = date_string.split("/")
+    return Date(year=parts[0], month=parts[1], day=parts[2])
 
 
 def retrieveAndSave(config):
@@ -28,9 +43,8 @@ def retrieveAndSave(config):
 
     retriever = TRetriever(client, config["fints"]["account"])
     converter = CsvConverter(";")
-    today = Date.today()
     csv_output = "\n".join(map(lambda transaction: converter.convert(
-        transaction), retriever.get_hbci_transactions(Date(today.year-1, today.month, today.day), Date.today())))
+        transaction), retriever.get_hbci_transactions(config["fints"]["start"], Date.today())))
     with open(config["files"]["csv_file"], 'w') as f:
         f.write(converter.get_headline())
         f.write("\n")
@@ -77,8 +91,13 @@ def main():
                         default="transactions.csv",   help='file to store/load csv transactions to/from (default: transactions.csv)')
     parser.add_argument('--ledger-file', dest='ledgerfile', action='store',
                         default="journal.ledger",   help='file to store ledger entries to (default: ledger.journal)')
+    parser.add_argument('--start', dest='start', action='store',
+                        default=None,   help='start date to pull the FinTS entires from (fromat: 2017/12/31 or 17/12/31, default: last year)')
     args = parser.parse_args()
     command_line_config = {
+        "fints": {
+            "start": date_string_to_mt940_date(args.start) if args.start else Date(Date.today().year-1, Date.today().month, Date.today().day)
+        },
         "files": {
             "csv_file": args.csvfile,
             "ledger_file": args.ledgerfile
@@ -89,7 +108,7 @@ def main():
     config_setup.setup_files()
     config = config_setup.get_config()
 
-    config.update(command_line_config)
+    config = update(config, command_line_config)
 
     if args.convert_to_csv:
         retrieveAndSave(config)
