@@ -35,8 +35,7 @@ class Config:
     def setup_files(self):
         if not os.path.exists('config.yml'):
             with open('config.yml', 'w') as config_file:
-                print(Config.DEFAULT_CONFIG)
-                config_file.write(yaml.dump(Config.DEFAULT_CONFIG))
+                config_file.write(yaml.dump(Config.DEFAULT_CONFIG, default_flow_style=False))
 
         if not os.path.exists('template.txt'):
             with open('template.txt', 'w') as template_file:
