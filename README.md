@@ -8,7 +8,7 @@ A tool for downloading transactions from FinTS banking APIs and sorting them int
 ## Install
 
 ```
-python setup.py install
+pip install fints2ledger
 ```
 
 Create a `config.yml` file with the following contents and replace values in the fints category:
