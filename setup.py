@@ -11,6 +11,7 @@ setup(name='fints2ledger',
       long_description_content_type='text/markdown',
       url='https://github.com/MoritzR/fints2ledger',
       author='Moritz Rumpf',
+      author_email='moritz.rumpf@gmail.com',
       license='MIT',
 
       entry_points={
