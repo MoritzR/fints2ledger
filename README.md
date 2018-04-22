@@ -15,9 +15,9 @@ Create a `config.yml` file with the following contents and replace values in the
 (This file will also be atomatically created if missing)
 ```
 fints:
-  blz: <your bank's BLZ>
-  account: <your account number>
-  password: <your banking password>
+  blz: "<your bank's BLZ>"
+  account: "<your account number>"
+  password: "<your banking password>"
   endpoint: <your bank fints endpoint> # e.g.: https://fints.ing-diba.de/fints/ for ING-Diba
 
 ledger:
