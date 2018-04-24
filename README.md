@@ -1,5 +1,5 @@
 # fints2ledger
-[![Build Status](https://travis-ci.org/MoritzR/fints2ledger.svg?branch=master)](https://travis-ci.org/MoritzR/fints2ledger) [![Coverage Status](https://coveralls.io/repos/github/MoritzR/fints2ledger/badge.svg?branch=master)](https://coveralls.io/github/MoritzR/fints2ledger?branch=master) [![PyPI version](https://badge.fury.io/py/fints2ledger.svg)](https://badge.fury.io/py/fints2ledger)[![languages](https://img.shields.io/pypi/pyversions/fints2ledger.svg)](https://pypi.org/project/fints2ledger)
+[![Build Status](https://travis-ci.org/MoritzR/fints2ledger.svg?branch=master)](https://travis-ci.org/MoritzR/fints2ledger) [![Coverage Status](https://coveralls.io/repos/github/MoritzR/fints2ledger/badge.svg?branch=master)](https://coveralls.io/github/MoritzR/fints2ledger?branch=master) [![PyPI version](https://badge.fury.io/py/fints2ledger.svg)](https://badge.fury.io/py/fints2ledger) [![languages](https://img.shields.io/pypi/pyversions/fints2ledger.svg)](https://pypi.org/project/fints2ledger)
 
 A tool for downloading transactions from FinTS banking APIs and sorting them into a [ledger journal](http://hledger.org/).
 
