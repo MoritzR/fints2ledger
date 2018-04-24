@@ -5,7 +5,7 @@ def readme():
         return f.read()
 
 setup(name='fints2ledger',
-      version='0.3',
+      version='0.4',
       description='A tool for downloading transactions from FinTS banking APIs and sorting them into a ledger journal.',
       long_description=readme(),
       long_description_content_type='text/markdown',
@@ -27,5 +27,12 @@ setup(name='fints2ledger',
       packages=['fints2ledger'],
       dependency_links=[
           'https://github.com/raphaelm/python-fints/tarball/master/#egg=fints-0.2.1'],
-      zip_safe=False
+      zip_safe=False,
+
+      classifiers=[
+          "Development Status :: 3 - Alpha",
+          "Programming Language :: Python :: 3.4",
+          "Programming Language :: Python :: 3.5",
+          "Programming Language :: Python :: 3.6"
+      ]
       )
