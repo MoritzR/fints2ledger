@@ -6,7 +6,7 @@ from mt940.models import Date, Amount
 
 class TRetrieverTest(unittest.TestCase):
     def test_calls_client_with_select_account(self):
-        '''retriever should get the statements of the client with the selected account,
+        '''retriever should get the transactions of the client with the selected account,
         when the client has two accounts'''
         startDate = Date(2017, 1, 1)
         endDate = Date(2017, 2, 1)
@@ -19,12 +19,12 @@ class TRetrieverTest(unittest.TestCase):
         account2Mock.accountnumber = "other account"
         clientMock.get_sepa_accounts.return_value = [
             account1Mock, account2Mock]
-        clientMock.get_statement.return_value = []
+        clientMock.get_transactions.return_value = []
         retriever = TRetriever(clientMock, selectedAccount)
 
         retriever.get_hbci_transactions(startDate, endDate)
 
-        clientMock.get_statement.assert_called_with(
+        clientMock.get_transactions.assert_called_with(
             account1Mock, startDate, endDate)
 
     def test_calls_returns_correct_transaction(self):
@@ -36,7 +36,7 @@ class TRetrieverTest(unittest.TestCase):
         account1Mock = Mock()
         account1Mock.accountnumber = selectedAccount
         clientMock.get_sepa_accounts.return_value = [account1Mock]
-        clientMock.get_statement.return_value = [hbciData]
+        clientMock.get_transactions.return_value = [hbciData]
         retriever = TRetriever(clientMock, selectedAccount)
 
         result = retriever.get_hbci_transactions(Date(2017, 2, 2), Date(2017, 3, 3))
