@@ -12,7 +12,7 @@ pip install fints2ledger
 ```
 
 Create a `config.yml` file with the following contents and replace values in the fints category:
-(This file will also be atomatically created if missing)
+(This file will also be automatically created if missing)
 ```
 fints:
   blz: "<your bank's BLZ>"
