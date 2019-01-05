@@ -38,6 +38,9 @@ class LedgerConverter:
                 self.existing_md5_entries.append(match.group(3))
 
     def prompt_for_input(self, input_key):
+        if input_key not in self.autocomplete_entries:
+            self.autocomplete_entries[input_key] = []
+            
         existing_entries = self.autocomplete_entries[input_key]
 
         completer = Completer(existing_entries)

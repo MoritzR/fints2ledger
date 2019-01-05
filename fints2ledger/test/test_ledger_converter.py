@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 from fints2ledger.csv_converter import CsvConverter
 from mt940.models import Amount, Date
 from fints2ledger.ledger_converter import LedgerConverter
@@ -32,7 +32,16 @@ class LedgerConverterTest(unittest.TestCase):
         actual_entry = self.writer.journal_entry(data)
 
         self.assertEquals(expected_entry, actual_entry)
-
+    
+    @patch("fints2ledger.ledger_converter.input", return_value="some entry")
+    def test_missing_autocomplete_file(self, input):
+        try:
+            self.writer.prompt_for_input("inputPromptWithoutFile")
+        except KeyError:
+            pass
+        else:
+            return
+        self.fail("prompt_for_input shouldn't raise error when prompting for input without a matching autocomplete file.")
 
 if __name__ == '__main__':
     unittest.main()
