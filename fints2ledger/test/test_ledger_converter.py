@@ -30,15 +30,15 @@ class LedgerConverterTest(unittest.TestCase):
 
         self.assertEquals(expected_entry, actual_entry)
     
-    @patch("fints2ledger.ledger_converter.input", return_value="some entry")
-    def test_missing_autocomplete_file(self, input):
-        try:
-            self.writer.prompt_for_input("inputPromptWithoutFile")
-        except KeyError:
-            pass
-        else:
-            return
-        self.fail("prompt_for_input shouldn't raise error when prompting for input without a matching autocomplete file.")
+    def test_missing_autocomplete_file(self):
+        with patch("fints2ledger.ledger_converter.input", return_value="some entry"):
+            try:
+                self.writer.prompt_for_input("inputPromptWithoutFile")
+            except KeyError:
+                pass
+            else:
+                return
+            self.fail("prompt_for_input shouldn't raise error when prompting for input without a matching autocomplete file.")
 
 if __name__ == '__main__':
     unittest.main()
