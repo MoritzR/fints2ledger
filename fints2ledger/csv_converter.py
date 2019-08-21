@@ -24,6 +24,6 @@ class CsvConverter:
             [date,
              amount,
              currency,
-             applicant_name.strip(),
-             posting_text.strip(),
-             purpose.strip()])
+             (applicant_name or "").strip(),
+             (posting_text or "").strip(),
+             (purpose or "").strip()])

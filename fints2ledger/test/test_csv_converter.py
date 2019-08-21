@@ -33,6 +33,22 @@ class ConverterTest(unittest.TestCase):
         self.assertIn("2017/11/01", entries)
         self.assertIn("-44", entries)
 
+    def test_convert_with_missing_values(self):
+        fintsTransaction = {
+            "date": Date(2017, 11, 1),
+            "amount": Amount('44', 'D', 'EUR'),
+            "applicant_name": None,
+            "posting_text": None,
+            "purpose": None
+        }
+        hbciData = Mock()
+        hbciData.data = fintsTransaction
+
+        csv_result = self.csvConverter.convert(hbciData)
+        entries = csv_result.split(",")
+
+        self.assertEquals(['2017/11/01', '-44', 'EUR', '', '', ''], entries)
+
 
 if __name__ == '__main__':
     unittest.main()
