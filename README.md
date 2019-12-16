@@ -13,7 +13,7 @@ A tool for downloading transactions from FinTS banking APIs and sorting them int
 pip install fints2ledger
 ```
 
-Create a `config.yml` file with the following contents and replace values in the fints category:
+Create config file at `~/.config/fints2ledger/config.yml` file with the following contents and replace values in the fints category:
 (This file will also be automatically created if missing)
 ```
 fints:
@@ -49,7 +49,8 @@ This will download the transactions from the last year and tries to convert them
 A list of available command line arguments:
 ```
 usage: fints2ledger [-h] [--no-csv] [--no-ledger] [--csv-file CSVFILE]
-                    [--ledger-file LEDGERFILE]
+                    [--ledger-file LEDGERFILE] [--files-path FILES_PATH]
+                    [--date START] [--separator SEPARATOR]
 
 Converting transactions from fints apis to ledger.
 
@@ -64,6 +65,9 @@ optional arguments:
   --ledger-file LEDGERFILE
                         file to store ledger entries to (default:
                         ledger.journal)
+  --files-path FILES_PATH
+                        directory to store fints2ledger files (like
+                        config.yml) (default: ~/.config/fints2ledger/)
   --date START          start date to pull the FinTS entires from (fromat:
                         2017/12/31 or 17/12/31, default: last year)
   --separator SEPARATOR

@@ -1,8 +1,10 @@
 import os
+import glob
 import yaml
 from mt940.models import Date
 import argparse
 import fints2ledger.utils as utils
+from pathlib import Path
 
 
 class Config:
@@ -31,19 +33,52 @@ class Config:
     {debit_account:<60}    {currency} {debit}
     {credit_account:<60}    {currency} {credit}
 """
+    
+    def __init__(self):
+        self.files_path = os.path.expanduser("~/.config/fints2ledger/")
+        self.config_file_name = "config.yml"
+        self.template_file_name = "template.txt"
 
     def setup_files(self):
-        if not os.path.exists('config.yml'):
-            with open('config.yml', 'w') as config_file:
+        Path(self.files_path).mkdir(parents=True, exist_ok=True) 
+
+        if not os.path.exists(self.getConfigFilePath()):
+            with open(self.getConfigFilePath(), 'w') as config_file:
                 config_file.write(yaml.dump(Config.DEFAULT_CONFIG, default_flow_style=False))
 
-        if not os.path.exists('template.txt'):
-            with open('template.txt', 'w') as template_file:
+            self.moveLocalConfigFileIfPresent()
+            self.moveLocalAutoFilesIfPresent()
+
+        if not os.path.exists(self.getTemplateFilePath()):
+            with open(self.getTemplateFilePath(), 'w') as template_file:
                 template_file.write(Config.DEFAULT_TEMPLATE)
+                
+            self.moveLocalTemplateFileIfPresent()
+
+    def getTemplateFilePath(self):
+        return os.path.join(self.files_path, self.template_file_name)
+
+    def getConfigFilePath(self):
+        return os.path.join(self.files_path, self.config_file_name)
+
+    def moveLocalConfigFileIfPresent(self):
+        if os.path.exists(self.config_file_name):
+            Path(self.config_file_name).replace(self.getConfigFilePath())
+            print("I moved your 'config.yml' to '{}'".format(self.files_path))
+
+    def moveLocalTemplateFileIfPresent(self):
+        if os.path.exists(self.template_file_name):
+            Path(self.template_file_name).replace(self.getTemplateFilePath())
+            print("I moved your 'template.txt' to '{}'".format(self.files_path))
+
+    def moveLocalAutoFilesIfPresent(self):
+        for auto_file in glob.glob("*.auto"):
+            Path(auto_file).replace(os.path.join(self.files_path,auto_file))
+            print("I moved your '{}' to '{}'".format(auto_file, self.files_path))
 
     def load_config_file(self):
         config = {}
-        with open("config.yml", "r") as config_file:
+        with open(self.getConfigFilePath(), "r") as config_file:
             config = yaml.load(config_file.read())
         return config
 
@@ -58,6 +93,8 @@ class Config:
                             default="transactions.csv",   help='file to store/load csv transactions to/from (default: transactions.csv)')
         parser.add_argument('--ledger-file', dest='ledgerfile', action='store',
                             default="journal.ledger",   help='file to store ledger entries to (default: ledger.journal)')
+        parser.add_argument('--files-path', dest='files_path', action='store',
+                            default="~/.config/fints2ledger/",   help='directory to store fints2ledger files (like config.yml) (default: ~/.config/fints2ledger/)')
         parser.add_argument('--date', dest='start', action='store',
                             default=None,   help='start date to pull the FinTS entires from (fromat: 2017/12/31 or 17/12/31, default: last year)')
         parser.add_argument('--separator', dest='separator', action='store',
@@ -73,10 +110,13 @@ class Config:
                 "convert_to_ledger": args.convert_to_ledger
             },
             "files": {
-                "csv_file": args.csvfile,
-                "ledger_file": args.ledgerfile
+                "csv_file": os.path.expanduser(args.csvfile),
+                "ledger_file": os.path.expanduser(args.ledgerfile),
+                "files_path": os.path.expanduser(args.files_path)
             }
         }
+
+        self.files_path = command_line_config["files"]["files_path"]
 
         self.setup_files()
         config = self.load_config_file()

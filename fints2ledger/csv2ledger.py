@@ -16,7 +16,7 @@ class Csv2Ledger:
             for autocomplete_file in self.config["ledger"]["autocomplete"]:
                 for autocomplete_key in self.config["ledger"]["autocomplete"][autocomplete_file]:
                     # add extension to have a grouping for autocomplete files
-                    file_with_extension = autocomplete_file + ".auto"
+                    file_with_extension = os.path.join(self.config["files"]["files_path"], autocomplete_file + ".auto")
                     # create file if non-existent
                     if not os.path.exists(file_with_extension):
                         with open(file_with_extension, 'w'):
