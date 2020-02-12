@@ -54,7 +54,7 @@ class TRetrieverTest(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             retriever.get_hbci_transactions(Date(2017, 2, 2), Date(2017, 3, 3))
 
-        self.assertIn("Could not find a matching account", str(context.exception))
+        self.assertIn("Could not find a matching account for account number 'selected account'", str(context.exception))
 
 if __name__ == '__main__':
     unittest.main()

@@ -14,5 +14,5 @@ class TRetriever:
         for account in accounts:
             if account.accountnumber == accountnumber:
                 return account
-        raise Exception("Could not find a matching account for {missing_account}. Possible accounts: {accounts}"
-                        .format(missing_account=account, accounts=accounts))
+        raise Exception("Could not find a matching account for account number '{missing_account}'. Possible accounts: {accounts}"
+                        .format(missing_account=accountnumber, accounts=accounts))
