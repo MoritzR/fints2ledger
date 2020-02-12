@@ -5,7 +5,7 @@ def readme():
         return f.read()
 
 setup(name='fints2ledger',
-      version='0.5.2',
+      version='0.5.3',
       description='A tool for downloading transactions from FinTS banking APIs and sorting them into a ledger journal.',
       long_description=readme(),
       long_description_content_type='text/markdown',
@@ -21,7 +21,7 @@ setup(name='fints2ledger',
 
       install_requires=[
           'mt-940>=4.11,<5',
-          'fints>=2,<3',
+          'fints>=3,<4',
           'pyyaml>=4.2b1,<5'
       ],
       setup_requires=['green'],
