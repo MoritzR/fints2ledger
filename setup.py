@@ -21,7 +21,7 @@ setup(name='fints2ledger',
 
       install_requires=[
           'mt-940>=4.11,<5',
-          'fints>=2,<3',
+          'fints>=3,<4',
           'pyyaml>=4.2b1,<5'
       ],
       setup_requires=['green'],
