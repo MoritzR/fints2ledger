@@ -46,6 +46,8 @@ fints2ledger
 ```
 This will download the transactions from the last year and tries to convert them to a ledger journal.
 
+You can enter `s` on any transaction prompt to skip the transaction and return to it on the next run.
+
 A list of available command line arguments:
 ```
 usage: fints2ledger [-h] [--no-csv] [--no-ledger] [--csv-file CSVFILE]
