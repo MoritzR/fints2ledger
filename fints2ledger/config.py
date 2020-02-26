@@ -121,4 +121,7 @@ class Config:
         self.setup_files()
         config = self.load_config_file()
 
+        if not "selectedAccount" in config["fints"]:
+            config["fints"]["selectedAccount"] = config["fints"]["account"]
+
         return utils.update_dict(config, command_line_config)

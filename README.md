@@ -21,6 +21,8 @@ fints:
   account: "<your account number>"
   password: "<your banking password>"
   endpoint: <your bank fints endpoint> # e.g.: https://fints.ing-diba.de/fints/ for ING-Diba
+  selectedAccount: "<account number>" # defaults to the value from "account"
+                                      # useful when you have multiple accounts for the same login
 
 ledger:
   prompts: 

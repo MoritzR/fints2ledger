@@ -2,6 +2,7 @@ import unittest
 import unittest.mock as mock
 from fints2ledger.config import Config
 
+
 class ConfigTest(unittest.TestCase):
     def setUp(self):
         self.config = Config()
@@ -11,14 +12,13 @@ class ConfigTest(unittest.TestCase):
     @mock.patch("fints2ledger.config.open")
     @mock.patch("fints2ledger.config.os")
     def test_creates_files_in_user_config_path(self, mock_os, mock_open, *_):
-        mock_os.path.exists.return_value=False
-        mock_os.path.join = lambda a,b: a+b
-        expectedCalls = [ mock.call("~/.config/fints2ledger/config.yml", "w")
-                        , mock.call("~/.config/fints2ledger/template.txt", "w")
-                        ]
+        mock_os.path.exists.return_value = False
+        mock_os.path.join = lambda a, b: a+b
+        expectedCalls = [mock.call("~/.config/fints2ledger/config.yml", "w"), mock.call("~/.config/fints2ledger/template.txt", "w")
+                         ]
 
         self.config.setup_files()
-        
+
         self.assertEquals(mock_open.call_args_list, expectedCalls)
 
     @mock.patch("fints2ledger.config.open")
@@ -28,21 +28,23 @@ class ConfigTest(unittest.TestCase):
     @mock.patch("fints2ledger.config.os")
     # move local files create with fints2ledger version <= 0.4.4
     def test_moves_local_config_files_to_config_directory(self, mock_os, mock_path, mock_print, mock_glob, *_):
-        mock_os.path.exists = lambda f: True if f in ["config.yml", "template.txt"] else False
-        mock_os.path.join = lambda a,b: a+b
+        mock_os.path.exists = lambda f: True if f in [
+            "config.yml", "template.txt"] else False
+        mock_os.path.join = lambda a, b: a+b
         mock_glob.glob.return_value = ["accounts.auto", "purpose.auto"]
-        expectedCalls = [ mock.call("~/.config/fints2ledger/config.yml")
-                        , mock.call("~/.config/fints2ledger/accounts.auto")
-                        , mock.call("~/.config/fints2ledger/purpose.auto")
-                        , mock.call("~/.config/fints2ledger/template.txt")
-                        ]
+        expectedCalls = [mock.call("~/.config/fints2ledger/config.yml"), mock.call("~/.config/fints2ledger/accounts.auto"), mock.call("~/.config/fints2ledger/purpose.auto"), mock.call("~/.config/fints2ledger/template.txt")
+                         ]
 
         self.config.setup_files()
-        
-        self.assertEquals(mock_path.return_value.mkdir.call_args_list, [mock.call(exist_ok=True, parents=True)])
-        self.assertEquals(mock_path.return_value.replace.call_args_list, expectedCalls)
-        self.assertIn(mock.call("I moved your 'config.yml' to '~/.config/fints2ledger/'"), mock_print.call_args_list)
-        self.assertIn(mock.call("I moved your 'template.txt' to '~/.config/fints2ledger/'"), mock_print.call_args_list)
+
+        self.assertEquals(mock_path.return_value.mkdir.call_args_list, [
+                          mock.call(exist_ok=True, parents=True)])
+        self.assertEquals(
+            mock_path.return_value.replace.call_args_list, expectedCalls)
+        self.assertIn(mock.call(
+            "I moved your 'config.yml' to '~/.config/fints2ledger/'"), mock_print.call_args_list)
+        self.assertIn(mock.call(
+            "I moved your 'template.txt' to '~/.config/fints2ledger/'"), mock_print.call_args_list)
 
     @mock.patch("fints2ledger.config.open")
     @mock.patch("fints2ledger.config.Path")
@@ -51,8 +53,25 @@ class ConfigTest(unittest.TestCase):
         mock_os.path.exists.return_value = False
 
         self.config.setup_files()
-        
+
         mock_path.return_value.replace.assert_not_called()
+
+    def test_defaults_selected_account_to_login_account(self):
+        self.config.load_config_file = lambda: {
+            "fints": {"account": "login-account"}}
+
+        config = self.config.get_config()
+
+        self.assertEquals(config["fints"]["selectedAccount"], "login-account")
+
+    def test_doesnt_default_selected_account_when_it_is_present(self):
+        self.config.load_config_file = lambda: {"fints": {
+            "account": "login-account", "selectedAccount": "other-account"}}
+
+        config = self.config.get_config()
+
+        self.assertEquals(config["fints"]["selectedAccount"], "other-account")
+
 
 if __name__ == '__main__':
     unittest.main()

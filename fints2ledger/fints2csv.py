@@ -17,7 +17,7 @@ class Fints2Csv:
             self.config["fints"]["endpoint"]
         )
 
-        retriever = TRetriever(client, self.config["fints"]["account"])
+        retriever = TRetriever(client, self.config["fints"]["selectedAccount"])
         converter = CsvConverter(self.config["fints"]["csv_separator"])
 
         csv_output = "\n".join(map(lambda transaction: converter.convert(
