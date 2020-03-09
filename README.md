@@ -7,6 +7,11 @@ A tool for downloading transactions from FinTS banking APIs and sorting them int
 
 ![](demo.gif)
 
+## Contents
+- [Install](#install)
+- [Usage](#usage)
+- [Developing](#developing)
+
 ## Install
 
 ```
@@ -100,4 +105,19 @@ Example:
 date;amount;currency;payee;posting;purpose
 2017/04/26;167.31;EUR;Billy, Bill;bonus;for vacation
 2017/04/27;-130;EUR;John, Smith;debit entry;monthly electricity payment
+```
+
+## Developing
+You can modify the code yourself and run it with:
+```
+git clone https://github.com/MoritzR/fints2ledger.git
+cd fints2ledger
+python fints2ledger/main.py
+```
+Don't forget that your python version should be 3.5 or higher.
+
+You can run the tests with:
+```
+pip install green
+green
 ```
