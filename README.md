@@ -3,7 +3,7 @@
 
 A tool for downloading transactions from FinTS banking APIs and sorting them into a [ledger journal](http://hledger.org/).
 
-[pyfints](https://github.com/raphaelm/python-fints) is used to download the transactions. A list of compatible banks can be found there. This tool was tested with ing-diba only.
+[pyfints](https://github.com/raphaelm/python-fints) is used to download the transactions. A list of compatible banks can be found there. This tool was tested with [ING][ing-link].
 
 ![](demo.gif)
 
@@ -25,7 +25,7 @@ fints:
   blz: "<your bank's BLZ>"
   account: "<your account number>"
   password: "<your banking password>"
-  endpoint: <your bank fints endpoint> # e.g.: https://fints.ing-diba.de/fints/ for ING-Diba
+  endpoint: <your bank fints endpoint> # e.g.: https://fints.ing.de/fints for ING
   selectedAccount: "<account number>" # defaults to the value from "account"
                                       # useful when you have multiple accounts for the same login
 
@@ -121,3 +121,5 @@ You can run the tests with:
 pip install green
 green
 ```
+
+[ing-link]: https://www.ing.de
