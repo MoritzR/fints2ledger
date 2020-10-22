@@ -95,6 +95,27 @@ It looks something like
 ```
 Each name inside curly brackets can specify a value that can come from either a named csv column, a default value (from the `config.yml`) or an input prompt (also from the `config.yml`).
 
+### Automatically matching transactions
+In the `ledger` category you can use a regex match on any field of the transaction data to automatically fill other fields.
+
+Example: I do not want to enter a `credit_account` and `purpose` for my monthly recurring payments for the rent of my apparment. Same for my music streaming transactions. I can change the `config.yml` like this:
+```
+ledger:
+  ...
+  fills:
+    - match:
+        payee: "The Landlord"
+        purpose: "Rent for apartment B month.*"
+      fill:
+        credit_account: "expenses:monthly:rent"
+        purpose: "monthly rent"
+    - match:
+        payee: "MUSIC COMPANY 123"
+      fill:
+        credit_account: "expenses:monthly:musiccompany"
+        purpose: "Monthly fee for music streaming"
+```
+
 ### Converting from csv to ledger without requesting a FinTS API
 With the argument `--no-csv` the program will not create a csv file with banking transactions itself (default ist fints -> csv -> ledger).
 Instead, it will convert directly from a csv file to ledger. This is useful when all transactions have already been downloaded or when converting from another source than FinTS to ledger.

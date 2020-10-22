@@ -3,6 +3,7 @@ import re
 from fints2ledger.autocomplete import Completer
 import readline
 import json
+import time
 import os
 from fints2ledger.config import Config
 
@@ -40,7 +41,7 @@ class LedgerConverter:
     def prompt_for_input(self, input_key):
         if input_key not in self.autocomplete_entries:
             self.autocomplete_entries[input_key] = []
-            
+
         existing_entries = self.autocomplete_entries[input_key]
 
         completer = Completer(existing_entries)
@@ -80,7 +81,16 @@ class LedgerConverter:
 
         print(json.dumps(data, indent=1))
         input_dict = {}
+
+        auto_fills = fill(data, self.config["ledger"].get("fills", []))
+        data.update(auto_fills)
+        for (key, value) in auto_fills.items():
+            print("Set '{}' to '{}'".format(key, value))
+            time.sleep(0.4) # So that one doesn't miss that values are automatically filled
+
         for input_key in self.prompts:
+            if auto_fills.get(input_key, None):
+                continue
             input_value = self.prompt_for_input(input_key)
             if input_value == None:
                 return None
@@ -102,3 +112,16 @@ class LedgerConverter:
                             for x in output_lines if x.strip()]) + '\n'
 
         return output
+
+def fill(transaction, fill_config):
+    result = {}
+
+    for prefill in fill_config:
+        matches = (re.match(regex, transaction[key]) for (
+            key, regex) in prefill["match"].items())
+        if all(matches):
+            result.update(
+                {fill_key: fill_value
+                    for (fill_key, fill_value) in prefill["fill"].items()}
+            )
+    return result
