@@ -77,14 +77,14 @@ optional arguments:
   --files-path FILES_PATH
                         directory to store fints2ledger files (like
                         config.yml) (default: ~/.config/fints2ledger/)
-  --date START          start date to pull the FinTS entires from (fromat:
+  --date START          start date to pull the FinTS entries from (format:
                         2017/12/31 or 17/12/31, default: last year)
   --separator SEPARATOR
                         character used as separator in csv file (default: ;)
 ```
 
 ### Template File
-A template file with the name `template.txt` will be automaticall generated. It will be user to create the ledger entries.
+A template file with the name `template.txt` will be automatically generated. It will be user to create the ledger entries.
 It looks something like
 ```
 {date} {payee} {posting} {purpose}
@@ -98,7 +98,7 @@ Each name inside curly brackets can specify a value that can come from either a 
 ### Automatically matching transactions
 In the `ledger` category you can use a regex match on any field of the transaction data to automatically fill other fields.
 
-Example: I do not want to enter a `credit_account` and `purpose` for my monthly recurring payments for the rent of my apparment. Same for my music streaming transactions. I can change the `config.yml` like this:
+Example: I do not want to enter a `credit_account` and `purpose` for my monthly recurring payments for the rent of my apartment. Same for my music streaming transactions. I can change the `config.yml` like this:
 ```
 ledger:
   ...
@@ -117,7 +117,7 @@ ledger:
 ```
 
 ### Converting from csv to ledger without requesting a FinTS API
-With the argument `--no-csv` the program will not create a csv file with banking transactions itself (default ist fints -> csv -> ledger).
+With the argument `--no-csv` the program will not create a csv file with banking transactions itself (default is fints -> csv -> ledger).
 Instead, it will convert directly from a csv file to ledger. This is useful when all transactions have already been downloaded or when converting from another source than FinTS to ledger.
 
 The csv file must provide a headline which names the columns. The column names are then used to fill the values in the template file.
