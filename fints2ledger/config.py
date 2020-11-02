@@ -96,7 +96,7 @@ class Config:
         parser.add_argument('--files-path', dest='files_path', action='store',
                             default="~/.config/fints2ledger/",   help='directory to store fints2ledger files (like config.yml) (default: ~/.config/fints2ledger/)')
         parser.add_argument('--date', dest='start', action='store',
-                            default=None,   help='start date to pull the FinTS entires from (fromat: 2017/12/31 or 17/12/31, default: last year)')
+                            default=None,   help='start date to pull the FinTS entries from (format: 2017/12/31 or 17/12/31, default: last year)')
         parser.add_argument('--separator', dest='separator', action='store',
                             default=";",   help='character used as separator in csv file (default: ;)')
         args = parser.parse_args()
