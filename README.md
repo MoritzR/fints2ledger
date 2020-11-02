@@ -30,7 +30,7 @@ fints:
                                       # useful when you have multiple accounts for the same login
 
 ledger:
-  prompts: 
+  prompts:
     - credit_account
     - debit_account
   autocomplete:
@@ -47,7 +47,7 @@ ledger:
 ```
 
 ## Usage
-Run 
+Run
 ```
 fints2ledger
 ```
@@ -91,9 +91,18 @@ It looks something like
     ; md5sum: {md5sum}
     {debit_account:<60}    {currency} {debit}
     {credit_account:<60}    {currency} {credit}
-    
+
 ```
 Each name inside curly brackets can specify a value that can come from either a named csv column, a default value (from the `config.yml`) or an input prompt (also from the `config.yml`).
+
+If you use [beancount](https://beancount.github.io) instead of (h)ledger use this template instead:
+
+```
+{date} txn "{payee} {posting} {purpose}"
+    ; md5sum: {md5sum}
+    {debit_account:<60}   {debit} {currency}
+    {credit_account:<60}   {credit} {currency}
+```
 
 ### Automatically matching transactions
 In the `ledger` category you can use a regex match on any field of the transaction data to automatically fill other fields.
