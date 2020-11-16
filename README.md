@@ -153,4 +153,4 @@ green
 ```
 
 [ing-link]: https://www.ing.de
-[GLS Bank]: https://www.gls.de
+[gls-link]: https://www.gls.de
