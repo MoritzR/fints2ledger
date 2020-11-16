@@ -3,7 +3,7 @@
 
 A tool for downloading transactions from FinTS banking APIs and sorting them into a [ledger journal](http://hledger.org/).
 
-[pyfints](https://github.com/raphaelm/python-fints) is used to download the transactions. A list of compatible banks can be found there. This tool was tested with [ING][ing-link].
+[pyfints](https://github.com/raphaelm/python-fints) is used to download the transactions. A list of compatible banks can be found there. This tool was tested with [ING][ing-link] and [GLS Bank][gls-link].
 
 ![](demo.gif)
 
@@ -153,3 +153,4 @@ green
 ```
 
 [ing-link]: https://www.ing.de
+[GLS Bank]: https://www.gls.de
