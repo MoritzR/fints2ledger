@@ -7,6 +7,12 @@ class Csv2Ledger:
         self.config = config
 
     def convertToLedger(self):
+        print("""
+            Controls:
+                - enter 's' to skip an entry
+                - Ctrl + C to abort
+        """)
+
         writer = LedgerConverter(self.config)
         if os.path.exists(self.config["files"]["ledger_file"]):
             with open(self.config["files"]["ledger_file"], 'r') as existing_journal:
