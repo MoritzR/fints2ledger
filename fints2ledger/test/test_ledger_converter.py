@@ -1,8 +1,9 @@
 import unittest
-from unittest.mock import patch
+import unittest.mock as mock
 import re
 from fints2ledger.ledger_converter import LedgerConverter
-from fints2ledger.ledger_converter import fill 
+from fints2ledger.ledger_converter import fill
+from fints2ledger.ledger_converter import print_transaction
 
 
 class LedgerConverterTest(unittest.TestCase):
@@ -33,7 +34,7 @@ class LedgerConverterTest(unittest.TestCase):
         self.assertEquals(expected_entry, actual_entry)
 
     def test_missing_autocomplete_file(self):
-        with patch("fints2ledger.ledger_converter.input", return_value="some entry", create=True):
+        with mock.patch("fints2ledger.ledger_converter.input", return_value="some entry", create=True):
             try:
                 self.writer.prompt_for_input("inputPromptWithoutFile")
             except KeyError:
@@ -61,7 +62,8 @@ class LedgerConverterTest(unittest.TestCase):
 
         result = fill(transaction, prefill_config)
 
-        self.assertEquals(result, {"credit_account": "expenses:daily:groceries"})
+        self.assertEquals(
+            result, {"credit_account": "expenses:daily:groceries"})
 
     def test_should_only_fill_when_all_matches_match(self):
         credit_account_key = "credit_account"
@@ -83,8 +85,16 @@ class LedgerConverterTest(unittest.TestCase):
         matching_result = fill(matching_transaction, prefill_config)
         other_result = fill(other_transaction, prefill_config)
 
-        self.assertEquals(matching_result, {"credit_account": "expenses:vacation"})
+        self.assertEquals(matching_result, {
+                          "credit_account": "expenses:vacation"})
         self.assertEquals(other_result, {})
+
+    @mock.patch("fints2ledger.ledger_converter.print")
+    def test_prints_transaction_in_uncidoe(self, mock_print):
+        print_transaction({
+            "purpose": "😀"
+        })
+        self.assertIn("😀", mock_print.call_args_list[0][0][0])
 
 
 if __name__ == '__main__':

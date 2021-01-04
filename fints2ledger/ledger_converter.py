@@ -79,7 +79,7 @@ class LedgerConverter:
             if md5digest in self.existing_md5_entries:
                 return None
 
-        print(json.dumps(data, indent=1))
+        print_transaction(data)
         input_dict = {}
 
         auto_fills = fill(data, self.config["ledger"].get("fills", []))
@@ -125,3 +125,6 @@ def fill(transaction, fill_config):
                     for (fill_key, fill_value) in prefill["fill"].items()}
             )
     return result
+
+def print_transaction(data):
+    print(json.dumps(data, indent=1, ensure_ascii=False))
