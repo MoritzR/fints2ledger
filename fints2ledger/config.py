@@ -127,4 +127,4 @@ class Config:
         if not "selectedAccount" in config["fints"]:
             config["fints"]["selectedAccount"] = config["fints"]["account"]
 
-        return utils.update_dict(config, command_line_config)
+        return utils.update_dict(command_line_config, config)
