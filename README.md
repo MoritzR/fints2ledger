@@ -58,6 +58,7 @@ A list of available command line arguments:
 usage: fints2ledger [-h] [--no-csv] [--no-ledger] [--csv-file CSVFILE]
                     [--ledger-file LEDGERFILE] [--files-path FILES_PATH]
                     [--date START] [--separator SEPARATOR]
+                    [--csv_date_format CSV_DATE_FORMAT]
 
 Converting transactions from fints apis to ledger.
 
@@ -79,6 +80,16 @@ optional arguments:
                         2017/12/31 or 17/12/31, default: last year)
   --separator SEPARATOR
                         character used as separator in csv file (default: ;)
+  --csv_date_format CSV_DATE_FORMAT
+                        Date format used in the donwloaded csv (and
+                        subsequently the ledger file). hledger supports 3 date
+                        formats (https://hledger.org/1.9/journal.html#simple-
+                        dates). Format needs to be compatible with pythons
+                        strftime(), see https://docs.python.org/3/library/date
+                        time.html#strftime-strptime-behavior
+                        (fints.csv_date_format in config.yml) (default:
+                        %Y/%m/%d)
+
 ```
 
 ### Template File
