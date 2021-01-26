@@ -15,7 +15,7 @@ A tool for downloading transactions from FinTS banking APIs and sorting them int
 ## Install
 
 ```
-pip install fints2ledger
+pip install --upgrade fints2ledger
 ```
 
 Create config file at `~/.config/fints2ledger/config.yml` file with the following contents and replace values in the fints category:
