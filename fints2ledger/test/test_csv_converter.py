@@ -50,5 +50,25 @@ class ConverterTest(unittest.TestCase):
         self.assertEquals(['2017/11/01', '-44', 'EUR', '', '', ''], entries)
 
 
+    def test_uses_date_format(self):
+        fintsTransaction = {
+            "date": Date(2017, 11, 1),
+            "amount": Amount('44', 'D', 'EUR'),
+            "applicant_name": None,
+            "posting_text": None,
+            "purpose": None
+        }
+        hbciData = Mock()
+
+        hbciData.data = { **fintsTransaction, "date": Date(2017, 11, 1) }
+        result1 = CsvConverter(",", "%Y/%m/%d").convert(hbciData)
+
+        hbciData.data = { **fintsTransaction, "date": Date(2017, 11, 1) }
+        result2 = CsvConverter(",", "%Y-%m-%d").convert(hbciData)
+
+        self.assertIn("2017/11/01", result1)
+        self.assertIn("2017-11-01", result2)
+
+
 if __name__ == '__main__':
     unittest.main()

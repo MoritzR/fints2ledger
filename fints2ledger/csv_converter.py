@@ -1,6 +1,7 @@
 class CsvConverter:
-    def __init__(self, separator):
+    def __init__(self, separator, date_format = "%Y/%m/%d"):
         self.separator = separator
+        self.date_format = date_format
 
     def get_headline(self):
         return self.separator.join(
@@ -14,7 +15,7 @@ class CsvConverter:
     def convert(self, transaction):
         hbciData = transaction.data
 
-        date = hbciData["date"].strftime("%Y/%m/%d")
+        date = hbciData["date"].strftime(self.date_format)
         amount = str(hbciData["amount"].amount)
         currency = hbciData["amount"].currency
         posting_text = hbciData["posting_text"]

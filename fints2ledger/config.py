@@ -99,11 +99,14 @@ class Config:
                             default=None,   help='start date to pull the FinTS entries from (format: 2017/12/31 or 17/12/31, default: last year)')
         parser.add_argument('--separator', dest='separator', action='store',
                             default=";",   help='character used as separator in csv file (default: ;)')
+        parser.add_argument('--csv_date_format', dest='csv_date_format', action='store',
+                            default='%Y/%m/%d',   help='Date format used in the donwloaded csv (and subsequently the ledger file). hledger supports 3 date formats (https://hledger.org/1.9/journal.html#simple-dates). Format needs to be compatible with pythons strftime(), see https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior (fints.csv_date_format in config.yml) (default: %%Y/%%m/%%d)')
         args = parser.parse_args()
         command_line_config = {
             "fints": {
                 "start": utils.date_string_to_mt940_date(args.start) if args.start else Date(Date.today().year-1, Date.today().month, Date.today().day),
                 "csv_separator": args.separator,
+                "csv_date_format": args.csv_date_format,
                 "convert_to_csv": args.convert_to_csv
             },
             "ledger": {

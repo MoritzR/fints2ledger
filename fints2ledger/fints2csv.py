@@ -18,7 +18,7 @@ class Fints2Csv:
         )
 
         retriever = TRetriever(client, self.config["fints"]["selectedAccount"])
-        converter = CsvConverter(self.config["fints"]["csv_separator"])
+        converter = CsvConverter(self.config["fints"]["csv_separator"], self.config["fints"]["csv_date_format"])
 
         csv_output = "\n".join(map(lambda transaction: converter.convert(
             transaction), retriever.get_hbci_transactions(self.config["fints"]["start"], Date.today())))
