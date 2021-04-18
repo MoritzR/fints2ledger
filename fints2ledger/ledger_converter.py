@@ -116,15 +116,21 @@ class LedgerConverter:
 def fill(transaction, fill_config):
     result = {}
 
-    for prefill in fill_config:
-        matches = (re.match(regex, transaction[key]) for (
-            key, regex) in prefill["match"].items())
-        if all(matches):
+    prefill = find_matching_prefill(transaction, fill_config)
+    if prefill:
             result.update(
                 {fill_key: fill_value
                     for (fill_key, fill_value) in prefill["fill"].items()}
             )
     return result
+
+def find_matching_prefill(transaction, fill_config):
+    for prefill in fill_config:
+        matches = (re.match(regex, transaction[key]) for (
+            key, regex) in prefill["match"].items())
+        if all(matches):
+            return prefill
+    return None
 
 def print_transaction(data):
     print(json.dumps(data, indent=1, ensure_ascii=False))
