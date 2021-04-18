@@ -82,13 +82,16 @@ class LedgerConverter:
         print_transaction(data)
         input_dict = {}
 
-        auto_fills = fill(data, self.config["ledger"].get("fills", []))
+        fill_config = self.config["ledger"].get("fills", [])
+        auto_fills = fill(data, fill_config)
         data.update(auto_fills)
         for (key, value) in auto_fills.items():
             print("Set '{}' to '{}'".format(key, value))
             time.sleep(0.4) # So that one doesn't miss that values are automatically filled
 
-        for input_key in self.prompts:
+        remaining_prompts_from_prefill = get_remaining_prompts_from_prefill(data, fill_config)
+        remaining_prompts = remaining_prompts_from_prefill if remaining_prompts_from_prefill != None else self.prompts
+        for input_key in remaining_prompts:
             if auto_fills.get(input_key, None):
                 continue
             input_value = self.prompt_for_input(input_key)
@@ -118,10 +121,10 @@ def fill(transaction, fill_config):
 
     prefill = find_matching_prefill(transaction, fill_config)
     if prefill:
-            result.update(
-                {fill_key: fill_value
-                    for (fill_key, fill_value) in prefill["fill"].items()}
-            )
+        result.update(
+            {fill_key: fill_value
+                for (fill_key, fill_value) in prefill["fill"].items() if fill_value is not None}
+        )
     return result
 
 def find_matching_prefill(transaction, fill_config):
@@ -132,5 +135,13 @@ def find_matching_prefill(transaction, fill_config):
             return prefill
     return None
 
+
+def get_remaining_prompts_from_prefill(transaction, fill_config):
+    prefill = find_matching_prefill(transaction, fill_config)
+    if not prefill:
+        return None
+    return [key for (key, value) in prefill["fill"].items() if value == None]
+
 def print_transaction(data):
     print(json.dumps(data, indent=1, ensure_ascii=False))
+

@@ -11,6 +11,7 @@ A tool for downloading transactions from FinTS banking APIs and sorting them int
 - [Install](#install)
 - [Usage](#usage)
 - [Developing](#developing)
+- [Changelog](#changelog)
 
 ## Install
 
@@ -160,6 +161,9 @@ You can run the tests with:
 pip install green
 green
 ```
+
+## Changelog
+The changelog can be found in [CHANGELOG.md](CHANGELOG.md)
 
 [ing-link]: https://www.ing.de
 [gls-link]: https://www.gls.de

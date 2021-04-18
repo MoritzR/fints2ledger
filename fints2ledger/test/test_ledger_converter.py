@@ -4,6 +4,7 @@ import re
 from fints2ledger.ledger_converter import LedgerConverter
 from fints2ledger.ledger_converter import fill
 from fints2ledger.ledger_converter import print_transaction
+from fints2ledger.ledger_converter import get_remaining_prompts_from_prefill
 
 
 class LedgerConverterTest(unittest.TestCase):
@@ -65,6 +66,27 @@ class LedgerConverterTest(unittest.TestCase):
         self.assertEquals(
             result, {"credit_account": "expenses:daily:groceries"})
 
+    def test_should_not_fill_None_values(self):
+        prefill_config = [
+            {
+                "match": {"purpose": ".*SUPERMARKET.*"},
+                "fill": {"credit_account": "expenses:daily:groceries", "purpose": None}
+            }
+        ]
+        transaction = {
+            "date": "2018/03/19",
+            "amount": "535",
+            "currency": "EUR",
+            "payee": "someone",
+            "posting": "some kind of credit",
+            "purpose": "Thank you for your purchase at SUPERMARKET",
+        }
+
+        result = fill(transaction, prefill_config)
+
+        self.assertEquals(
+            result, {"credit_account": "expenses:daily:groceries"})
+
     def test_should_only_fill_when_all_matches_match(self):
         credit_account_key = "credit_account"
         prefill_config = [
@@ -88,6 +110,38 @@ class LedgerConverterTest(unittest.TestCase):
         self.assertEquals(matching_result, {
                           "credit_account": "expenses:vacation"})
         self.assertEquals(other_result, {})
+    
+    def test_should_list_None_prefills_as_remaining_prompts(self):
+        credit_account_key = "credit_account"
+        prefill_config = [
+            {
+                "match": {"purpose": ".*VACATION.*", "payee": "vacation_company"},
+                "fill": {credit_account_key: "expenses:vacation", "purpose": None}
+            }
+        ]
+        transaction = {
+            "payee": "vacation_company",
+            "purpose": "VACATION on an island",
+        }
+
+        self.assertEquals(get_remaining_prompts_from_prefill(transaction, prefill_config), ["purpose"])
+
+        
+    def test_should_return_None_if_transaction_is_not_matching(self):
+        credit_account_key = "credit_account"
+        prefill_config = [
+            {
+                "match": {"purpose": ".*SUPERMARKET.*", "payee": "vacation_company"},
+                "fill": {credit_account_key: "expenses:vacation", "purpose": None}
+            }
+        ]
+        transaction = {
+            "payee": "vacation_company",
+            "purpose": "VACATION on an island",
+        }
+
+        self.assertEquals(get_remaining_prompts_from_prefill(transaction, prefill_config), None)
+
 
     @mock.patch("fints2ledger.ledger_converter.print")
     def test_prints_transaction_in_uncidoe(self, mock_print):
