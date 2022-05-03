@@ -79,7 +79,7 @@ class Config:
     def load_config_file(self):
         config = {}
         with open(self.getConfigFilePath(), 'r') as config_file:
-            config = yaml.load(config_file.read())
+            config = yaml.safe_load(config_file.read())
         return config
 
     def get_config(self):
