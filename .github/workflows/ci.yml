@@ -28,4 +28,4 @@ jobs:
       - name: test
         run: green -vvv -r
       - name: Test with pytest
-        run: coveralls
+        run: coveralls --service=github
