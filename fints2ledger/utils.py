@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import collections
 from mt940.models import Date
 
