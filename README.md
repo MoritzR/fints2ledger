@@ -154,7 +154,6 @@ git clone https://github.com/MoritzR/fints2ledger.git
 cd fints2ledger
 python fints2ledger/main.py
 ```
-Don't forget that your python version should be 3.5 or higher.
 
 You can run the tests with:
 ```
