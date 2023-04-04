@@ -22,8 +22,7 @@ class Fints2Csv:
             "end": Date.today()
         })
 
-        csv_output = "\n".join(map(lambda transaction: converter.convert(
-            transaction), transactions))
+        csv_output = "\n".join(map(converter.convert, transactions))
 
         with open(self.config["files"]["csv_file"], 'w') as f:
             f.write(converter.get_headline())
