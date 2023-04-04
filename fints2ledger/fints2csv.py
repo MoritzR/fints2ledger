@@ -9,21 +9,32 @@ class Fints2Csv:
         self.config = config
 
     def retrieveAndSave(self):
-        client = FinTS3PinTanClient(
-            self.config["fints"]["blz"],  # Your bank's BLZ
-            self.config["fints"]["account"],  # your account number
-            self.config["fints"]["password"],
-            # e.g. 'https://fints.ing-diba.de/fints/'
-            self.config["fints"]["endpoint"]
-        )
-
-        retriever = TRetriever(client, self.config["fints"]["selectedAccount"])
         converter = CsvConverter(self.config["fints"]["csv_separator"], self.config["fints"]["csv_date_format"])
 
+        transactions = retrieve_transactions({
+            "blz": self.config["fints"]["blz"],  # Your bank's BLZ
+            "account": self.config["fints"]["account"],  # your account number
+            "password": self.config["fints"]["password"],
+            # e.g. 'https://fints.ing-diba.de/fints/'
+            "endpoint": self.config["fints"]["endpoint"],
+            "selected_account": self.config["fints"]["selectedAccount"],
+            "start": self.config["fints"]["start"],
+            "end": Date.today()
+        })
+
         csv_output = "\n".join(map(lambda transaction: converter.convert(
-            transaction), retriever.get_hbci_transactions(self.config["fints"]["start"], Date.today())))
+            transaction), transactions))
 
         with open(self.config["files"]["csv_file"], 'w') as f:
             f.write(converter.get_headline())
             f.write("\n")
             f.write(csv_output)
+
+def retrieve_transactions(args):
+    client = FinTS3PinTanClient(
+        args["blz"],
+        args["account"],
+        args["password"],
+        args["endpoint"]
+    )
+    return TRetriever(client, args["selected_account"]).get_hbci_transactions(args["start"], args["end"])
