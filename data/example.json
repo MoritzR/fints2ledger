@@ -1,0 +1,50 @@
+[
+    {
+        "date": "2022/03/23",
+        "amount": "-19.69",
+        "currency": "EUR",
+        "posting": "Lastschrifteinzug",
+        "payee": "VISA KAUFLAND",
+        "purpose": "NR XXXX 1234 KAUFUMSATZ120092309482309480239"
+    },
+    {
+        "date": "2022/03/27",
+        "amount": "-422.5",
+        "currency": "EUR",
+        "posting": "Dauerauftrag/Terminueberweisung",
+        "payee": "Mietkonto",
+        "purpose": "Miete für Mietstraße 3"
+    },
+    {
+        "date": "2022/03/27",
+        "amount": "-1.38",
+        "currency": "EUR",
+        "posting": "Lastschrifteinzug",
+        "payee": "VISANETTO",
+        "purpose": "NR XXXX 1234 KAUFUMSATZ138927429385742683465"
+    },
+    {
+        "date": "2022/03/24",
+        "amount": "-90",
+        "currency": "EUR",
+        "posting": "Lastschrifteinzug",
+        "payee": "Bargeldauszahlung VISA Card",
+        "purpose": "NR XXXX 1234 BARGELDAUSZAHLUNG09850345210240234"
+    },
+    {
+        "date": "2022/03/27",
+        "amount": "283.17",
+        "currency": "EUR",
+        "posting": "Gehalt",
+        "payee": "Employer GmbH",
+        "purpose": "LOHN / GEHALT 03/22"
+    },
+    {
+        "date": "2022/03/30",
+        "amount": "-69",
+        "currency": "EUR",
+        "posting": "Lastschrifteinzug",
+        "payee": "Sportstudio",
+        "purpose": "Sportstudio.Beitrag (ID111111)VOM 28.03.2022"
+    }
+]

@@ -1,0 +1,90 @@
+name:                hsfints2ledger
+version:             0.1.0.0
+github:              "githubuser/hsfints2ledger"
+license:             BSD3
+author:              "Author name here"
+maintainer:          "example@example.com"
+copyright:           "2023 Author name here"
+
+extra-source-files:
+- README.md
+- CHANGELOG.md
+
+data-files:
+- data/*
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/githubuser/hsfints2ledger#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- typed-process # for calling to python
+- directory # for getting the users home directory
+- filepath # for concatenating file paths
+- yaml # for parsing yaml
+- aeson # for json/yml parsing
+- bytestring # for the ByteString Type, used by Aeson
+- aeson-pretty # for json pretty printing
+- text # used by libraries instead of String
+- haskeline # for autocompleting inputs
+- hledger-lib # for autocompleting ledger accounts
+- containers # for Maps and Sets
+- text-format-heavy # for python like formatting of template strings
+- cryptohash-md5 # for md5
+- base16-bytestring # for md5 to hex
+- regex-tdfa # for regex matching
+- time # time library
+- dates # for more flexible date parsing, like "30 days ago"
+- optparse-applicative # for parsing CLI arguments
+- sydtest # testing library
+- sydtest-discover # automatic test discovery
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wmissing-export-lists
+- -Wmissing-home-modules
+- -Wpartial-fields
+- -Wredundant-constraints
+
+default-extensions:
+- GHC2021
+- DuplicateRecordFields
+- OverloadedRecordDot
+- OverloadedStrings
+- NoFieldSelectors
+- BlockArguments
+
+library:
+  source-dirs: src
+
+executables:
+  hsfints2ledger-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - hsfints2ledger
+
+tests:
+  hsfints2ledger-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - hsfints2ledger
