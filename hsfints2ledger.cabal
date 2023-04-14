@@ -37,6 +37,7 @@ library
       Config.YamlConfig
       Ledger
       Lib
+      Matching.Parser
       Prompt
       Transactions
       Utils
@@ -120,6 +121,7 @@ test-suite hsfints2ledger-test
   main-is: Spec.hs
   other-modules:
       ConfigSpec
+      Matching.ParserSpec
       TransactionSpec
       Paths_hsfints2ledger
   hs-source-dirs:
