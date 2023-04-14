@@ -118,6 +118,7 @@ findMatch fillings templateMap =
   fillings
     & find (matches templateMap)
 
+-- TODO make this match on amounts like '<= 100'
 matches :: TemplateMap -> Filling -> Bool
 matches templateMap filling =
   -- TODO check if this (!) can fail
