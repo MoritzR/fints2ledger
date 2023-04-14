@@ -1,0 +1,4 @@
+{date} {payee} {posting} {purpose}
+    ; md5sum: {md5sum}
+    {debitAccount:<60}    {currency} {debit}
+    {creditAccount:<60}    {currency} {credit}

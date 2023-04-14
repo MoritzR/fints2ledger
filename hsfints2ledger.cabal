@@ -1,0 +1,158 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.35.1.
+--
+-- see: https://github.com/sol/hpack
+
+name:           hsfints2ledger
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/hsfints2ledger#readme>
+homepage:       https://github.com/githubuser/hsfints2ledger#readme
+bug-reports:    https://github.com/githubuser/hsfints2ledger/issues
+author:         Author name here
+maintainer:     example@example.com
+copyright:      2023 Author name here
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    CHANGELOG.md
+data-files:
+    data/example.json
+    data/pyfints.py
+    data/template.txt
+
+source-repository head
+  type: git
+  location: https://github.com/githubuser/hsfints2ledger
+
+library
+  exposed-modules:
+      Completion
+      Config.AppConfig
+      Config.CliConfig
+      Config.Files
+      Config.StartupChecks
+      Config.YamlConfig
+      Ledger
+      Lib
+      Prompt
+      Transactions
+      Utils
+  other-modules:
+      Paths_hsfints2ledger
+  hs-source-dirs:
+      src
+  default-extensions:
+      GHC2021
+      DuplicateRecordFields
+      OverloadedRecordDot
+      OverloadedStrings
+      NoFieldSelectors
+      BlockArguments
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  build-depends:
+      aeson
+    , aeson-pretty
+    , base >=4.7 && <5
+    , base16-bytestring
+    , bytestring
+    , containers
+    , cryptohash-md5
+    , dates
+    , directory
+    , filepath
+    , haskeline
+    , hledger-lib
+    , optparse-applicative
+    , regex-tdfa
+    , sydtest
+    , sydtest-discover
+    , text
+    , text-format-heavy
+    , time
+    , typed-process
+    , yaml
+  default-language: Haskell2010
+
+executable hsfints2ledger-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_hsfints2ledger
+  hs-source-dirs:
+      app
+  default-extensions:
+      GHC2021
+      DuplicateRecordFields
+      OverloadedRecordDot
+      OverloadedStrings
+      NoFieldSelectors
+      BlockArguments
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      aeson
+    , aeson-pretty
+    , base >=4.7 && <5
+    , base16-bytestring
+    , bytestring
+    , containers
+    , cryptohash-md5
+    , dates
+    , directory
+    , filepath
+    , haskeline
+    , hledger-lib
+    , hsfints2ledger
+    , optparse-applicative
+    , regex-tdfa
+    , sydtest
+    , sydtest-discover
+    , text
+    , text-format-heavy
+    , time
+    , typed-process
+    , yaml
+  default-language: Haskell2010
+
+test-suite hsfints2ledger-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      ConfigSpec
+      TransactionSpec
+      Paths_hsfints2ledger
+  hs-source-dirs:
+      test
+  default-extensions:
+      GHC2021
+      DuplicateRecordFields
+      OverloadedRecordDot
+      OverloadedStrings
+      NoFieldSelectors
+      BlockArguments
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      aeson
+    , aeson-pretty
+    , base >=4.7 && <5
+    , base16-bytestring
+    , bytestring
+    , containers
+    , cryptohash-md5
+    , dates
+    , directory
+    , filepath
+    , haskeline
+    , hledger-lib
+    , hsfints2ledger
+    , optparse-applicative
+    , regex-tdfa
+    , sydtest
+    , sydtest-discover
+    , text
+    , text-format-heavy
+    , time
+    , typed-process
+    , yaml
+  default-language: Haskell2010

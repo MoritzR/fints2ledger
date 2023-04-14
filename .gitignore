@@ -1,14 +1,2 @@
-config.yml
-*.ledger
-*.csv
-*.auto
-template.txt
-
-**/__pycache__
-.eggs
-build
-dist
-fints2ledger.egg-info
-.coverage
-
-.vscode
+.stack-work/
+*~
