@@ -110,14 +110,14 @@ updateTemplateMapFromPrompts config prompts templateMap = do
   results <- mapM (promptForTemplateMap config templateMap) prompts
   return $ fromList (zip prompts results) <> templateMap
 
-runCompletionFor :: AppConfig -> Text -> (forall a. InputT IO a -> IO a)
-runCompletionFor config key
+runCompletion :: AppConfig -> Text -> (forall a. InputT IO a -> IO a)
+runCompletion config key
   -- make this elem check more robust to renames
   | key `elem` ["creditAccount", "debitAccount"] = runWithAccountCompletion config
   | otherwise = runWithNoCompletion
 
 promptForTemplateMap :: AppConfig -> TemplateMap -> Text -> IO Text
-promptForTemplateMap config templateMap key = runCompletionFor config key do
+promptForTemplateMap config templateMap key = runCompletion config key do
   liftIO printEmptyLine
   line <- getInputLine $ TL.unpack (key <> ": ")
   case line of
