@@ -64,25 +64,22 @@ getMd5 ledgerConfig templateMap = TL.fromStrict md5
 
 promptForTransaction :: Set Text -> AppConfig -> Transaction -> IO ()
 promptForTransaction existingMd5Sums config transaction = do
-  let templateMapToShow =
-        config.ledgerConfig.defaults
-          & insertTransaction transaction
-
-  let md5Sum = getMd5 config.ledgerConfig templateMapToShow
-
   when (md5Sum `notMember` existingMd5Sums) do
-    let templateMapWithMd5AndDebit =
-          templateMapToShow
-            & insert "md5sum" md5Sum
-            & insertCreditDebit transaction
-    let prompter = case findMatch templateMapToShow config.ledgerConfig.fills of
-          Just filling -> promptForMatchingEntry config filling.fill
-          Nothing -> promptForManualEntry config config.ledgerConfig.prompts
     templateMapWithUserInputs <- prompter templateMapWithMd5AndDebit
 
     template <- readFile $ getTemplatePath config.configDirectory
     let renderedTemplate = format (fromString template) templateMapWithUserInputs
     TLIO.appendFile config.journalFile $ "\n\n" <> renderedTemplate
+ where
+  templateMapToShow = insertTransaction transaction config.ledgerConfig.defaults
+  md5Sum = getMd5 config.ledgerConfig templateMapToShow
+  templateMapWithMd5AndDebit =
+    templateMapToShow
+      & insert "md5sum" md5Sum
+      & insertCreditDebit transaction
+  prompter = case findMatch templateMapToShow config.ledgerConfig.fills of
+    Just filling -> promptForMatchingEntry config filling.fill
+    Nothing -> promptForManualEntry config config.ledgerConfig.prompts
 
 promptForMatchingEntry :: AppConfig -> Fill -> TemplateMap -> IO TemplateMap
 promptForMatchingEntry config fill templateMap = do
