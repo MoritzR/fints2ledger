@@ -7,7 +7,7 @@ import Config.YamlConfig (Fill, Filling (..), LedgerConfig (..))
 import Control.Arrow ((>>>))
 import Control.Monad (forM_, when)
 import Control.Monad.IO.Class (MonadIO (liftIO))
-import Crypto.Hash.MD5 as MD5
+import Crypto.Hash.MD5 qualified as MD5
 import Data.Aeson.Encode.Pretty (encodePretty)
 import Data.ByteString.Base16 qualified as Base16
 import Data.Either (partitionEithers)
