@@ -8,7 +8,7 @@ import Config.CliConfig (getCliConfig)
 import Config.StartupChecks (runStartupChecks)
 import Control.Monad (unless)
 import Options.Applicative (execParser)
-import Prompt (prompt)
+import Prompt (transactionsToLedger)
 import System.Directory (doesFileExist)
 import Transactions (getExampleTransactions, getTransactionsFromFinTS)
 import Utils (createFile)
@@ -28,7 +28,7 @@ someFunc = do
           then getExampleTransactions
           else getTransactionsFromFinTS appConfig
   transactions <- getTransactions
-  prompt appConfig transactions
+  transactionsToLedger appConfig transactions
 
 ensureFileExists :: FilePath -> IO ()
 ensureFileExists path = do
