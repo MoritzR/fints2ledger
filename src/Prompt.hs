@@ -129,7 +129,7 @@ matchesOneEntry templateMap (key, value) = case key of
   "amount" ->
     let
       matchesAmount = runParser amountParser (TL.unpack key) ?? const False
-      amount = (read $ TL.unpack $ templateMap ! key)
+      amount = read $ TL.unpack $ templateMap ! key
      in
       matchesAmount amount
   _ -> value =~ (templateMap ! key)
