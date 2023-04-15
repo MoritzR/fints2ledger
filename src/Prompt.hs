@@ -12,8 +12,7 @@ import Data.Aeson.Encode.Pretty (encodePretty)
 import Data.ByteString.Base16 qualified as Base16
 import Data.Either (partitionEithers)
 import Data.Function ((&))
-import Data.List (find)
-import Data.Map (Map, fromList, insert, toList, (!), (!?))
+import Data.Map (Map, fromList, insert, toList, (!?))
 import Data.Map qualified as Map
 import Data.Maybe (fromJust)
 import Data.Set (Set, notMember)
@@ -25,7 +24,7 @@ import Data.Text.Lazy (Text)
 import Data.Text.Lazy qualified as TL
 import Data.Text.Lazy.IO qualified as TLIO
 import GHC.Arr (Array, elems)
-import Matching.Parser (amountParser, runParser)
+import Matching.Matching (findMatch)
 import System.Console.Haskeline (InputT, getInputLine)
 import Text.Regex.TDFA (AllTextMatches (getAllTextMatches), (=~))
 import Transactions (Transaction (..))
@@ -76,7 +75,7 @@ promptForTransaction existingMd5Sums config transaction = do
           templateMapToShow
             & insert "md5sum" md5Sum
             & insertCreditDebit transaction
-    let prompter = case findMatch config.ledgerConfig.fills templateMapToShow of
+    let prompter = case findMatch templateMapToShow config.ledgerConfig.fills of
           Just filling -> promptForMatchingEntry config filling.fill
           Nothing -> promptForManualEntry config config.ledgerConfig.prompts
     templateMapWithUserInputs <- prompter templateMapWithMd5AndDebit
@@ -113,26 +112,6 @@ updateTemplateMapFromPrompts :: AppConfig -> [Text] -> TemplateMap -> IO Templat
 updateTemplateMapFromPrompts config prompts templateMap = do
   results <- mapM (promptForTemplateMap config templateMap) prompts
   return $ fromList (zip prompts results) <> templateMap
-
-findMatch :: [Filling] -> TemplateMap -> Maybe Filling
-findMatch fillings templateMap =
-  fillings
-    & find (matches templateMap)
-
-matches :: TemplateMap -> Filling -> Bool
-matches templateMap filling =
-  -- TODO check if this (!) can fail
-  all (matchesOneEntry templateMap) (toList filling.match)
-
-matchesOneEntry :: TemplateMap -> (Text, Text) -> Bool
-matchesOneEntry templateMap (key, value) = case key of
-  "amount" ->
-    let
-      matchesAmount = runParser amountParser (TL.unpack key) ?? const False
-      amount = read $ TL.unpack $ templateMap ! key
-     in
-      matchesAmount amount
-  _ -> value =~ (templateMap ! key)
 
 runCompletionFor :: AppConfig -> Text -> (forall a. InputT IO a -> IO a)
 runCompletionFor config key

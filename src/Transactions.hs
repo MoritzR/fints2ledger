@@ -15,7 +15,7 @@ import Control.Exception (Exception, throwIO)
 import Data.Aeson (FromJSON, ToJSON)
 import Data.Aeson qualified as Aeson
 import Data.Text.Lazy.Encoding qualified as TL
-import Data.Text.Lazy.IO as TLIO
+import Data.Text.Lazy.IO qualified as TLIO
 import GHC.Generics (Generic)
 import Paths_hsfints2ledger (getDataFileName)
 import System.Process.Typed (ExitCode (ExitFailure, ExitSuccess), readProcess, shell)
