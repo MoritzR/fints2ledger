@@ -25,6 +25,7 @@ import Data.Text.Lazy (Text)
 import Data.Text.Lazy qualified as TL
 import Data.Text.Lazy.IO qualified as TLIO
 import GHC.Arr (Array, elems)
+import Matching.Parser (amountParser, runParser)
 import System.Console.Haskeline (InputT, getInputLine)
 import Text.Regex.TDFA (AllTextMatches (getAllTextMatches), (=~))
 import Transactions (Transaction (..))
@@ -118,11 +119,20 @@ findMatch fillings templateMap =
   fillings
     & find (matches templateMap)
 
--- TODO make this match on amounts like '<= 100'
 matches :: TemplateMap -> Filling -> Bool
 matches templateMap filling =
   -- TODO check if this (!) can fail
-  all (\(key, regex) -> regex =~ (templateMap ! key)) (toList filling.match)
+  all (matchesOneEntry templateMap) (toList filling.match)
+
+matchesOneEntry :: TemplateMap -> (Text, Text) -> Bool
+matchesOneEntry templateMap (key, value) = case key of
+  "amount" ->
+    let
+      matchesAmount = runParser amountParser (TL.unpack key) ?? const False
+      amount = (read $ TL.unpack $ templateMap ! key)
+     in
+      matchesAmount amount
+  _ -> value =~ (templateMap ! key)
 
 runCompletionFor :: AppConfig -> Text -> (forall a. InputT IO a -> IO a)
 runCompletionFor config key
