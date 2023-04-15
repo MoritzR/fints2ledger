@@ -120,7 +120,7 @@ updateTemplateMapFromPrompts config (prompt : restPrompts) templateMap = do
 promptForEntry :: AppConfig -> TemplateMap -> Text -> IO (PromptResult Text)
 promptForEntry config templateMap key = runCompletion config key do
   liftIO printEmptyLine
-  line <- getInputLine $ TL.unpack (key <> ": ")
+  line <- getInputLine $ TL.unpack ("> " <> key <> ": ")
   case line of
     Nothing -> return Skip
     Just "s" -> return Skip
