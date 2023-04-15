@@ -54,7 +54,8 @@ library
       BlockArguments
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-      aeson
+      QuickCheck
+    , aeson
     , aeson-pretty
     , base >=4.7 && <5
     , base16-bytestring
@@ -92,7 +93,8 @@ executable hsfints2ledger-exe
       BlockArguments
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      aeson
+      QuickCheck
+    , aeson
     , aeson-pretty
     , base >=4.7 && <5
     , base16-bytestring
@@ -135,7 +137,8 @@ test-suite hsfints2ledger-test
       BlockArguments
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      aeson
+      QuickCheck
+    , aeson
     , aeson-pretty
     , base >=4.7 && <5
     , base16-bytestring

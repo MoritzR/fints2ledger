@@ -44,6 +44,7 @@ dependencies:
 - optparse-applicative # for parsing CLI arguments
 - sydtest # testing library
 - sydtest-discover # automatic test discovery
+- QuickCheck # property based testing library
 
 ghc-options:
 - -Wall
