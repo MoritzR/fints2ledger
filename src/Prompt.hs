@@ -1,6 +1,6 @@
 module Prompt (prompt) where
 
-import Completion (runWithAccountCompletion, runWithNoCompletion)
+import Completion (runCompletion)
 import Config.AppConfig (AppConfig (..))
 import Config.Files (getTemplatePath)
 import Config.YamlConfig (Fill, Filling (..), LedgerConfig (..))
@@ -25,7 +25,7 @@ import Data.Text.Lazy qualified as TL
 import Data.Text.Lazy.IO qualified as TLIO
 import GHC.Arr (Array, elems)
 import Matching.Matching (findMatch)
-import System.Console.Haskeline (InputT, getInputLine)
+import System.Console.Haskeline (getInputLine)
 import Text.Regex.TDFA (AllTextMatches (getAllTextMatches), (=~))
 import Transactions (Transaction (..))
 import Utils (byteStringToString, printEmptyLine, (??))
@@ -109,12 +109,6 @@ updateTemplateMapFromPrompts :: AppConfig -> [Text] -> TemplateMap -> IO Templat
 updateTemplateMapFromPrompts config prompts templateMap = do
   results <- mapM (promptForTemplateMap config templateMap) prompts
   return $ fromList (zip prompts results) <> templateMap
-
-runCompletion :: AppConfig -> Text -> (forall a. InputT IO a -> IO a)
-runCompletion config key
-  -- make this elem check more robust to renames
-  | key `elem` ["creditAccount", "debitAccount"] = runWithAccountCompletion config
-  | otherwise = runWithNoCompletion
 
 promptForTemplateMap :: AppConfig -> TemplateMap -> Text -> IO Text
 promptForTemplateMap config templateMap key = runCompletion config key do
