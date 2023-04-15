@@ -1,4 +1,4 @@
-module Prompt (prompt) where
+module Prompt (transactionsToLedger) where
 
 import Completion (runCompletion)
 import Config.AppConfig (AppConfig (..))
@@ -28,17 +28,18 @@ import Matching.Matching (findMatch)
 import System.Console.Haskeline (getInputLine)
 import Text.Regex.TDFA (AllTextMatches (getAllTextMatches), (=~))
 import Transactions (Transaction (..))
-import Utils (byteStringToString, printEmptyLine, (??))
+import Utils (byteStringToString, printEmptyLine)
 
 -- a Map of key/value pairs that will be used to fill the template file
 type TemplateMap = Map Text Text
 
-prompt :: AppConfig -> [Transaction] -> IO ()
-prompt config transactions = do
+transactionsToLedger :: AppConfig -> [Transaction] -> IO ()
+transactionsToLedger config transactions = do
   existingMd5Sums <- getExistingMd5Sums <$> TLIO.readFile config.journalFile
+  template <- readFile $ getTemplatePath config.configDirectory
 
   forM_ transactions do
-    promptForTransaction existingMd5Sums config
+    transactionToLedger config existingMd5Sums template
 
 insertTransaction :: Transaction -> TemplateMap -> TemplateMap
 insertTransaction transaction =
@@ -62,27 +63,28 @@ getMd5 ledgerConfig templateMap = TL.fromStrict md5
   md5Values = fromJust . flip Map.lookup templateMap <$> md5Keys
   md5 = decodeUtf8 $ Base16.encode $ MD5.finalize $ foldl MD5.update MD5.init (encodeUtf8 . TL.toStrict <$> md5Values)
 
-promptForTransaction :: Set Text -> AppConfig -> Transaction -> IO ()
-promptForTransaction existingMd5Sums config transaction = do
+transactionToLedger :: AppConfig -> Set Text -> String -> Transaction -> IO ()
+transactionToLedger config existingMd5Sums template transaction = do
   when (md5Sum `notMember` existingMd5Sums) do
-    templateMapWithUserInputs <- prompter templateMapWithMd5AndDebit
-
-    template <- readFile $ getTemplatePath config.configDirectory
-    let renderedTemplate = format (fromString template) templateMapWithUserInputs
-    TLIO.appendFile config.journalFile $ "\n\n" <> renderedTemplate
+    maybeResult <- prompter templateMapToShow
+    case maybeResult of
+      Skip -> return ()
+      Result templateMapWithUserInputs -> do
+        let templateMapFinal =
+              templateMapWithUserInputs
+                & insert "md5sum" md5Sum
+                & insertCreditDebit transaction
+        let renderedTemplate = format (fromString template) templateMapFinal
+        TLIO.appendFile config.journalFile $ "\n\n" <> renderedTemplate
  where
   templateMapToShow = insertTransaction transaction config.ledgerConfig.defaults
   md5Sum = getMd5 config.ledgerConfig templateMapToShow
-  templateMapWithMd5AndDebit =
-    templateMapToShow
-      & insert "md5sum" md5Sum
-      & insertCreditDebit transaction
   prompter = case findMatch templateMapToShow config.ledgerConfig.fills of
-    Just filling -> promptForMatchingEntry config filling.fill
-    Nothing -> promptForManualEntry config config.ledgerConfig.prompts
+    Just filling -> getPromptResultForMatchingEntry config filling.fill
+    Nothing -> getPromptResultForManualEntry config
 
-promptForMatchingEntry :: AppConfig -> Fill -> TemplateMap -> IO TemplateMap
-promptForMatchingEntry config fill templateMap = do
+getPromptResultForMatchingEntry :: AppConfig -> Fill -> TemplateMap -> IO (PromptResult TemplateMap)
+getPromptResultForMatchingEntry config fill templateMap = do
   let fillAsList = toList fill
   let (prompts, fills) =
         fillAsList
@@ -100,25 +102,31 @@ promptForMatchingEntry config fill templateMap = do
   printTemplateMap templateMapWithFills
   updateTemplateMapFromPrompts config prompts templateMapWithFills
 
-promptForManualEntry :: AppConfig -> [Text] -> TemplateMap -> IO TemplateMap
-promptForManualEntry config prompts templateMap = do
+getPromptResultForManualEntry :: AppConfig -> TemplateMap -> IO (PromptResult TemplateMap)
+getPromptResultForManualEntry config templateMap = do
   printTemplateMap templateMap
-  updateTemplateMapFromPrompts config prompts templateMap
+  updateTemplateMapFromPrompts config config.ledgerConfig.prompts templateMap
 
-updateTemplateMapFromPrompts :: AppConfig -> [Text] -> TemplateMap -> IO TemplateMap
-updateTemplateMapFromPrompts config prompts templateMap = do
-  results <- mapM (promptForTemplateMap config templateMap) prompts
-  return $ fromList (zip prompts results) <> templateMap
+updateTemplateMapFromPrompts :: AppConfig -> [Text] -> TemplateMap -> IO (PromptResult TemplateMap)
+updateTemplateMapFromPrompts _config [] templateMap = return $ Result templateMap
+updateTemplateMapFromPrompts config (prompt : restPrompts) templateMap = do
+  maybeResult <- promptForEntry config templateMap prompt
+  case maybeResult of
+    Result result -> do
+      updateTemplateMapFromPrompts config restPrompts $ insert prompt result templateMap
+    -- TODO use fmap instead
+    Skip -> return Skip
 
-promptForTemplateMap :: AppConfig -> TemplateMap -> Text -> IO Text
-promptForTemplateMap config templateMap key = runCompletion config key do
+promptForEntry :: AppConfig -> TemplateMap -> Text -> IO (PromptResult Text)
+promptForEntry config templateMap key = runCompletion config key do
   liftIO printEmptyLine
   line <- getInputLine $ TL.unpack (key <> ": ")
   case line of
-    Nothing -> return "" -- TODO end program
+    Nothing -> return Skip
+    Just "s" -> return Skip
     -- TODO throw error instead? This can happen when the user doesn't provide an account and also sets no default
-    Just "" -> return $ templateMap !? key ?? "MISSING"
-    Just value -> return $ TL.strip $ TL.pack value
+    Just "" -> return $ maybe Skip Result (templateMap !? key)
+    Just value -> return $ Result $ TL.strip $ TL.pack value
 
 md5Regex :: Text
 md5Regex = "; md5sum: ([A-Za-z0-9]{32})"
@@ -135,3 +143,5 @@ printTemplateMap templateMap = do
   printEmptyLine
   printEmptyLine
   putStrLn $ byteStringToString $ encodePretty templateMap
+
+data PromptResult a = Result a | Skip deriving (Show)
