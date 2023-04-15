@@ -12,12 +12,16 @@ packages:
   original:
     hackage: text-format-heavy-0.1.5.3
 - completed:
-    hackage: dates-0.2.3.2@sha256:ba1534b90fa24e11becec3b3d8564198144591ddff6f4a472c8b153bc665309f,2311
+    commit: a9bfaf0248aca1e3d3b872838ea74ecc54f04ed1
+    git: https://github.com/mdippery/dates.git
+    name: dates
     pantry-tree:
-      sha256: 66742a11fd1eb1b1c287a0d82630db2bb23716b19203b0d4fb4bf69dee35e39f
-      size: 443
+      sha256: 2a540faa34c89c5850c77da07f042ca956be27b87b36ac1b480dc24f96d6427b
+      size: 748
+    version: 0.2.3.3
   original:
-    hackage: dates-0.2.3.2
+    commit: a9bfaf0248aca1e3d3b872838ea74ecc54f04ed1
+    git: https://github.com/mdippery/dates.git
 snapshots:
 - completed:
     sha256: 14ca51a9a597c32dd7804c10d079feea3d0ae40c5fbbb346cbd67b3ae49f6d01
