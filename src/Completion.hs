@@ -1,6 +1,5 @@
 module Completion (
-  runWithAccountCompletion,
-  runWithNoCompletion,
+  runCompletion,
 )
 where
 
@@ -10,6 +9,13 @@ import Data.Text (isPrefixOf, pack, unpack)
 import Hledger (Journal)
 import Ledger (getAccounts, getJournal)
 import System.Console.Haskeline (Completion, CompletionFunc, InputT, Settings (Settings), completeWord, noCompletion, runInputT, simpleCompletion)
+import Data.Text.Lazy (Text)
+
+runCompletion :: AppConfig -> Text -> (forall a. InputT IO a -> IO a)
+runCompletion config key
+  -- make this elem check more robust to renames
+  | key `elem` ["creditAccount", "debitAccount"] = runWithAccountCompletion config
+  | otherwise = runWithNoCompletion
 
 getCompletions :: Journal -> String -> [Completion]
 getCompletions journal input =
