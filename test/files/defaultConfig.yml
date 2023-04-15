@@ -14,4 +14,3 @@ ledger:
   - amount
   prompts:
   - credit_account
-  - debit_account
