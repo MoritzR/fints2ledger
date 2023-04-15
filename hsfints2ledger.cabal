@@ -126,6 +126,7 @@ test-suite hsfints2ledger-test
       ConfigSpec
       Matching.ParserSpec
       TransactionSpec
+      UtilsSpec
       Paths_hsfints2ledger
   hs-source-dirs:
       test
