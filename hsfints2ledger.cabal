@@ -37,6 +37,7 @@ library
       Config.YamlConfig
       Ledger
       Lib
+      Matching.Matching
       Matching.Parser
       Prompt
       Transactions
