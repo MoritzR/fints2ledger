@@ -7,9 +7,7 @@ import Config.YamlConfig (Fill, Filling (..), LedgerConfig (..))
 import Control.Arrow ((>>>))
 import Control.Monad (forM_, when)
 import Control.Monad.IO.Class (MonadIO (liftIO))
-import Crypto.Hash.MD5 qualified as MD5
 import Data.Aeson.Encode.Pretty (encodePretty)
-import Data.ByteString.Base16 qualified as Base16
 import Data.Either (partitionEithers)
 import Data.Function ((&))
 import Data.Map (Map, fromList, insert, toList, (!?))
@@ -18,7 +16,6 @@ import Data.Maybe (fromJust)
 import Data.Set (Set, notMember)
 import Data.Set qualified as Set
 import Data.String (IsString (fromString))
-import Data.Text.Encoding (decodeUtf8, encodeUtf8)
 import Data.Text.Format.Heavy (format)
 import Data.Text.Lazy (Text)
 import Data.Text.Lazy qualified as TL
@@ -27,8 +24,8 @@ import GHC.Arr (Array, elems)
 import Matching.Matching (findMatch)
 import System.Console.Haskeline (getInputLine)
 import Text.Regex.TDFA (AllTextMatches (getAllTextMatches), (=~))
-import Transactions (Transaction (..))
-import Utils (byteStringToString, printEmptyLine)
+import Transactions (Amount (..), Transaction (..))
+import Utils (byteStringToString, calculateMd5Value, formatDouble, printEmptyLine)
 
 -- a Map of key/value pairs that will be used to fill the template file
 type TemplateMap = Map Text Text
@@ -44,7 +41,7 @@ transactionsToLedger config transactions = do
 insertTransaction :: Transaction -> TemplateMap -> TemplateMap
 insertTransaction transaction =
   insert "date" (TL.pack transaction.date)
-    >>> insert "amount" (TL.pack $ show transaction.amount)
+    >>> insert "amount" (TL.pack $ formatDouble transaction.amount.amount)
     >>> insert "currency" (TL.pack transaction.currency)
     >>> insert "payee" (TL.pack transaction.payee)
     >>> insert "posting" (TL.pack transaction.posting)
@@ -56,12 +53,11 @@ insertCreditDebit transaction =
     >>> insert "credit" (TL.pack $ show $ -transaction.amount)
 
 getMd5 :: LedgerConfig -> TemplateMap -> Text
-getMd5 ledgerConfig templateMap = TL.fromStrict md5
+getMd5 ledgerConfig templateMap = calculateMd5Value md5Values
  where
   md5Keys = TL.pack <$> ledgerConfig.md5
   -- TODO throw a meaningful error instead of using fromJust or make this state impossible
   md5Values = fromJust . flip Map.lookup templateMap <$> md5Keys
-  md5 = decodeUtf8 $ Base16.encode $ MD5.finalize $ foldl MD5.update MD5.init (encodeUtf8 . TL.toStrict <$> md5Values)
 
 transactionToLedger :: AppConfig -> Set Text -> String -> Transaction -> IO ()
 transactionToLedger config existingMd5Sums template transaction = do
