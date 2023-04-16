@@ -42,9 +42,6 @@ dependencies:
 - time # time library
 - dates # for more flexible date parsing, like "30 days ago"
 - optparse-applicative # for parsing CLI arguments
-- sydtest # testing library
-- sydtest-discover # automatic test discovery
-- QuickCheck # property based testing library
 
 language: GHC2021
 
@@ -90,3 +87,6 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - hsfints2ledger
+    - sydtest # testing library
+    - sydtest-discover # automatic test discovery
+    - QuickCheck # property based testing library
