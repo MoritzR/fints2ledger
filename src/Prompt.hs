@@ -110,7 +110,6 @@ updateTemplateMapFromPrompts config (prompt : restPrompts) templateMap = do
   case maybeResult of
     Result result -> do
       updateTemplateMapFromPrompts config restPrompts $ insert prompt result templateMap
-    -- TODO use fmap instead
     Skip -> return Skip
 
 promptForEntry :: AppConfig -> TemplateMap -> Text -> IO (PromptResult Text)
