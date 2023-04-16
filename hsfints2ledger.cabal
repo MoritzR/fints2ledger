@@ -54,8 +54,7 @@ library
       BlockArguments
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-      QuickCheck
-    , aeson
+      aeson
     , aeson-pretty
     , base >=4.7 && <5
     , base16-bytestring
@@ -69,8 +68,6 @@ library
     , hledger-lib
     , optparse-applicative
     , regex-tdfa
-    , sydtest
-    , sydtest-discover
     , text
     , text-format-heavy
     , time
@@ -92,8 +89,7 @@ executable hsfints2ledger-exe
       BlockArguments
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      QuickCheck
-    , aeson
+      aeson
     , aeson-pretty
     , base >=4.7 && <5
     , base16-bytestring
@@ -108,8 +104,6 @@ executable hsfints2ledger-exe
     , hsfints2ledger
     , optparse-applicative
     , regex-tdfa
-    , sydtest
-    , sydtest-discover
     , text
     , text-format-heavy
     , time
