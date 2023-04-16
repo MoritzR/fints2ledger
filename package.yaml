@@ -46,6 +46,8 @@ dependencies:
 - sydtest-discover # automatic test discovery
 - QuickCheck # property based testing library
 
+language: GHC2021
+
 ghc-options:
 - -Wall
 - -Wcompat
@@ -58,7 +60,6 @@ ghc-options:
 - -Wredundant-constraints
 
 default-extensions:
-- GHC2021
 - DuplicateRecordFields
 - OverloadedRecordDot
 - OverloadedStrings
