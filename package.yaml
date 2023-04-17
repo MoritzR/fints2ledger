@@ -42,6 +42,7 @@ dependencies:
 - time # time library
 - dates # for more flexible date parsing, like "30 days ago"
 - optparse-applicative # for parsing CLI arguments
+- transformers # For ReaderT
 
 language: GHC2021
 

@@ -1,5 +1,6 @@
 module Prompt (transactionsToLedger) where
 
+import App (App, HasConfig)
 import Completion (runCompletion)
 import Config.AppConfig (AppConfig (..))
 import Config.Files (getTemplatePath)
@@ -7,6 +8,7 @@ import Config.YamlConfig (Fill, Filling (..), LedgerConfig (..))
 import Control.Arrow ((>>>))
 import Control.Monad (forM_, when)
 import Control.Monad.IO.Class (MonadIO (liftIO))
+import Control.Monad.Trans.Reader (asks)
 import Data.Aeson.Encode.Pretty (encodePretty)
 import Data.Either (partitionEithers)
 import Data.Function ((&))
@@ -30,13 +32,13 @@ import Utils (byteStringToString, calculateMd5Value, formatDouble, printEmptyLin
 -- a Map of key/value pairs that will be used to fill the template file
 type TemplateMap = Map Text Text
 
-transactionsToLedger :: AppConfig -> [Transaction] -> IO ()
-transactionsToLedger config transactions = do
-  existingMd5Sums <- getExistingMd5Sums <$> TLIO.readFile config.journalFile
-  template <- readFile $ getTemplatePath config.configDirectory
-
+transactionsToLedger :: HasConfig env => [Transaction] -> App env ()
+transactionsToLedger transactions = do
+  config <- asks (.config)
+  existingMd5Sums <- getExistingMd5Sums <$> liftIO (TLIO.readFile config.journalFile)
+  template <- liftIO $ readFile $ getTemplatePath config.configDirectory
   forM_ transactions do
-    transactionToLedger config existingMd5Sums template
+    transactionToLedger existingMd5Sums template
 
 insertTransaction :: Transaction -> TemplateMap -> TemplateMap
 insertTransaction transaction =
@@ -59,10 +61,17 @@ getMd5 ledgerConfig templateMap = calculateMd5Value md5Values
   -- TODO throw a meaningful error instead of using fromJust or make this state impossible
   md5Values = fromJust . flip Map.lookup templateMap <$> md5Keys
 
-transactionToLedger :: AppConfig -> Set Text -> String -> Transaction -> IO ()
-transactionToLedger config existingMd5Sums template transaction = do
+transactionToLedger :: HasConfig env => Set Text -> String -> Transaction -> App env ()
+transactionToLedger existingMd5Sums template transaction = do
+  config <- asks (.config)
+  let templateMapToShow = insertTransaction transaction config.ledgerConfig.defaults
+      md5Sum = getMd5 config.ledgerConfig templateMapToShow
   when (md5Sum `notMember` existingMd5Sums) do
-    maybeResult <- prompter templateMapToShow
+    let prompter = case findMatch templateMapToShow config.ledgerConfig.fills of
+          Just filling -> getPromptResultForMatchingEntry config filling.fill
+          Nothing -> getPromptResultForManualEntry config
+
+    maybeResult <- liftIO $ prompter templateMapToShow
     case maybeResult of
       Skip -> return ()
       Result templateMapWithUserInputs -> do
@@ -71,13 +80,7 @@ transactionToLedger config existingMd5Sums template transaction = do
                 & insert "md5sum" md5Sum
                 & insertCreditDebit transaction
         let renderedTemplate = format (fromString template) templateMapFinal
-        TLIO.appendFile config.journalFile $ "\n\n" <> renderedTemplate
- where
-  templateMapToShow = insertTransaction transaction config.ledgerConfig.defaults
-  md5Sum = getMd5 config.ledgerConfig templateMapToShow
-  prompter = case findMatch templateMapToShow config.ledgerConfig.fills of
-    Just filling -> getPromptResultForMatchingEntry config filling.fill
-    Nothing -> getPromptResultForManualEntry config
+        liftIO $ TLIO.appendFile config.journalFile $ "\n\n" <> renderedTemplate
 
 getPromptResultForMatchingEntry :: AppConfig -> Fill -> TemplateMap -> IO (PromptResult TemplateMap)
 getPromptResultForMatchingEntry config fill templateMap = do
