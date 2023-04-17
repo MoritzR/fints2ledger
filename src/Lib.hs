@@ -7,11 +7,16 @@ import Config.AppConfig (AppConfig (..), getConfig)
 import Config.CliConfig (getCliConfig)
 import Config.StartupChecks (runStartupChecks)
 import Control.Monad (unless)
+import Control.Monad.Trans.Reader (ReaderT (runReaderT))
 import Options.Applicative (execParser)
 import Prompt (transactionsToLedger)
 import System.Directory (doesFileExist)
 import Transactions (getExampleTransactions, getTransactionsFromFinTS)
 import Utils (createFile)
+
+data Env = Env
+  { config :: AppConfig
+  }
 
 someFunc :: IO ()
 someFunc = do
@@ -28,7 +33,10 @@ someFunc = do
           then getExampleTransactions
           else getTransactionsFromFinTS appConfig
   transactions <- getTransactions
-  transactionsToLedger appConfig transactions
+
+  let env = Env{config = appConfig}
+
+  runReaderT (transactionsToLedger transactions) env
 
 ensureFileExists :: FilePath -> IO ()
 ensureFileExists path = do
