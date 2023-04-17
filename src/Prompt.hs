@@ -68,10 +68,10 @@ transactionToLedger existingMd5Sums template transaction = do
       md5Sum = getMd5 config.ledgerConfig templateMapToShow
   when (md5Sum `notMember` existingMd5Sums) do
     let prompter = case findMatch templateMapToShow config.ledgerConfig.fills of
-          Just filling -> getPromptResultForMatchingEntry config filling.fill
-          Nothing -> getPromptResultForManualEntry config
+          Just filling -> getPromptResultForMatchingEntry filling.fill
+          Nothing -> getPromptResultForManualEntry
 
-    maybeResult <- liftIO $ prompter templateMapToShow
+    maybeResult <- prompter templateMapToShow
     case maybeResult of
       Skip -> return ()
       Result templateMapWithUserInputs -> do
@@ -82,8 +82,8 @@ transactionToLedger existingMd5Sums template transaction = do
         let renderedTemplate = format (fromString template) templateMapFinal
         liftIO $ TLIO.appendFile config.journalFile $ "\n\n" <> renderedTemplate
 
-getPromptResultForMatchingEntry :: AppConfig -> Fill -> TemplateMap -> IO (PromptResult TemplateMap)
-getPromptResultForMatchingEntry config fill templateMap = do
+getPromptResultForMatchingEntry :: HasConfig env => Fill -> TemplateMap -> App env (PromptResult TemplateMap)
+getPromptResultForMatchingEntry fill templateMap = do
   let fillAsList = toList fill
   let (prompts, fills) =
         fillAsList
@@ -98,33 +98,36 @@ getPromptResultForMatchingEntry config fill templateMap = do
 
   let templateMapWithFills = fromList fills <> templateMap
 
-  printTemplateMap templateMapWithFills
-  updateTemplateMapFromPrompts config prompts templateMapWithFills
+  liftIO $ printTemplateMap templateMapWithFills
+  updateTemplateMapFromPrompts prompts templateMapWithFills
 
-getPromptResultForManualEntry :: AppConfig -> TemplateMap -> IO (PromptResult TemplateMap)
-getPromptResultForManualEntry config templateMap = do
-  printTemplateMap templateMap
-  updateTemplateMapFromPrompts config config.ledgerConfig.prompts templateMap
+getPromptResultForManualEntry :: HasConfig env => TemplateMap -> App env (PromptResult TemplateMap)
+getPromptResultForManualEntry templateMap = do
+  prompts <- asks (.config.ledgerConfig.prompts)
+  liftIO $ printTemplateMap templateMap
+  updateTemplateMapFromPrompts prompts templateMap
 
-updateTemplateMapFromPrompts :: AppConfig -> [Text] -> TemplateMap -> IO (PromptResult TemplateMap)
-updateTemplateMapFromPrompts _config [] templateMap = return $ Result templateMap
-updateTemplateMapFromPrompts config (prompt : restPrompts) templateMap = do
-  maybeResult <- promptForEntry config templateMap prompt
+updateTemplateMapFromPrompts :: HasConfig env => [Text] -> TemplateMap -> App env (PromptResult TemplateMap)
+updateTemplateMapFromPrompts [] templateMap = return $ Result templateMap
+updateTemplateMapFromPrompts (prompt : restPrompts) templateMap = do
+  maybeResult <- promptForEntry templateMap prompt
   case maybeResult of
     Result result -> do
-      updateTemplateMapFromPrompts config restPrompts $ insert prompt result templateMap
+      updateTemplateMapFromPrompts restPrompts $ insert prompt result templateMap
     Skip -> return Skip
 
-promptForEntry :: AppConfig -> TemplateMap -> Text -> IO (PromptResult Text)
-promptForEntry config templateMap key = runCompletion config key do
-  liftIO printEmptyLine
-  line <- getInputLine $ TL.unpack ("> " <> key <> ": ")
-  case line of
-    Nothing -> return Skip
-    Just "s" -> return Skip
-    -- TODO throw error instead? This can happen when the user doesn't provide an account and also sets no default
-    Just "" -> return $ maybe Skip Result (templateMap !? key)
-    Just value -> return $ Result $ TL.strip $ TL.pack value
+promptForEntry :: HasConfig env => TemplateMap -> Text -> App env (PromptResult Text)
+promptForEntry templateMap key = do
+  config <- asks (.config)
+  liftIO $ runCompletion config key do
+    liftIO printEmptyLine
+    line <- getInputLine $ TL.unpack ("> " <> key <> ": ")
+    case line of
+      Nothing -> return Skip
+      Just "s" -> return Skip
+      -- TODO throw error instead? This can happen when the user doesn't provide an account and also sets no default
+      Just "" -> return $ maybe Skip Result (templateMap !? key)
+      Just value -> return $ Result $ TL.strip $ TL.pack value
 
 md5Regex :: Text
 md5Regex = "; md5sum: ([A-Za-z0-9]{32})"
