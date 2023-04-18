@@ -12,6 +12,32 @@ import Prompt (transactionsToLedger)
 import Test.Syd (Spec, describe, it, shouldContain)
 import Transactions (Amount (Amount), Transaction (..))
 
+spec :: Spec
+spec = do
+  describe "transactionsToLedger" do
+    it "shows the transaction and the default values" do
+      let env =
+            testEnv
+              { config =
+                  testConfig
+                    { ledgerConfig =
+                        testConfig.ledgerConfig
+                          { defaults = fromList [("debitAccount", "assets:bank:checking")]
+                          }
+                    }
+              }
+      output <- runToLedger [testTransaction] env
+
+      -- transaction values
+      output `shouldContain` testTransaction.date
+      output `shouldContain` "99.99"
+      output `shouldContain` testTransaction.currency
+      output `shouldContain` testTransaction.posting
+      output `shouldContain` testTransaction.purpose
+
+      -- default values
+      output `shouldContain` "assets:bank:checking"
+
 testConfig :: AppConfig
 testConfig =
   Config
@@ -59,29 +85,3 @@ runToLedger transactions env = do
       { putStrLn = \s -> modifyIORef ioRef (++ [s])
       }
   join <$> readIORef ioRef
-
-spec :: Spec
-spec = do
-  describe "transactionsToLedger" do
-    it "shows the transaction and the default values" do
-      let env =
-            testEnv
-              { config =
-                  testConfig
-                    { ledgerConfig =
-                        testConfig.ledgerConfig
-                          { defaults = fromList [("debitAccount", "assets:bank:checking")]
-                          }
-                    }
-              }
-      output <- runToLedger [testTransaction] env
-
-      -- transaction values
-      output `shouldContain` testTransaction.date
-      output `shouldContain` "99.99"
-      output `shouldContain` testTransaction.currency
-      output `shouldContain` testTransaction.posting
-      output `shouldContain` testTransaction.purpose
-
-      -- default values
-      output `shouldContain` "assets:bank:checking"
