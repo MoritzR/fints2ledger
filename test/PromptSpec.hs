@@ -9,7 +9,7 @@ import Data.IORef (modifyIORef, newIORef, readIORef)
 import Data.Map (empty, fromList)
 import Data.Time.Calendar (Day (ModifiedJulianDay))
 import Prompt (transactionsToLedger)
-import Test.Syd (Spec, describe, it, shouldContain)
+import Test.Syd (Spec, describe, it, shouldBe, shouldContain)
 import Transactions (Amount (Amount), Transaction (..))
 
 spec :: Spec
@@ -57,6 +57,14 @@ spec = do
       output <- runToLedger [testTransaction] env
       output `shouldContain` "automatically filled in purpose"
 
+    it "skips entries that have their md5 already in the journal" do
+      let env =
+            testEnv
+              { readFile = const $ return "; md5sum: 5abd61b9de15c3115519a5f1b4ac7992"
+              }
+      output <- runToLedger [testTransaction] env
+      output `shouldBe` []
+
 testConfig :: AppConfig
 testConfig =
   Config
@@ -68,7 +76,7 @@ testConfig =
     , ledgerConfig =
         LedgerConfig
           { defaults = empty
-          , md5 = []
+          , md5 = ["purpose"]
           , prompts = []
           , fills = []
           }
