@@ -2,7 +2,7 @@ module PromptSpec (spec) where
 
 import App (Env (..), PromptResult (Skip))
 import Config.AppConfig (AppConfig (..))
-import Config.YamlConfig (LedgerConfig (..))
+import Config.YamlConfig (Filling (Filling, match), LedgerConfig (..), fill)
 import Control.Monad (join)
 import Control.Monad.Trans.Reader (ReaderT (runReaderT))
 import Data.IORef (modifyIORef, newIORef, readIORef)
@@ -15,7 +15,16 @@ import Transactions (Amount (Amount), Transaction (..))
 spec :: Spec
 spec = do
   describe "transactionsToLedger" do
-    it "shows the transaction and the default values" do
+    it "shows the transaction" do
+      output <- runToLedger [testTransaction] testEnv
+
+      output `shouldContain` testTransaction.date
+      output `shouldContain` "99.99"
+      output `shouldContain` testTransaction.currency
+      output `shouldContain` testTransaction.posting
+      output `shouldContain` testTransaction.purpose
+
+    it "shows the default values" do
       let env =
             testEnv
               { config =
@@ -27,16 +36,26 @@ spec = do
                     }
               }
       output <- runToLedger [testTransaction] env
-
-      -- transaction values
-      output `shouldContain` testTransaction.date
-      output `shouldContain` "99.99"
-      output `shouldContain` testTransaction.currency
-      output `shouldContain` testTransaction.posting
-      output `shouldContain` testTransaction.purpose
-
-      -- default values
       output `shouldContain` "assets:bank:checking"
+
+    it "shows the automatically filled in values" do
+      let env =
+            testEnv
+              { config =
+                  testConfig
+                    { ledgerConfig =
+                        testConfig.ledgerConfig
+                          { fills =
+                              [ Filling
+                                  { match = fromList [("payee", ".*")]
+                                  , fill = fromList [("purpose", Just "automatically filled in purpose")]
+                                  }
+                              ]
+                          }
+                    }
+              }
+      output <- runToLedger [testTransaction] env
+      output `shouldContain` "automatically filled in purpose"
 
 testConfig :: AppConfig
 testConfig =
