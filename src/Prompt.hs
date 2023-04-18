@@ -27,7 +27,7 @@ import Matching.Matching (findMatch)
 import System.Console.Haskeline (getInputLine)
 import Text.Regex.TDFA (AllTextMatches (getAllTextMatches), (=~))
 import Transactions (Amount (..), Transaction (..))
-import Utils (byteStringToString, calculateMd5Value, formatDouble, printEmptyLine)
+import Utils (byteStringToString, calculateMd5Value, formatDouble)
 
 -- a Map of key/value pairs that will be used to fill the template file
 type TemplateMap = Map Text Text
@@ -98,13 +98,13 @@ getPromptResultForMatchingEntry fill templateMap = do
 
   let templateMapWithFills = fromList fills <> templateMap
 
-  liftIO $ printTemplateMap templateMapWithFills
+  printTemplateMap templateMapWithFills
   updateTemplateMapFromPrompts prompts templateMapWithFills
 
 getPromptResultForManualEntry :: HasConfig env => TemplateMap -> App env (PromptResult TemplateMap)
 getPromptResultForManualEntry templateMap = do
   prompts <- asks (.config.ledgerConfig.prompts)
-  liftIO $ printTemplateMap templateMap
+  printTemplateMap templateMap
   updateTemplateMapFromPrompts prompts templateMap
 
 updateTemplateMapFromPrompts :: HasConfig env => [Text] -> TemplateMap -> App env (PromptResult TemplateMap)
@@ -139,10 +139,13 @@ getExistingMd5Sums textToSearchIn =
         & map (!! 1)
         & Set.fromList
 
-printTemplateMap :: TemplateMap -> IO ()
+printTemplateMap :: TemplateMap -> App env ()
 printTemplateMap templateMap = do
   printEmptyLine
   printEmptyLine
-  putStrLn $ byteStringToString $ encodePretty templateMap
+  liftIO $ putStrLn $ byteStringToString $ encodePretty templateMap
+
+printEmptyLine :: App env ()
+printEmptyLine = liftIO $ putStrLn ""
 
 data PromptResult a = Result a | Skip deriving (Show)

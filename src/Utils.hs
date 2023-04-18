@@ -1,4 +1,4 @@
-module Utils (encodeAsString, byteStringToString, printEmptyLine, (??), orElseThrow, createFile, calculateMd5Value, formatDouble) where
+module Utils (encodeAsString, byteStringToString, (??), orElseThrow, createFile, calculateMd5Value, formatDouble) where
 
 import Control.Exception (Exception, throwIO)
 import Crypto.Hash.MD5 qualified as MD5
@@ -15,9 +15,6 @@ byteStringToString = TL.unpack . TL.decodeUtf8
 
 encodeAsString :: ToJSON a => a -> String
 encodeAsString = byteStringToString . encode
-
-printEmptyLine :: IO ()
-printEmptyLine = putStrLn ""
 
 (??) :: Maybe a -> a -> a
 Nothing ?? a = a
