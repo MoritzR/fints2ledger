@@ -14,6 +14,7 @@ import Control.Monad.Trans.Reader (ReaderT (runReaderT), ask)
 import Data.Map (Map, (!?))
 import Data.Text.Lazy (Text)
 import Data.Text.Lazy qualified as TL
+import Data.Text.Lazy.IO qualified as TLIO
 import Options.Applicative (execParser)
 import Prompt (transactionsToLedger)
 import System.Console.Haskeline (getInputLine)
@@ -42,6 +43,8 @@ someFunc = do
           { config = appConfig
           , putStrLn = putStrLn
           , promptForEntry = promptForEntry
+          , readFile = TLIO.readFile
+          , appendFile = TLIO.appendFile
           }
 
   runReaderT (transactionsToLedger transactions) env
