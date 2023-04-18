@@ -50,11 +50,20 @@ testEnv =
     , appendFile = \_filePath _text -> return ()
     }
 
+runToLedger :: [Transaction] -> Env -> IO String
+runToLedger transactions env = do
+  ioRef <- newIORef []
+  runReaderT
+    (transactionsToLedger transactions)
+    env
+      { putStrLn = \s -> modifyIORef ioRef (++ [s])
+      }
+  join <$> readIORef ioRef
+
 spec :: Spec
 spec = do
-  describe "Prompt" do
+  describe "transactionsToLedger" do
     it "shows the transaction and the default values" do
-      outputRef <- newIORef []
       let env =
             testEnv
               { config =
@@ -64,10 +73,8 @@ spec = do
                           { defaults = fromList [("debitAccount", "assets:bank:checking")]
                           }
                     }
-              , putStrLn = \s -> modifyIORef outputRef (++ [s])
               }
-      runReaderT (transactionsToLedger [testTransaction]) env
-      output <- join <$> readIORef outputRef
+      output <- runToLedger [testTransaction] env
 
       -- transaction values
       output `shouldContain` testTransaction.date
