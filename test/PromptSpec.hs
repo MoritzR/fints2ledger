@@ -66,4 +66,6 @@ spec = do
       output `shouldContain` transaction.currency
       output `shouldContain` transaction.posting
       output `shouldContain` transaction.purpose
+
+      -- default values
       output `shouldContain` "assets:bank:checking"
