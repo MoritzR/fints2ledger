@@ -15,3 +15,7 @@ spec = do
       let encodedYaml = T.decodeUtf8 $ Yaml.encode defaultYamlConfig
 
       encodedYaml `shouldBe` expectedYaml
+
+    it "encoding and then decoding results in the same config" do
+      result <- Yaml.decodeThrow (Yaml.encode defaultYamlConfig)
+      result `shouldBe` defaultYamlConfig

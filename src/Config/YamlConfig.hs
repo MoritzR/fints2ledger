@@ -23,7 +23,7 @@ data YamlConfig = YamlConfig
   { fints :: FintsConfig
   , ledger :: LedgerConfig
   }
-  deriving (Show, Generic, FromJSON, ToJSON)
+  deriving (Show, Eq, Generic, FromJSON, ToJSON)
 
 data FintsConfig = FintsConfig
   { account :: String
@@ -32,7 +32,7 @@ data FintsConfig = FintsConfig
   , selectedAccount :: Maybe String
   , password :: Password
   }
-  deriving (Show, Generic)
+  deriving (Show, Eq, Generic)
 
 instance ToJSON FintsConfig where
   toJSON =
@@ -54,13 +54,13 @@ data LedgerConfig = LedgerConfig
   , prompts :: [Text]
   , fills :: [Filling]
   }
-  deriving (Show, Generic, FromJSON, ToJSON)
+  deriving (Show, Eq, Generic, FromJSON, ToJSON)
 
 data Filling = Filling
   { match :: Match
   , fill :: Fill
   }
-  deriving (Show, Generic, FromJSON, ToJSON)
+  deriving (Show, Eq, Generic, FromJSON, ToJSON)
 
 -- a Map from a field to a default value for this field
 type DefaultsConfig = Map Text Text
@@ -73,7 +73,7 @@ type Match = Map Text Text
 type Fill = Map Text (Maybe Text)
 
 newtype Password = Password {getPassword :: String}
-  deriving (Generic)
+  deriving (Generic, Eq)
 
 instance FromJSON Password where
   parseJSON = fmap Password . parseJSON
