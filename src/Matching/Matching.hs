@@ -20,7 +20,7 @@ matches templateMap filling =
     -- TODO make this string more safe
     "amount" ->
       let
-        matchesAmount = runParser amountParser (TL.unpack key) ?? const False
+        matchesAmount = runParser amountParser (TL.unpack regex) ?? const False
         -- TODO check if this (!) can fail
         amount = read $ TL.unpack $ templateMap ! key
        in
