@@ -16,7 +16,7 @@ matches :: Map Text Text -> Filling -> Bool
 matches templateMap filling =
   all matchesEntry $ toList filling.match
  where
-  matchesEntry (key, value) = case key of
+  matchesEntry (key, regex) = case key of
     -- TODO make this string more safe
     "amount" ->
       let
@@ -25,4 +25,4 @@ matches templateMap filling =
         amount = read $ TL.unpack $ templateMap ! key
        in
         matchesAmount amount
-    _ -> value =~ (templateMap ! key)
+    _ -> (templateMap ! key) =~ regex
