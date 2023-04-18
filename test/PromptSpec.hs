@@ -29,22 +29,34 @@ testConfig =
           }
     }
 
+testTransaction :: Transaction
+testTransaction =
+  Transaction
+    { date = "01/01/2023"
+    , amount = Amount 99.99
+    , currency = "EUR"
+    , posting = "test posting"
+    , payee = "test payee"
+    , purpose = "test purpose"
+    }
+
+testEnv :: Env
+testEnv =
+  Env
+    { config = testConfig
+    , promptForEntry = \_templateMap _key -> return Skip
+    , putStrLn = const $ return ()
+    , readFile = const $ return ""
+    , appendFile = \_filePath _text -> return ()
+    }
+
 spec :: Spec
 spec = do
   describe "Prompt" do
     it "shows the transaction and the default values" do
-      let transaction =
-            Transaction
-              { date = "01/01/2023"
-              , amount = Amount 99.99
-              , currency = "EUR"
-              , posting = "test posting"
-              , payee = "test payee"
-              , purpose = "test purpose"
-              }
       outputRef <- newIORef []
       let env =
-            Env
+            testEnv
               { config =
                   testConfig
                     { ledgerConfig =
@@ -53,19 +65,16 @@ spec = do
                           }
                     }
               , putStrLn = \s -> modifyIORef outputRef (++ [s])
-              , promptForEntry = \_templateMap _key -> return Skip
-              , readFile = const $ return ""
-              , appendFile = \_filePath _text -> return ()
               }
-      runReaderT (transactionsToLedger [transaction]) env
+      runReaderT (transactionsToLedger [testTransaction]) env
       output <- join <$> readIORef outputRef
 
       -- transaction values
-      output `shouldContain` transaction.date
+      output `shouldContain` testTransaction.date
       output `shouldContain` "99.99"
-      output `shouldContain` transaction.currency
-      output `shouldContain` transaction.posting
-      output `shouldContain` transaction.purpose
+      output `shouldContain` testTransaction.currency
+      output `shouldContain` testTransaction.posting
+      output `shouldContain` testTransaction.purpose
 
       -- default values
       output `shouldContain` "assets:bank:checking"
