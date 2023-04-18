@@ -6,10 +6,10 @@ where
 import Config.AppConfig (AppConfig (..))
 import Data.Function ((&))
 import Data.Text (isPrefixOf, pack, unpack)
+import Data.Text.Lazy (Text)
 import Hledger (Journal)
 import Ledger (getAccounts, getJournal)
 import System.Console.Haskeline (Completion, CompletionFunc, InputT, Settings (Settings), completeWord, noCompletion, runInputT, simpleCompletion)
-import Data.Text.Lazy (Text)
 
 runCompletion :: AppConfig -> Text -> (forall a. InputT IO a -> IO a)
 runCompletion config key

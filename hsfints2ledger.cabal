@@ -120,6 +120,7 @@ test-suite hsfints2ledger-test
   other-modules:
       ConfigSpec
       Matching.ParserSpec
+      PromptSpec
       TransactionSpec
       UtilsSpec
       Paths_hsfints2ledger

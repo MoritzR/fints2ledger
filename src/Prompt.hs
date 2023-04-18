@@ -20,13 +20,12 @@ import Data.String (IsString (fromString))
 import Data.Text.Format.Heavy (format)
 import Data.Text.Lazy (Text)
 import Data.Text.Lazy qualified as TL
-import Data.Text.Lazy.IO qualified as TLIO
 import GHC.Arr (Array, elems)
 import Matching.Matching (findMatch)
 import Text.Regex.TDFA (AllTextMatches (getAllTextMatches), (=~))
 import Transactions (Amount (..), Transaction (..))
 import Utils (byteStringToString, calculateMd5Value, formatDouble)
-import Prelude hiding (putStrLn)
+import Prelude hiding (appendFile, putStrLn, readFile)
 
 -- a Map of key/value pairs that will be used to fill the template file
 type TemplateMap = Map Text Text
@@ -34,10 +33,11 @@ type TemplateMap = Map Text Text
 transactionsToLedger :: [Transaction] -> App ()
 transactionsToLedger transactions = do
   config <- asks (.config)
-  existingMd5Sums <- getExistingMd5Sums <$> liftIO (TLIO.readFile config.journalFile)
+  readFile <- asks (.readFile)
+  existingMd5Sums <- getExistingMd5Sums <$> liftIO (readFile config.journalFile)
   template <- liftIO $ readFile $ getTemplatePath config.configDirectory
   forM_ transactions do
-    transactionToLedger existingMd5Sums template
+    transactionToLedger existingMd5Sums (TL.unpack template)
 
 insertTransaction :: Transaction -> TemplateMap -> TemplateMap
 insertTransaction transaction =
@@ -63,6 +63,7 @@ getMd5 ledgerConfig templateMap = calculateMd5Value md5Values
 transactionToLedger :: Set Text -> String -> Transaction -> App ()
 transactionToLedger existingMd5Sums template transaction = do
   config <- asks (.config)
+  appendFile <- asks (.appendFile)
   let templateMapToShow = insertTransaction transaction config.ledgerConfig.defaults
       md5Sum = getMd5 config.ledgerConfig templateMapToShow
   when (md5Sum `notMember` existingMd5Sums) do
@@ -79,7 +80,7 @@ transactionToLedger existingMd5Sums template transaction = do
                 & insert "md5sum" md5Sum
                 & insertCreditDebit transaction
         let renderedTemplate = format (fromString template) templateMapFinal
-        liftIO $ TLIO.appendFile config.journalFile $ "\n\n" <> renderedTemplate
+        liftIO $ appendFile config.journalFile $ "\n\n" <> renderedTemplate
 
 getPromptResultForMatchingEntry :: Fill -> TemplateMap -> App (PromptResult TemplateMap)
 getPromptResultForMatchingEntry fill templateMap = do

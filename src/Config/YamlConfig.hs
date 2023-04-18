@@ -100,7 +100,7 @@ defaultYamlConfig =
           }
     , ledger =
         LedgerConfig
-          { prompts = ["creditAccount" ]
+          { prompts = ["creditAccount"]
           , defaults = fromList [("debitAccount", "assets:bank:checking")]
           , md5 = ["date", "payee", "purpose", "amount"]
           , fills = []
