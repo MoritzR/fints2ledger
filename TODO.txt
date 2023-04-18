@@ -1,7 +1,6 @@
 allow "fills" to not be specified
 make the printed template map have a specific order
 
-test that the template map is shown with fills for a matching entry
 test that the md5 check works
 test what happens when the user does not provide a required field like the account
 test <= 99.10 in matchings
