@@ -1,7 +1,6 @@
 module Prompt (transactionsToLedger) where
 
-import App (App, HasConfig)
-import Completion (runCompletion)
+import App (App, Env (..), PromptResult (..))
 import Config.AppConfig (AppConfig (..))
 import Config.Files (getTemplatePath)
 import Config.YamlConfig (Fill, Filling (..), LedgerConfig (..))
@@ -12,7 +11,7 @@ import Control.Monad.Trans.Reader (asks)
 import Data.Aeson.Encode.Pretty (encodePretty)
 import Data.Either (partitionEithers)
 import Data.Function ((&))
-import Data.Map (Map, fromList, insert, toList, (!?))
+import Data.Map (Map, fromList, insert, toList)
 import Data.Map qualified as Map
 import Data.Maybe (fromJust)
 import Data.Set (Set, notMember)
@@ -24,15 +23,15 @@ import Data.Text.Lazy qualified as TL
 import Data.Text.Lazy.IO qualified as TLIO
 import GHC.Arr (Array, elems)
 import Matching.Matching (findMatch)
-import System.Console.Haskeline (getInputLine)
 import Text.Regex.TDFA (AllTextMatches (getAllTextMatches), (=~))
 import Transactions (Amount (..), Transaction (..))
 import Utils (byteStringToString, calculateMd5Value, formatDouble)
+import Prelude hiding (putStrLn)
 
 -- a Map of key/value pairs that will be used to fill the template file
 type TemplateMap = Map Text Text
 
-transactionsToLedger :: HasConfig env => [Transaction] -> App env ()
+transactionsToLedger :: [Transaction] -> App ()
 transactionsToLedger transactions = do
   config <- asks (.config)
   existingMd5Sums <- getExistingMd5Sums <$> liftIO (TLIO.readFile config.journalFile)
@@ -61,7 +60,7 @@ getMd5 ledgerConfig templateMap = calculateMd5Value md5Values
   -- TODO throw a meaningful error instead of using fromJust or make this state impossible
   md5Values = fromJust . flip Map.lookup templateMap <$> md5Keys
 
-transactionToLedger :: HasConfig env => Set Text -> String -> Transaction -> App env ()
+transactionToLedger :: Set Text -> String -> Transaction -> App ()
 transactionToLedger existingMd5Sums template transaction = do
   config <- asks (.config)
   let templateMapToShow = insertTransaction transaction config.ledgerConfig.defaults
@@ -82,7 +81,7 @@ transactionToLedger existingMd5Sums template transaction = do
         let renderedTemplate = format (fromString template) templateMapFinal
         liftIO $ TLIO.appendFile config.journalFile $ "\n\n" <> renderedTemplate
 
-getPromptResultForMatchingEntry :: HasConfig env => Fill -> TemplateMap -> App env (PromptResult TemplateMap)
+getPromptResultForMatchingEntry :: Fill -> TemplateMap -> App (PromptResult TemplateMap)
 getPromptResultForMatchingEntry fill templateMap = do
   let fillAsList = toList fill
   let (prompts, fills) =
@@ -101,33 +100,21 @@ getPromptResultForMatchingEntry fill templateMap = do
   printTemplateMap templateMapWithFills
   updateTemplateMapFromPrompts prompts templateMapWithFills
 
-getPromptResultForManualEntry :: HasConfig env => TemplateMap -> App env (PromptResult TemplateMap)
+getPromptResultForManualEntry :: TemplateMap -> App (PromptResult TemplateMap)
 getPromptResultForManualEntry templateMap = do
   prompts <- asks (.config.ledgerConfig.prompts)
   printTemplateMap templateMap
   updateTemplateMapFromPrompts prompts templateMap
 
-updateTemplateMapFromPrompts :: HasConfig env => [Text] -> TemplateMap -> App env (PromptResult TemplateMap)
+updateTemplateMapFromPrompts :: [Text] -> TemplateMap -> App (PromptResult TemplateMap)
 updateTemplateMapFromPrompts [] templateMap = return $ Result templateMap
 updateTemplateMapFromPrompts (prompt : restPrompts) templateMap = do
+  promptForEntry <- asks (.promptForEntry)
   maybeResult <- promptForEntry templateMap prompt
   case maybeResult of
     Result result -> do
       updateTemplateMapFromPrompts restPrompts $ insert prompt result templateMap
     Skip -> return Skip
-
-promptForEntry :: HasConfig env => TemplateMap -> Text -> App env (PromptResult Text)
-promptForEntry templateMap key = do
-  config <- asks (.config)
-  liftIO $ runCompletion config key do
-    liftIO printEmptyLine
-    line <- getInputLine $ TL.unpack ("> " <> key <> ": ")
-    case line of
-      Nothing -> return Skip
-      Just "s" -> return Skip
-      -- TODO throw error instead? This can happen when the user doesn't provide an account and also sets no default
-      Just "" -> return $ maybe Skip Result (templateMap !? key)
-      Just value -> return $ Result $ TL.strip $ TL.pack value
 
 md5Regex :: Text
 md5Regex = "; md5sum: ([A-Za-z0-9]{32})"
@@ -139,13 +126,14 @@ getExistingMd5Sums textToSearchIn =
         & map (!! 1)
         & Set.fromList
 
-printTemplateMap :: TemplateMap -> App env ()
+printTemplateMap :: TemplateMap -> App ()
 printTemplateMap templateMap = do
+  putStrLn <- asks (.putStrLn)
   printEmptyLine
   printEmptyLine
   liftIO $ putStrLn $ byteStringToString $ encodePretty templateMap
 
-printEmptyLine :: App env ()
-printEmptyLine = liftIO $ putStrLn ""
-
-data PromptResult a = Result a | Skip deriving (Show)
+printEmptyLine :: App ()
+printEmptyLine = do
+  putStrLn <- asks (.putStrLn)
+  liftIO $ putStrLn ""
