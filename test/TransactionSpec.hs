@@ -12,7 +12,7 @@ spec = do
   describe "Transactions" do
     it "parses the sample transactions" do
       sampleTransaction <- TLIO.readFile =<< getDataFileName "data/example.json"
-      let parsedTransactions = Aeson.eitherDecode @[Transaction] (encodeUtf8 sampleTransaction)
+      let parsedTransactions = Aeson.eitherDecode (encodeUtf8 sampleTransaction)
 
       head <$> parsedTransactions
         `shouldBe` Right
