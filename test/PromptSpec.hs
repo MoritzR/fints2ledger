@@ -1,9 +1,10 @@
 module PromptSpec (spec) where
 
-import App (Env (..), PromptResult (Skip))
+import App (Env (..), PromptResult (Result, Skip))
 import Config.AppConfig (AppConfig (..))
 import Config.YamlConfig (Filling (Filling, match), LedgerConfig (..), fill)
 import Control.Monad (join)
+import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Trans.Reader (ReaderT (runReaderT))
 import Data.IORef (modifyIORef, newIORef, readIORef)
 import Data.Map (empty, fromList)
@@ -64,6 +65,56 @@ spec = do
               }
       output <- runToLedger [testTransaction] env
       output `shouldBe` []
+
+    it "doesn't prompt for entries that are autofilled" do
+      ioRef <- newIORef []
+      let env =
+            testEnv
+              { config =
+                  testConfig
+                    { ledgerConfig =
+                        testConfig.ledgerConfig
+                          { fills =
+                              [ Filling
+                                  { match = fromList [("payee", ".*")]
+                                  , fill = empty
+                                  }
+                              ]
+                          }
+                    }
+              , promptForEntry = \_templateMap key -> do
+                  liftIO $ modifyIORef ioRef (++ [key])
+                  return $ Result "test input"
+              }
+      runReaderT (transactionsToLedger [testTransaction]) env
+      promptedFor <- readIORef ioRef
+
+      promptedFor `shouldBe` []
+
+    it "prompts for entries that are autofilled but have an empty fill key" do
+      ioRef <- newIORef []
+      let env =
+            testEnv
+              { config =
+                  testConfig
+                    { ledgerConfig =
+                        testConfig.ledgerConfig
+                          { fills =
+                              [ Filling
+                                  { match = fromList [("payee", ".*")]
+                                  , fill = fromList [("purpose", Nothing), ("payee", Nothing)]
+                                  }
+                              ]
+                          }
+                    }
+              , promptForEntry = \_templateMap key -> do
+                  liftIO $ modifyIORef ioRef (++ [key])
+                  return $ Result "test input"
+              }
+      runReaderT (transactionsToLedger [testTransaction]) env
+      promptedFor <- readIORef ioRef
+
+      promptedFor `shouldBe` ["payee", "purpose"]
 
 testConfig :: AppConfig
 testConfig =
