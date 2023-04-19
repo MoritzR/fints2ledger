@@ -41,12 +41,12 @@ transactionsToLedger transactions = do
 
 insertTransaction :: Transaction -> TemplateMap -> TemplateMap
 insertTransaction transaction =
-  insert "date" (TL.pack transaction.date)
-    >>> insert "amount" (TL.pack $ formatDouble transaction.amount.amount)
-    >>> insert "currency" (TL.pack transaction.currency)
-    >>> insert "payee" (TL.pack transaction.payee)
-    >>> insert "posting" (TL.pack transaction.posting)
-    >>> insert "purpose" (TL.pack transaction.purpose)
+  insert "date" (transaction.date)
+    >>> insert "amount" (formatDouble transaction.amount.amount)
+    >>> insert "currency" (transaction.currency)
+    >>> insert "payee" (transaction.payee)
+    >>> insert "posting" (transaction.posting)
+    >>> insert "purpose" (transaction.purpose)
 
 insertCreditDebit :: Transaction -> TemplateMap -> TemplateMap
 insertCreditDebit transaction =

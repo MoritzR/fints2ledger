@@ -31,9 +31,9 @@ createFile path = writeFile path ""
 calculateMd5Value :: [Text] -> Text
 calculateMd5Value md5Values = TL.fromStrict $ T.decodeUtf8 $ Base16.encode $ MD5.finalize $ foldl MD5.update MD5.init (T.encodeUtf8 . TL.toStrict <$> md5Values)
 
-formatDouble :: Double -> String
+formatDouble :: Double -> Text
 formatDouble double
-  | fromInteger floored == double = show floored
-  | otherwise = show double
+  | fromInteger floored == double = TL.pack $ show floored
+  | otherwise = TL.pack $ show double
  where
   floored = floor double :: Integer

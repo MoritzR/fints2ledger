@@ -20,6 +20,7 @@ import GHC.Generics (Generic)
 import Paths_hsfints2ledger (getDataFileName)
 import System.Process.Typed (ExitCode (ExitFailure, ExitSuccess), readProcess, shell)
 import Utils (encodeAsString, orElseThrow, (??))
+import Data.Text.Lazy (Text)
 
 getExampleTransactions :: IO [Transaction]
 getExampleTransactions = do
@@ -75,12 +76,12 @@ instance ToJSON Amount where
   toJSON value = Aeson.toJSON value.amount
 
 data Transaction = Transaction
-  { date :: String
+  { date :: Text
   , amount :: Amount
-  , currency :: String
-  , posting :: String
-  , payee :: String
-  , purpose :: String
+  , currency :: Text
+  , posting :: Text
+  , payee :: Text
+  , purpose :: Text
   }
   deriving (Show, Generic, FromJSON, ToJSON, Eq)
 
