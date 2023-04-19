@@ -17,10 +17,10 @@ spec = do
       head <$> parsedTransactions
         `shouldBe` Right
           Transaction
-            { date = "2022/03/23",
-              amount = Amount (-19.69),
-              currency = "EUR",
-              posting = "Lastschrifteinzug",
-              payee = "VISA KAUFLAND",
-              purpose = "NR XXXX 1234 KAUFUMSATZ120092309482309480239"
+            { date = "2022/03/23"
+            , amount = Amount (-19.69)
+            , currency = "EUR"
+            , posting = "Lastschrifteinzug"
+            , payee = "VISA KAUFLAND"
+            , purpose = "NR XXXX 1234 KAUFUMSATZ120092309482309480239"
             }
