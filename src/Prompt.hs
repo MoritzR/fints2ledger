@@ -1,3 +1,6 @@
+{-# LANGUAGE ApplicativeDo #-}
+{-# LANGUAGE RecordWildCards #-}
+
 module Prompt (transactionsToLedger) where
 
 import App (App, Env (..), PromptResult (..))
@@ -11,6 +14,7 @@ import Control.Monad.Trans.Reader (asks)
 import Data.Aeson.Encode.Pretty (encodePretty)
 import Data.Either (partitionEithers)
 import Data.Function ((&))
+import Data.Functor.Identity (Identity (Identity))
 import Data.Map (Map, fromList, insert, toList)
 import Data.Map qualified as Map
 import Data.Maybe (fromJust)
@@ -29,6 +33,35 @@ import Prelude hiding (appendFile, putStrLn, readFile)
 
 -- a Map of key/value pairs that will be used to fill the template file
 type TemplateMap = Map Text Text
+
+data Template f = Template
+  { date :: Text
+  , amount :: Amount
+  , currency :: Text
+  , posting :: Text
+  , payee :: Text
+  , purpose :: Text
+  , creditAccount :: f Text
+  , debitAccount :: f Text
+  }
+
+checkPresent :: err -> Maybe value -> Either err value
+checkPresent err = maybe (Left err) Right
+
+initial :: Transaction -> Template Maybe
+initial Transaction{..} =
+  Template
+    { creditAccount = Nothing
+    , debitAccount = Nothing
+    , ..
+    }
+
+finalize :: Template Maybe -> Either String (Template Identity)
+finalize Template{..} = do
+  debitAccount <- pure <$> checkPresent "debitAccount is missing" debitAccount
+  creditAccount <- pure <$> checkPresent "debitAccount is missing" creditAccount
+
+  Right $ Template{..}
 
 transactionsToLedger :: [Transaction] -> App ()
 transactionsToLedger transactions = do
