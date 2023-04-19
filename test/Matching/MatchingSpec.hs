@@ -72,3 +72,49 @@ spec = do
               [filling]
 
       result `shouldBe` Nothing
+
+    it "finds a match when all of the regexes match" do
+      let filling =
+            Filling
+              { match = fromList [("payee", ".*"), ("purpose", ".*")]
+              , fill = empty
+              }
+
+      let result =
+            findMatch
+              (fromList [("payee", "a match"), ("purpose", "also a match")])
+              [filling]
+
+      result `shouldBe` Just filling
+
+    it "finds no match when not all of the regexes match" do
+      let filling =
+            Filling
+              { match = fromList [("payee", "regex"), ("purpose", ".*")]
+              , fill = empty
+              }
+      let result =
+            findMatch
+              (fromList [("payee", "no match"), ("purpose", "a match")])
+              [filling]
+
+      result `shouldBe` Nothing
+
+    it "returns only the first filling when two overlap" do
+      let fillings =
+            [ Filling
+                { match = fromList [("payee", ".*")]
+                , fill = fromList [("purpose", Just "first filling")]
+                }
+            , Filling
+                { match = fromList [("payee", ".*")]
+                , fill = fromList [("purpose", Just "second filling")]
+                }
+            ]
+
+      let result =
+            findMatch
+              (fromList [("payee", "a match")])
+              fillings
+
+      result `shouldBe` Just (fillings !! 0)
