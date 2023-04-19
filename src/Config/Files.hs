@@ -5,6 +5,7 @@ module Config.Files (getDefaultConfigDirectory, getConfigFilePath, getTemplatePa
 import Data.String (IsString)
 import System.Directory (getHomeDirectory)
 import System.FilePath ((</>))
+import Paths_hsfints2ledger (getDataFileName)
 
 getDefaultConfigDirectory :: IO ConfigDirectory
 getDefaultConfigDirectory = do
@@ -14,8 +15,8 @@ getDefaultConfigDirectory = do
 getConfigFilePath :: ConfigDirectory -> FilePath
 getConfigFilePath configDirectory = configDirectory.get </> "config.yml"
 
-getTemplatePath :: ConfigDirectory -> FilePath
-getTemplatePath configDirectory = configDirectory.get </> "template.txt"
+getTemplatePath :: IO FilePath
+getTemplatePath = getDataFileName "data/template.txt"
 
 newtype ConfigDirectory = ConfigDirectory {get :: FilePath}
   deriving newtype (Show, IsString)

@@ -35,7 +35,7 @@ transactionsToLedger transactions = do
   config <- asks (.config)
   readFile <- asks (.readFile)
   existingMd5Sums <- getExistingMd5Sums <$> liftIO (readFile config.journalFile)
-  template <- liftIO $ readFile $ getTemplatePath config.configDirectory
+  template <- liftIO $ readFile =<< getTemplatePath
   forM_ transactions do
     transactionToLedger existingMd5Sums (TL.unpack template)
 
