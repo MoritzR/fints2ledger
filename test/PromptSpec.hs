@@ -19,11 +19,11 @@ spec = do
     it "shows the transaction" do
       output <- runToLedger [testTransaction] testEnv
 
-      output `shouldContain` testTransaction.date
+      output `shouldContain` TL.unpack testTransaction.date
       output `shouldContain` "99.99"
-      output `shouldContain` testTransaction.currency
-      output `shouldContain` testTransaction.posting
-      output `shouldContain` testTransaction.purpose
+      output `shouldContain` TL.unpack testTransaction.currency
+      output `shouldContain` TL.unpack testTransaction.posting
+      output `shouldContain` TL.unpack testTransaction.purpose
 
     it "shows the default values" do
       let env =
