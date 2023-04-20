@@ -9,12 +9,15 @@ module Config.YamlConfig (
   Password,
   getYamlConfig,
   defaultYamlConfig,
+  validateYamlConfig,
 )
 where
 
 import Config.Files (ConfigDirectory, getConfigFilePath)
 import Data.Aeson as Aeson
 import Data.Map (Map, fromList)
+import Data.Set (difference, isSubsetOf, toList)
+import Data.Set qualified as Set
 import Data.Text.Lazy (Text)
 import Data.Yaml (decodeFileThrow)
 import GHC.Generics (Generic)
@@ -87,6 +90,23 @@ instance Show Password where
 getYamlConfig :: ConfigDirectory -> IO YamlConfig
 getYamlConfig configDirectory = decodeFileThrow $ getConfigFilePath configDirectory
 
+allowedKeys :: [String]
+allowedKeys = ["amount", "currency", "posting", "payee", "purpose"]
+
+validateYamlConfig :: YamlConfig -> Maybe String
+validateYamlConfig yamlConfig = do
+  if md5KeySet `isSubsetOf` allowedKeySet
+    then Nothing
+    else
+      Just $
+        "md5 values are not valid: "
+          <> (show . toList) (md5KeySet `difference` allowedKeySet)
+          <> ", only "
+          <> show allowedKeys
+          <> " are allowed"
+ where
+  md5KeySet = Set.fromList yamlConfig.ledger.md5
+  allowedKeySet = Set.fromList allowedKeys
 defaultYamlConfig :: YamlConfig
 defaultYamlConfig =
   YamlConfig

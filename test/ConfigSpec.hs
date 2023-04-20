@@ -1,6 +1,6 @@
 module ConfigSpec (spec) where
 
-import Config.YamlConfig (defaultYamlConfig)
+import Config.YamlConfig (LedgerConfig (..), YamlConfig (..), defaultYamlConfig, validateYamlConfig)
 import Data.Text.Encoding as T
 import Data.Text.IO as TIO
 import Data.Yaml qualified as Yaml
@@ -19,3 +19,12 @@ spec = do
     it "encoding and then decoding results in the same config" do
       result <- Yaml.decodeThrow (Yaml.encode defaultYamlConfig)
       result `shouldBe` defaultYamlConfig
+
+    it "returns an error when md5 there are invalid md5 keys" do
+      let validKeys = validateYamlConfig $ defaultYamlConfig{ledger = defaultYamlConfig.ledger{md5 = ["purpose"]}}
+          hasInvalidKey = validateYamlConfig $ defaultYamlConfig{ledger = defaultYamlConfig.ledger{md5 = ["invalid", "purpose"]}}
+
+      validKeys `shouldBe` Nothing
+      hasInvalidKey
+        `shouldBe` Just
+          "md5 values are not valid: [\"invalid\"], only [\"amount\",\"currency\",\"posting\",\"payee\",\"purpose\"] are allowed"
