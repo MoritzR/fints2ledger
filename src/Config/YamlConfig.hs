@@ -14,6 +14,7 @@ module Config.YamlConfig (
 where
 
 import Config.Files (ConfigDirectory, getConfigFilePath)
+import Control.Exception (Exception, throwIO)
 import Data.Aeson as Aeson
 import Data.Map (Map)
 import Data.Map qualified as Map
@@ -89,7 +90,11 @@ instance Show Password where
   show = const "********"
 
 getYamlConfig :: ConfigDirectory -> IO YamlConfig
-getYamlConfig configDirectory = decodeFileThrow $ getConfigFilePath configDirectory
+getYamlConfig configDirectory = do
+  config <- decodeFileThrow $ getConfigFilePath configDirectory
+  case validateYamlConfig config of
+    Nothing -> return config
+    Just err -> throwIO $ ValidationException err
 
 allowedKeySet :: Set String
 allowedKeySet = Set.fromList ["amount", "currency", "posting", "payee", "purpose"]
@@ -126,3 +131,7 @@ defaultYamlConfig =
           , fills = []
           }
     }
+
+newtype ValidationException = ValidationException String deriving (Show)
+
+instance Exception ValidationException
