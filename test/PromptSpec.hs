@@ -8,6 +8,7 @@ import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Trans.Reader (ReaderT (runReaderT))
 import Data.IORef (modifyIORef, newIORef, readIORef)
 import Data.Map (empty, fromList)
+import Data.Text.Lazy qualified as TL
 import Data.Time.Calendar (Day (ModifiedJulianDay))
 import Prompt (transactionsToLedger)
 import Test.Syd (Spec, describe, it, shouldBe, shouldContain)
