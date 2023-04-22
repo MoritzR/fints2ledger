@@ -1,4 +1,2 @@
 allow "fills" to not be specified
 make the printed template map have a specific order
-
-test what happens when the user does not provide a required field like the account

@@ -69,6 +69,7 @@ getCliConfig = do
     info
       parser
       ( fullDesc
+          -- TODO fill in correct help text
           <> progDesc "Print a greeting for TARGET"
           <> header "hello - a test for optparse-applicative"
       )

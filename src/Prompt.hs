@@ -57,7 +57,7 @@ getMd5 :: LedgerConfig -> TemplateMap -> Text
 getMd5 ledgerConfig templateMap = calculateMd5Value md5Values
  where
   md5Keys = TL.pack <$> ledgerConfig.md5
-  -- TODO throw a meaningful error instead of using fromJust or make this state impossible
+  -- This is validated, so fromJust should not error. TODO: find a way to not use fromJust
   md5Values = fromJust . flip Map.lookup templateMap <$> md5Keys
 
 transactionToLedger :: Set Text -> String -> Transaction -> App ()
