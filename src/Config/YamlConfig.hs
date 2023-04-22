@@ -15,8 +15,9 @@ where
 
 import Config.Files (ConfigDirectory, getConfigFilePath)
 import Data.Aeson as Aeson
-import Data.Map (Map, fromList)
-import Data.Set (difference, isSubsetOf, toList)
+import Data.Map (Map)
+import Data.Map qualified as Map
+import Data.Set (Set, difference, isSubsetOf, toList)
 import Data.Set qualified as Set
 import Data.Text.Lazy (Text)
 import Data.Yaml (decodeFileThrow)
@@ -90,8 +91,8 @@ instance Show Password where
 getYamlConfig :: ConfigDirectory -> IO YamlConfig
 getYamlConfig configDirectory = decodeFileThrow $ getConfigFilePath configDirectory
 
-allowedKeys :: [String]
-allowedKeys = ["amount", "currency", "posting", "payee", "purpose"]
+allowedKeySet :: Set String
+allowedKeySet = Set.fromList ["amount", "currency", "posting", "payee", "purpose"]
 
 validateYamlConfig :: YamlConfig -> Maybe String
 validateYamlConfig yamlConfig = do
@@ -102,11 +103,10 @@ validateYamlConfig yamlConfig = do
         "md5 values are not valid: "
           <> (show . toList) (md5KeySet `difference` allowedKeySet)
           <> ", only "
-          <> show allowedKeys
+          <> (show . toList) allowedKeySet
           <> " are allowed"
  where
   md5KeySet = Set.fromList yamlConfig.ledger.md5
-  allowedKeySet = Set.fromList allowedKeys
 defaultYamlConfig :: YamlConfig
 defaultYamlConfig =
   YamlConfig
@@ -121,7 +121,7 @@ defaultYamlConfig =
     , ledger =
         LedgerConfig
           { prompts = ["creditAccount"]
-          , defaults = fromList [("debitAccount", "assets:bank:checking")]
+          , defaults = Map.fromList [("debitAccount", "assets:bank:checking")]
           , md5 = ["date", "payee", "purpose", "amount"]
           , fills = []
           }
