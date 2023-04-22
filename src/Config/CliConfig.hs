@@ -4,7 +4,7 @@ import Config.Files (ConfigDirectory, getDefaultConfigDirectory)
 import Data.Dates (DateTime, dateTimeToDay, getCurrentDateTime, parseDate)
 import Data.Time (Day, addDays)
 import Hledger (getCurrentDay)
-import Options.Applicative (Parser, ParserInfo, eitherReader, fullDesc, header, help, info, long, metavar, option, progDesc, short, showDefault, strOption, switch, value)
+import Options.Applicative (Parser, ParserInfo, eitherReader, fullDesc, header, help, helper, info, long, metavar, option, progDesc, short, showDefault, strOption, switch, value, (<**>))
 
 data CliConfig = CliConfig
   { configDirectory :: ConfigDirectory
@@ -18,7 +18,7 @@ configDirectoryOption :: ConfigDirectory -> Parser ConfigDirectory
 configDirectoryOption defaultDirectory =
   strOption $
     long "files-path"
-      <> help "directory where fints2ledger puts it's config files (like config.yml)"
+      <> help "directory where fints2ledger puts its config files (like config.yml)"
       <> metavar "PATH"
       <> showDefault
       <> value defaultDirectory
@@ -67,11 +67,9 @@ getCliConfig = do
   parser <- getCliParser
   return $
     info
-      parser
+      (parser <**> helper)
       ( fullDesc
-          -- TODO fill in correct help text
-          <> progDesc "Print a greeting for TARGET"
-          <> header "hello - a test for optparse-applicative"
+          <> progDesc "Convert banking transactions from a FinTS endpoint to a ledger journal."
       )
 
 mapLeft :: (a -> c) -> Either a b -> Either c b
