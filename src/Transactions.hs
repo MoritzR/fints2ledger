@@ -17,7 +17,9 @@ import Data.Aeson qualified as Aeson
 import Data.Text.Lazy (Text)
 import Data.Text.Lazy.Encoding qualified as TL
 import Data.Text.Lazy.IO qualified as TLIO
+import Data.Time (Day, defaultTimeLocale, formatTime)
 import GHC.Generics (Generic)
+import Hledger (getCurrentDay)
 import Paths_hsfints2ledger (getDataFileName)
 import System.Process.Typed (ExitCode (ExitFailure, ExitSuccess), readProcess, shell)
 import Utils (encodeAsString, orElseThrow, (??))
@@ -31,6 +33,7 @@ getExampleTransactions = do
 
 getTransactionsFromFinTS :: AppConfig -> IO [Transaction]
 getTransactionsFromFinTS config = do
+  currentDay <- getCurrentDay
   pyfintsFilePath <- getDataFileName "data/pyfints.py"
   let pyfintsArgs =
         PyFintsArguments
@@ -39,8 +42,8 @@ getTransactionsFromFinTS config = do
           , endpoint = config.fintsConfig.endpoint
           , selectedAccount = config.fintsConfig.selectedAccount ?? config.fintsConfig.account
           , password = config.fintsConfig.password
-          , start = "2023/03/01"
-          , end = "2023/04/01"
+          , start = formatDayForPython config.startDate
+          , end = formatDayForPython currentDay
           }
   let shellCommand =
         shell $
@@ -54,6 +57,9 @@ getTransactionsFromFinTS config = do
     ExitFailure _ -> do
       TLIO.putStrLn $ TL.decodeUtf8 stdErr
       throwIO $ PyFintsError "Failed to get FinTS transactions, check the message above."
+
+formatDayForPython :: Day -> String
+formatDayForPython = formatTime defaultTimeLocale "%Y/%m/%d"
 
 data PyFintsArguments = PyFintsArguments
   { account :: String
