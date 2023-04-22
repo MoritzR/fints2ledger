@@ -21,7 +21,7 @@ matches templateMap filling =
     "amount" ->
       let
         matchesAmount = runParser amountParser (TL.unpack regex) ?? const False
-        -- TODO check if this (!) can fail
+        -- TODO don't use unsafe (!)
         amount = read $ TL.unpack $ templateMap ! key
        in
         matchesAmount amount
