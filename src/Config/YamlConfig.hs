@@ -97,7 +97,7 @@ getYamlConfig configDirectory = do
     Just err -> throwIO $ ValidationException err
 
 allowedKeySet :: Set String
-allowedKeySet = Set.fromList ["amount", "currency", "posting", "payee", "purpose"]
+allowedKeySet = Set.fromList ["date", "amount", "currency", "posting", "payee", "purpose"]
 
 validateYamlConfig :: YamlConfig -> Maybe String
 validateYamlConfig yamlConfig = do
