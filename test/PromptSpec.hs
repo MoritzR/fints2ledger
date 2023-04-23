@@ -9,10 +9,12 @@ import Control.Monad.Trans.Reader (ReaderT (runReaderT))
 import Data.IORef (modifyIORef, newIORef, readIORef)
 import Data.Map (empty, fromList)
 import Data.Text.Lazy qualified as TL
+import Data.Text.Lazy.IO qualified as TLIO
 import Data.Time.Calendar (Day (ModifiedJulianDay))
 import Prompt (transactionsToLedger)
-import Test.Syd (Spec, describe, it, shouldBe, shouldContain)
+import Test.Syd (Spec, describe, it, shouldBe, shouldContain, goldenTextFile  )
 import Transactions (Amount (Amount), Transaction (..))
+import Data.List (isInfixOf)
 
 spec :: Spec
 spec = do
@@ -117,6 +119,23 @@ spec = do
 
       promptedFor `shouldBe` ["payee", "purpose"]
 
+  
+    it "matches the snapshot" do
+      let getSnapshot = do
+            ioRef <- newIORef ""
+            let env =
+                  testEnv
+                    { promptForEntry = \_templateMap _key -> do
+                        return $ Result "expenses:test",
+                      appendFile = \_filePath text -> modifyIORef ioRef (<> text)
+                    }
+
+            output <- runToLedger [testTransaction] env
+            putStrLn output
+            TL.toStrict <$> readIORef ioRef
+
+      goldenTextFile "test/files/snapshot.ledger" getSnapshot
+
 testConfig :: AppConfig
 testConfig =
   Config
@@ -127,9 +146,9 @@ testConfig =
     , fintsConfig = error "Tests should need a fintsConfig"
     , ledgerConfig =
         LedgerConfig
-          { defaults = empty
+          { defaults = fromList [("debitAccount", "assets:test")]
           , md5 = ["purpose"]
-          , prompts = []
+          , prompts = ["creditAccount"]
           , fills = []
           }
     , pythonExecutable = "echo \"echo python\""
@@ -152,7 +171,10 @@ testEnv =
     { config = testConfig
     , promptForEntry = \_templateMap _key -> return Skip
     , putStrLn = const $ return ()
-    , readFile = const $ return ""
+    , readFile = \path -> if "template.txt" `isInfixOf` path
+        then TLIO.readFile path
+        else return ""
+
     , appendFile = \_filePath _text -> return ()
     , sleep = return ()
     }
