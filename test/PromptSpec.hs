@@ -132,6 +132,7 @@ testConfig =
           , prompts = []
           , fills = []
           }
+    , pythonExecutable = "echo \"echo python\""
     }
 
 testTransaction :: Transaction
