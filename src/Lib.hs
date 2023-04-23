@@ -1,5 +1,5 @@
 module Lib (
-  someFunc,
+  runFints2Ledger,
 )
 where
 
@@ -23,8 +23,8 @@ import Transactions (getExampleTransactions, getTransactionsFromFinTS)
 import Utils (createFile)
 import Control.Concurrent (threadDelay)
 
-someFunc :: IO ()
-someFunc = do
+runFints2Ledger :: IO ()
+runFints2Ledger = do
   cliConfig <- execParser =<< getCliConfig
 
   runStartupChecks cliConfig
