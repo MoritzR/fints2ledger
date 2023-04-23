@@ -27,4 +27,4 @@ spec = do
       validKeys `shouldBe` Nothing
       hasInvalidKey
         `shouldBe` Just
-          "md5 values are not valid: [\"invalid\"], only [\"amount\",\"currency\",\"payee\",\"posting\",\"purpose\"] are allowed"
+          "md5 values are not valid: [\"invalid\"], only [\"amount\",\"currency\",\"date\",\"payee\",\"posting\",\"purpose\"] are allowed"
