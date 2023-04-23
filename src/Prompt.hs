@@ -8,10 +8,9 @@ import Control.Arrow ((>>>))
 import Control.Monad (forM_, when)
 import Control.Monad.IO.Class (MonadIO (liftIO))
 import Control.Monad.Trans.Reader (asks)
-import Data.Aeson.Encode.Pretty (encodePretty)
 import Data.Either (partitionEithers)
 import Data.Function ((&))
-import Data.Map (Map, fromList, insert, toList)
+import Data.Map (Map, fromList, insert, toList, (!?))
 import Data.Map qualified as Map
 import Data.Maybe (fromJust)
 import Data.Set (Set, notMember)
@@ -24,7 +23,7 @@ import GHC.Arr (Array, elems)
 import Matching.Matching (findMatch)
 import Text.Regex.TDFA (AllTextMatches (getAllTextMatches), (=~))
 import Transactions (Amount (..), Transaction (..))
-import Utils (byteStringToString, calculateMd5Value, formatDouble)
+import Utils (calculateMd5Value, formatDouble)
 import Prelude hiding (appendFile, putStrLn, readFile)
 
 -- a Map of key/value pairs that will be used to fill the template file
@@ -136,10 +135,18 @@ getExistingMd5Sums textToSearchIn =
 
 printTemplateMap :: TemplateMap -> App ()
 printTemplateMap templateMap = do
-  putStrLn <- asks (.putStrLn)
   printEmptyLine
   printEmptyLine
-  liftIO $ putStrLn $ byteStringToString $ encodePretty templateMap
+  -- TODO make these string type safe
+  let keysInOrder = ["date", "amount", "currency", "payee", "posting", "purpose", "creditAccount", "debitAccount"]
+  forM_ keysInOrder printIfPresent
+ where
+  printIfPresent key = do
+    case templateMap !? key of
+      Just s -> do
+        putStrLn <- asks (.putStrLn)
+        liftIO $ putStrLn $ TL.unpack $ "    " <> key <> ": " <> s
+      Nothing -> return ()
 
 printEmptyLine :: App ()
 printEmptyLine = do
