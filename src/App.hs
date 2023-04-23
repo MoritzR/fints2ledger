@@ -15,6 +15,7 @@ data Env = Env
   , readFile :: FilePath -> IO Text
   , appendFile :: FilePath -> Text -> IO ()
   , promptForEntry :: Map Text Text -> Text -> App (PromptResult Text)
+  , sleep :: IO ()
   }
 
 data PromptResult a = Result a | Skip deriving (Show)
