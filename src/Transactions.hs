@@ -49,7 +49,9 @@ getTransactionsFromFinTS config = do
         shell $
           "FINTS2LEDGER_ARGS='"
             ++ encodeAsString pyfintsArgs
-            ++ "' python3 "
+            ++ "' "
+            ++ config.pythonExecutable
+            ++ " "
             ++ pyfintsFilePath
   (exitCode, stdOut, stdErr) <- readProcess shellCommand
   case exitCode of
