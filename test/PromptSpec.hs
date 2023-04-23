@@ -154,6 +154,7 @@ testEnv =
     , putStrLn = const $ return ()
     , readFile = const $ return ""
     , appendFile = \_filePath _text -> return ()
+    , sleep = return ()
     }
 
 runToLedger :: [Transaction] -> Env -> IO String

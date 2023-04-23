@@ -21,6 +21,7 @@ import System.Console.Haskeline (getInputLine)
 import System.Directory (doesFileExist)
 import Transactions (getExampleTransactions, getTransactionsFromFinTS)
 import Utils (createFile)
+import Control.Concurrent (threadDelay)
 
 someFunc :: IO ()
 someFunc = do
@@ -45,6 +46,7 @@ someFunc = do
           , promptForEntry = promptForEntry
           , readFile = TLIO.readFile
           , appendFile = TLIO.appendFile
+          , sleep = threadDelay 500_000
           }
 
   runReaderT (transactionsToLedger transactions) env

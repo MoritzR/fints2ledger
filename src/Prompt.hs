@@ -26,7 +26,6 @@ import Text.Regex.TDFA (AllTextMatches (getAllTextMatches), (=~))
 import Transactions (Amount (..), Transaction (..))
 import Utils (byteStringToString, calculateMd5Value, formatDouble)
 import Prelude hiding (appendFile, putStrLn, readFile)
-import Control.Concurrent (threadDelay)
 
 -- a Map of key/value pairs that will be used to fill the template file
 type TemplateMap = Map Text Text
@@ -97,16 +96,15 @@ getPromptResultForMatchingEntry fill templateMap = do
           & partitionEithers
   -- TODO add a small delay and some output so that one can see what is filled in
 
-
   let templateMapWithFills = fromList fills <> templateMap
 
   printTemplateMap templateMapWithFills
 
-
   putStrLn <- asks (.putStrLn)
+  sleep <- asks (.sleep)
   forM_ fills \(key, value) -> do
     liftIO $ putStrLn $ TL.unpack key <> ": " <> TL.unpack value
-  liftIO $ threadDelay 500_000
+  liftIO $ sleep
 
   updateTemplateMapFromPrompts prompts templateMapWithFills
 
