@@ -4,13 +4,14 @@ import Config.Files (ConfigDirectory, getDefaultConfigDirectory)
 import Data.Dates (DateTime, dateTimeToDay, getCurrentDateTime, parseDate)
 import Data.Time (Day, addDays)
 import Hledger (getCurrentDay)
-import Options.Applicative (Parser, ParserInfo, eitherReader, fullDesc, header, help, helper, info, long, metavar, option, progDesc, short, showDefault, strOption, switch, value, (<**>))
+import Options.Applicative (Parser, ParserInfo, eitherReader, fullDesc, help, helper, info, long, metavar, option, progDesc, short, showDefault, strOption, switch, value, (<**>))
 
 data CliConfig = CliConfig
   { configDirectory :: ConfigDirectory
   , journalFile :: FilePath
   , startDate :: Day
   , isDemo :: Bool
+  , pythonExecutable :: String
   }
   deriving (Show)
 
@@ -50,6 +51,14 @@ demoOption =
     long "demo"
       <> help "runs with a sample set of transactions, without actually calling a FinTS endpoint"
 
+pythonExecutableOption :: Parser FilePath
+pythonExecutableOption =
+  strOption $
+    long "python-command"
+      <> help "command for running python"
+      <> showDefault
+      <> value "python3"
+
 getCliParser :: IO (Parser CliConfig)
 getCliParser = do
   defaultConfigDirectory <- getDefaultConfigDirectory
@@ -61,6 +70,7 @@ getCliParser = do
       <*> journalFileOption
       <*> startDateOption currentDateTime ninetyDaysAgo
       <*> demoOption
+      <*> pythonExecutableOption
 
 getCliConfig :: IO (ParserInfo CliConfig)
 getCliConfig = do
