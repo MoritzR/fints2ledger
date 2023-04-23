@@ -30,7 +30,6 @@ dependencies:
 - yaml # for parsing yaml
 - aeson # for json/yml parsing
 - bytestring # for the ByteString Type, used by Aeson
-- aeson-pretty # for json pretty printing
 - text # used by libraries instead of String
 - haskeline # for autocompleting inputs
 - hledger-lib # for autocompleting ledger accounts
