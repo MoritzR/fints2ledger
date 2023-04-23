@@ -103,8 +103,8 @@ getPromptResultForMatchingEntry fill templateMap = do
   putStrLn <- asks (.putStrLn)
   sleep <- asks (.sleep)
   forM_ fills \(key, value) -> do
-    liftIO $ putStrLn $ TL.unpack key <> ": " <> TL.unpack value
-  liftIO $ sleep
+    liftIO $ putStrLn $ "Set '" <> TL.unpack key <> "' to '" <> TL.unpack value <> "'"
+  liftIO sleep
 
   updateTemplateMapFromPrompts prompts templateMapWithFills
 
