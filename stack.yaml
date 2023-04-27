@@ -17,7 +17,7 @@
 #
 # resolver: ./custom-snapshot.yaml
 # resolver: https://example.com/snapshots/2018-01-01.yaml
-resolver: lts-20.17
+resolver: lts-20.18
 # resolver:
 #   url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/20/17.yaml
 
@@ -47,7 +47,9 @@ extra-deps:
   commit: a9bfaf0248aca1e3d3b872838ea74ecc54f04ed1
 
 # Override default flag values for local packages and extra-deps
-# flags: {}
+flags:
+  hsfints2ledger:
+    bundle_data_dir: true
 
 # Extra package databases containing global packages
 # extra-package-dbs: []
