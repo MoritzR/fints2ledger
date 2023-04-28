@@ -20,7 +20,7 @@ import Data.Text.Lazy.IO qualified as TLIO
 import Data.Time (Day, defaultTimeLocale, formatTime)
 import GHC.Generics (Generic)
 import Hledger (getCurrentDay)
-import Paths_hsfints2ledger (getDataFileName)
+import Paths_fints2ledger (getDataFileName)
 import System.Process.Typed (ExitCode (ExitFailure, ExitSuccess), readProcess, shell)
 import Utils (encodeAsString, orElseThrow, (??))
 

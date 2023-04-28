@@ -3,4 +3,4 @@ source-repository-package
   location: https://github.com/mdippery/dates.git
   tag: a9bfaf0248aca1e3d3b872838ea74ecc54f04ed1
 
-packages: ./hsfints2ledger.cabal
+packages: ./fints2ledger.cabal

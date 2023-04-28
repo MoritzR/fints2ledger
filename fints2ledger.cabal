@@ -4,11 +4,11 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 
-name:           hsfints2ledger
+name:           fints2ledger
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/hsfints2ledger#readme>
-homepage:       https://github.com/githubuser/hsfints2ledger#readme
-bug-reports:    https://github.com/githubuser/hsfints2ledger/issues
+description:    Please see the README on GitHub at <https://github.com/githubuser/fints2ledger#readme>
+homepage:       https://github.com/githubuser/fints2ledger#readme
+bug-reports:    https://github.com/githubuser/fints2ledger/issues
 author:         Author name here
 maintainer:     example@example.com
 copyright:      2023 Author name here
@@ -25,10 +25,10 @@ data-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/hsfints2ledger
+  location: https://github.com/githubuser/fints2ledger
 
 flag bundle_data_dir
-  description: blabla
+  description: Set the data dir to be relative to the executable for easier bundling
   manual: True
   default: False
 
@@ -49,7 +49,7 @@ library
       Transactions
       Utils
   other-modules:
-      Paths_hsfints2ledger
+      Paths_fints2ledger
   hs-source-dirs:
       src
   default-extensions:
@@ -81,9 +81,9 @@ library
     , yaml
   default-language: GHC2021
 
-executable hsfints2ledger-exe
+executable fints2ledger
   other-modules:
-      Paths_hsfints2ledger
+      Paths_fints2ledger
   hs-source-dirs:
       app
   default-extensions:
@@ -103,9 +103,9 @@ executable hsfints2ledger-exe
     , dates
     , directory
     , filepath
+    , fints2ledger
     , haskeline
     , hledger-lib >=1.27.1
-    , hsfints2ledger
     , optparse-applicative
     , regex-tdfa
     , text
@@ -120,7 +120,7 @@ executable hsfints2ledger-exe
   else
     main-is: Main.hs
 
-test-suite hsfints2ledger-test
+test-suite fints2ledger-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
@@ -130,7 +130,7 @@ test-suite hsfints2ledger-test
       PromptSpec
       TransactionSpec
       UtilsSpec
-      Paths_hsfints2ledger
+      Paths_fints2ledger
   hs-source-dirs:
       test
   default-extensions:
@@ -151,9 +151,9 @@ test-suite hsfints2ledger-test
     , dates
     , directory
     , filepath
+    , fints2ledger
     , haskeline
     , hledger-lib >=1.27.1
-    , hsfints2ledger
     , optparse-applicative
     , regex-tdfa
     , sydtest

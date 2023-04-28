@@ -3,7 +3,7 @@
 module Config.Files (getDefaultConfigDirectory, getConfigFilePath, getTemplatePath, ConfigDirectory (..)) where
 
 import Data.String (IsString)
-import Paths_hsfints2ledger (getDataFileName)
+import Paths_fints2ledger (getDataFileName)
 import System.Directory (getHomeDirectory)
 import System.FilePath ((</>))
 

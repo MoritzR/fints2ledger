@@ -1,6 +1,6 @@
-name:                hsfints2ledger
+name:                fints2ledger
 version:             0.1.0.0
-github:              "githubuser/hsfints2ledger"
+github:              "githubuser/fints2ledger"
 license:             BSD3
 author:              "Author name here"
 maintainer:          "example@example.com"
@@ -20,7 +20,7 @@ data-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/githubuser/hsfints2ledger#readme>
+description:         Please see the README on GitHub at <https://github.com/githubuser/fints2ledger#readme>
 
 dependencies:
 - base >= 4.7 && < 5
@@ -68,7 +68,7 @@ library:
   source-dirs: src
 
 executables:
-  hsfints2ledger-exe:
+  fints2ledger:
     when:
     - condition: (flag(bundle_data_dir))
       then:
@@ -81,10 +81,10 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - hsfints2ledger
+    - fints2ledger
 
 tests:
-  hsfints2ledger-test:
+  fints2ledger-test:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
@@ -92,13 +92,13 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - hsfints2ledger
+    - fints2ledger
     - sydtest # testing library
     - sydtest-discover # automatic test discovery
     - QuickCheck # property based testing library
 
 flags:
   bundle_data_dir:
-    description: blabla
+    description: Set the data dir to be relative to the executable for easier bundling
     default: false
     manual: true
