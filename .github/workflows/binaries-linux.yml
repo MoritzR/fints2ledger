@@ -5,10 +5,13 @@ on:
     branches: [ hs ]
   workflow_dispatch:
 
+
+permissions:
+  contents: read
+
 jobs:
-  build:
+  linux:
     runs-on: ubuntu-latest
-    container: alpine:edge
     steps:
 
     - name: Check out
@@ -32,51 +35,25 @@ jobs:
         restore-keys: |
              ${{ runner.os }}-cabal
 
-    - name: Install general tools with system package manager
+    - name: Install ghc
       run: |
-        apk --no-cache add binutils-gold curl gcc g++ git gmp-dev ncurses-dev ncurses-static libffi-dev make xz tar perl zlib-dev zlib-static
+        ghcup install ghc --set 9.2.7
 
-    - name: Add .ghcup/bin to PATH for following steps
+    - name: Install dependencies
       run: |
-        echo "$HOME/.ghcup/bin/" >> $GITHUB_PATH
+          ghc --version
+          cabal --version
+          cabal update
+          cabal build --dependencies-only
 
-    - name: Install haskell tools with ghcup if needed
-      # originally based on fossas/haskell-static-alpine
+    - name: Build and install artifact
       run: |
-        if [[ ! -x ~/.ghcup/bin/ghcup ]]; then
-          mkdir -p ~/.ghcup/bin && curl https://downloads.haskell.org/~ghcup/x86_64-linux-ghcup > ~/.ghcup/bin/ghcup && chmod +x ~/.ghcup/bin/ghcup
-        fi
-        ghcup --version
-        if [[ ! -x ~/.ghcup/bin/ghc-9.2.7 ]]; then
-          ~/.ghcup/bin/ghcup install ghc 9.2.7 && ~/.ghcup/bin/ghcup set ghc 9.2.7
-        fi
-        ghc --version
-        if [[ ! -x ~/.ghcup/bin/cabal-3.8.1.0 ]]; then
-          ~/.ghcup/bin/ghcup install cabal 3.8.1.0 && ~/.ghcup/bin/ghcup set cabal 3.8.1.0
-        fi
-        cabal --version
+          export ARTIFACTS=linux/hsfints2ledger
+          mkdir -p ${ARTIFACTS}
+          cabal install --installdir="${ARTIFACTS}" --install-method=copy --enable-executable-static -fbundle_data_dir 
+          strip "${ARTIFACTS}/hsfints2ledger-exe"
 
-    - name: Update cabal package index
-      run: |
-        cabal update
-
-    - name: Build on alpine
-      run: |
-        cabal build -fbundle_data_dir --enable-executable-static hsfints2ledger-exe || (echo "ERROR: building fints2ledger failed"; false)
-
-    - name: Gather binaries
-      run: |
-        mkdir tmp
-        cp dist-newstyle/build/x86_64-linux/ghc-*/hsfints2ledger-*/x/hsfints2ledger-exe/build/hsfints2ledger-exe/hsfints2ledger-exe tmp
-        cp -r data tmp/data
-        cd tmp
-        tar cvf fints2ledger-linux-x64.tar *
-
-    # upload-artifact loses execute permissions, so we tar the binaries to preserve them.
-    # github UI always zips artifacts when they are downloaded, so we don't bother compressing the tar.
-    # Unfortunately it means users must both unzip and untar.
-    - name: Upload binaries
-      uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v3
       with:
-        name: fints2ledger-linux-x64
-        path: tmp/fints2ledger-linux-x64.tar
+        name: linux
+        path: linux
