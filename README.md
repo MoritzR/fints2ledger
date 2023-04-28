@@ -14,37 +14,22 @@ A tool for downloading transactions from FinTS banking APIs and sorting them int
 - [Changelog](#changelog)
 
 ## Install
-
+You need Python version 3.6 or higher. Install the Python dependencies using:
 ```
-pip install --upgrade fints2ledger
+python3 -m pip install "fints>=3,<4" "mt-940>=4.11,<5"
 ```
 
-Create config file at `~/.config/fints2ledger/config.yml` file with the following contents and replace values in the fints category:
-(This file will also be automatically created if missing)
-```
-fints:
-  blz: "<your bank's BLZ>"
-  account: "<your account number>"
-  password: "<your banking password>  (set to empty string if you prefer being prompted)"
-  endpoint: <your bank fints endpoint> # e.g.: https://fints.ing.de/fints for ING
-  selectedAccount: "<account number>" # defaults to the value from "account"
-                                      # useful when you have multiple accounts for the same login
+Next, you can install fints2ledger either from a pre-built binary or from source.
 
-ledger:
-  prompts:
-    - credit_account
-    - debit_account
-  autocomplete:
-    accounts:
-      - credit_account
-      - debit_account
-  defaults:
-    debit_account: assets:bank:checking
-  md5:
-    - date
-    - payee
-    - purpose
-    - amount
+### from a pre-built binary
+Simply grab the package from the [releases page](https://github.com/MoritzR/fints2ledger/releases)
+
+### from source
+For the you need stack installed (or alternatively cabal). Then run
+```
+git clone git@github.com:MoritzR/fints2ledger.git
+cd fints2ledger
+stack install
 ```
 
 ## Usage
@@ -93,27 +78,6 @@ optional arguments:
 
 ```
 
-### Template File
-A template file with the name `template.txt` will be automatically generated. It will be user to create the ledger entries.
-It looks something like
-```
-{date} {payee} {posting} {purpose}
-    ; md5sum: {md5sum}
-    {debit_account:<60}    {currency} {debit}
-    {credit_account:<60}    {currency} {credit}
-
-```
-Each name inside curly brackets can specify a value that can come from either a named csv column, a default value (from the `config.yml`) or an input prompt (also from the `config.yml`).
-
-If you use [beancount](https://beancount.github.io) instead of (h)ledger use this template instead:
-
-```
-{date} txn "{payee} {posting} {purpose}"
-    ; md5sum: {md5sum}
-    {debit_account:<60}   {debit} {currency}
-    {credit_account:<60}   {credit} {currency}
-```
-
 ### Automatically matching transactions
 In the `ledger` category you can use a regex match on any field of the transaction data to automatically fill other fields.
 
@@ -133,32 +97,6 @@ ledger:
       fill:
         credit_account: "expenses:monthly:musiccompany"
         purpose: "Monthly fee for music streaming"
-```
-
-### Converting from csv to ledger without requesting a FinTS API
-With the argument `--no-csv` the program will not create a csv file with banking transactions itself (default is fints -> csv -> ledger).
-Instead, it will convert directly from a csv file to ledger. This is useful when all transactions have already been downloaded or when converting from another source than FinTS to ledger.
-
-The csv file must provide a headline which names the columns. The column names are then used to fill the values in the template file.
-Example:
-```
-date;amount;currency;payee;posting;purpose
-2017/04/26;167.31;EUR;Billy, Bill;bonus;for vacation
-2017/04/27;-130;EUR;John, Smith;debit entry;monthly electricity payment
-```
-
-## Developing
-You can modify the code yourself and run it with:
-```
-git clone https://github.com/MoritzR/fints2ledger.git
-cd fints2ledger
-python fints2ledger/main.py
-```
-
-You can run the tests with:
-```
-pip install green
-green
 ```
 
 ## Changelog
