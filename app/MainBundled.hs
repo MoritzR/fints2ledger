@@ -6,5 +6,5 @@ import Lib
 
 main :: IO ()
 main = do
-    setEnv "hsfints2ledger_datadir" =<< (takeDirectory <$> getExecutablePath)
+    setEnv "fints2ledger_datadir" =<< (takeDirectory <$> getExecutablePath)
     runFints2Ledger

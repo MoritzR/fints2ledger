@@ -48,10 +48,10 @@ jobs:
 
     - name: Build and install artifact
       run: |
-          export ARTIFACTS=linux/hsfints2ledger
+          export ARTIFACTS=linux/fints2ledger
           mkdir -p ${ARTIFACTS}
           cabal install --installdir="${ARTIFACTS}" --install-method=copy --enable-executable-static -fbundle_data_dir 
-          strip "${ARTIFACTS}/hsfints2ledger-exe"
+          strip "${ARTIFACTS}/fints2ledger"
 
     - uses: actions/upload-artifact@v3
       with:
