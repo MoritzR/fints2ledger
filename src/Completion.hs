@@ -16,7 +16,7 @@ import Utils ((??))
 runCompletion :: AppConfig -> Text -> (forall a. InputT IO a -> IO a)
 runCompletion config key
   -- make this elem check more robust to renames
-  | key `elem` ["creditAccount", "debitAccount"] = runWithAccountCompletion config
+  | key `elem` ["credit_account", "debit_account"] = runWithAccountCompletion config
   | otherwise = runWithNoCompletion
 
 getCompletions :: Journal -> String -> [Completion]

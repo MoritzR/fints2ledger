@@ -35,7 +35,7 @@ spec = do
                   testConfig
                     { ledgerConfig =
                         testConfig.ledgerConfig
-                          { defaults = fromList [("debitAccount", "assets:bank:checking")]
+                          { defaults = fromList [("debit_account", "assets:bank:checking")]
                           }
                     }
               }
@@ -146,9 +146,9 @@ testConfig =
     , fintsConfig = error "Tests should need a fintsConfig"
     , ledgerConfig =
         LedgerConfig
-          { defaults = fromList [("debitAccount", "assets:test")]
+          { defaults = fromList [("debit_account", "assets:test")]
           , md5 = ["purpose"]
-          , prompts = ["creditAccount"]
+          , prompts = ["credit_account"]
           , fills = []
           }
     , pythonExecutable = "echo \"echo python\""

@@ -66,7 +66,7 @@ fints2ledger --help
 ### Automatically matching transactions
 In the `ledger` category you can use a regex match on any field of the transaction data to automatically fill other fields.
 
-Example: I do not want to enter a `creditAccount` and `purpose` for my monthly recurring payments for the rent of my apartment. Same for my music streaming transactions. I can change the `config.yml` like this:
+Example: I do not want to enter a `credit_account` and `purpose` for my monthly recurring payments for the rent of my apartment. Same for my music streaming transactions. I can change the `config.yml` like this:
 ```
 ledger:
   ...
@@ -75,12 +75,12 @@ ledger:
         payee: "The Landlord"
         purpose: "Rent for apartment B month.*"
       fill:
-        creditAccount: "expenses:monthly:rent"
+        credit_account: "expenses:monthly:rent"
         purpose: "monthly rent"
     - match:
         payee: "MUSIC COMPANY 123"
       fill:
-        creditAccount: "expenses:monthly:musiccompany"
+        credit_account: "expenses:monthly:musiccompany"
         purpose: "Monthly fee for music streaming"
 ```
 
