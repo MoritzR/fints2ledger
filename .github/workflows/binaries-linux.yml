@@ -50,7 +50,7 @@ jobs:
       run: |
           export ARTIFACTS=linux/fints2ledger
           mkdir -p ${ARTIFACTS}
-          cp dist-newstyle/build/x86_64-linux/ghc-*/fints2ledger-*/x/fints2ledger/build/fints2ledger/fints2ledger ${ARTIFACTS}
+          cabal install --installdir="${ARTIFACTS}" --install-method=copy --enable-executable-static -fbundle_data_dir 
           strip "${ARTIFACTS}/fints2ledger"
 
     - uses: actions/upload-artifact@v3
