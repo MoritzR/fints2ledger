@@ -32,9 +32,15 @@ type TemplateMap = Map Text Text
 transactionsToLedger :: [Transaction] -> App ()
 transactionsToLedger transactions = do
   config <- asks (.config)
+  putStrLn <- asks (.putStrLn)
   readFile <- asks (.readFile)
   existingMd5Sums <- getExistingMd5Sums <$> liftIO (readFile config.journalFile)
   template <- liftIO $ readFile =<< getTemplatePath
+
+  liftIO $ putStrLn "        Controls:"
+  liftIO $ putStrLn "            - Ctrl + D or enter 's' to skip an entry:"
+  liftIO $ putStrLn "            - Ctrl + C to abort:"
+
   forM_ transactions do
     transactionToLedger existingMd5Sums (TL.unpack template)
 
