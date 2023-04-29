@@ -22,7 +22,8 @@ pip3 install "fints>=3,<4" "mt-940>=4.11,<5"
 Next, you can install fints2ledger either from a pre-built binary or from source.
 
 ### from a pre-built binary
-Simply grab the package from the [releases page](https://github.com/MoritzR/fints2ledger/releases)
+Simply grab the package from the [releases page](https://github.com/MoritzR/fints2ledger/releases).
+On Linux, don't forget to make the binary executable with `chmod +x fints2ledger`.
 
 ### from source
 For this you need [stack](https://docs.haskellstack.org/en/stable/#how-to-install-stack) installed (or alternatively [cabal](https://www.haskell.org/cabal/#install-upgrade)). Then run
