@@ -5,7 +5,7 @@ A tool for downloading transactions from FinTS banking APIs and sorting them int
 
 [pyfints](https://github.com/raphaelm/python-fints) is used to download the transactions. A list of compatible banks can be found there. This tool was tested with [ING][ing-link] and [GLS Bank][gls-link].
 
-![](demo.gif)
+![](demo.webm)
 
 ## Contents
 - [Install](#install)
