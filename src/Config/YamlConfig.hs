@@ -125,8 +125,8 @@ defaultYamlConfig =
           }
     , ledger =
         LedgerConfig
-          { prompts = ["creditAccount"]
-          , defaults = Map.fromList [("debitAccount", "assets:bank:checking")]
+          { prompts = ["credit_account"]
+          , defaults = Map.fromList [("debit_account", "assets:bank:checking")]
           , md5 = ["date", "payee", "purpose", "amount"]
           , fills = []
           }

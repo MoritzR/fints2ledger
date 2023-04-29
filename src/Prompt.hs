@@ -78,8 +78,21 @@ transactionToLedger existingMd5Sums template transaction = do
               templateMapWithUserInputs
                 & insert "md5sum" md5Sum
                 & insertCreditDebit transaction
+                & insertAccountsWithUnderscore
         let renderedTemplate = format (fromString template) templateMapFinal
         liftIO $ appendFile config.journalFile $ "\n\n" <> renderedTemplate
+
+-- This in needed because the library for the template rendering doesn't accept underscores
+insertAccountsWithUnderscore :: TemplateMap -> TemplateMap
+insertAccountsWithUnderscore templateMap = case (maybeCreditAccount, maybeDebitAccount) of
+  (Just creditAccount, Just debitAccount) ->
+    templateMap
+      & insert "creditAccount" creditAccount
+      & insert "debitAccount" debitAccount
+  _ -> templateMap
+ where
+  maybeCreditAccount = templateMap !? "creditAccount"
+  maybeDebitAccount = templateMap !? "debitAccount"
 
 getPromptResultForMatchingEntry :: Fill -> TemplateMap -> App (PromptResult TemplateMap)
 getPromptResultForMatchingEntry fill templateMap = do
@@ -139,7 +152,7 @@ printTemplateMap templateMap = do
   printEmptyLine
   printEmptyLine
   -- TODO make these string type safe
-  let keysInOrder = ["date", "amount", "currency", "payee", "posting", "purpose", "creditAccount", "debitAccount"]
+  let keysInOrder = ["date", "amount", "currency", "payee", "posting", "purpose", "credit_account", "debit_account"]
   forM_ keysInOrder printIfPresent
  where
   printIfPresent key = do

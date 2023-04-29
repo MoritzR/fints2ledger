@@ -5,7 +5,7 @@ fints:
   password: <your banking password>
 ledger:
   defaults:
-    debitAccount: assets:bank:checking
+    debit_account: assets:bank:checking
   fills: []
   md5:
   - date
@@ -13,4 +13,4 @@ ledger:
   - purpose
   - amount
   prompts:
-  - creditAccount
+  - credit_account
