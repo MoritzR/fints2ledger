@@ -38,8 +38,8 @@ transactionsToLedger transactions = do
   template <- liftIO $ readFile =<< getTemplatePath
 
   liftIO $ putStrLn "        Controls:"
-  liftIO $ putStrLn "            - Ctrl + D or enter 's' to skip an entry:"
-  liftIO $ putStrLn "            - Ctrl + C to abort:"
+  liftIO $ putStrLn "            - Ctrl + D or enter 's' to skip an entry"
+  liftIO $ putStrLn "            - Ctrl + C to abort"
 
   forM_ transactions do
     transactionToLedger existingMd5Sums (TL.unpack template)
@@ -90,15 +90,14 @@ transactionToLedger existingMd5Sums template transaction = do
 
 -- This in needed because the library for the template rendering doesn't accept underscores
 insertAccountsWithUnderscore :: TemplateMap -> TemplateMap
-insertAccountsWithUnderscore templateMap = case (maybeCreditAccount, maybeDebitAccount) of
-  (Just creditAccount, Just debitAccount) ->
-    templateMap
-      & insert "creditAccount" creditAccount
-      & insert "debitAccount" debitAccount
-  _ -> templateMap
+insertAccountsWithUnderscore templateMap =
+  templateMap
+    & maybeInsert "creditAccount" maybeCreditAccount
+    & maybeInsert "debitAccount" maybeDebitAccount
  where
-  maybeCreditAccount = templateMap !? "creditAccount"
-  maybeDebitAccount = templateMap !? "debitAccount"
+  maybeCreditAccount = templateMap !? "credit_account"
+  maybeDebitAccount = templateMap !? "debit_account"
+  maybeInsert key maybeValue theMap = maybe theMap (\value -> insert key value theMap) maybeValue
 
 getPromptResultForMatchingEntry :: Fill -> TemplateMap -> App (PromptResult TemplateMap)
 getPromptResultForMatchingEntry fill templateMap = do
