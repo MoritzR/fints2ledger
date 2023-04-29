@@ -17,24 +17,6 @@ jobs:
     - name: Check out
       uses: actions/checkout@v3
 
-    - name: Cache ghcup-installed tools
-      id:   ghcup
-      uses: actions/cache@v3
-      with:
-        path: ~/.ghcup
-        key: ${{ runner.os }}-ghcup-${{ hashFiles('**.yaml') }}
-        restore-keys: |
-             ${{ runner.os }}-ghcup
-
-    - name: Cache cabal-installed libs
-      id:   cabal
-      uses: actions/cache@v3
-      with:
-        path: ~/.cabal
-        key: ${{ runner.os }}-cabal-${{ hashFiles('**.yaml') }}
-        restore-keys: |
-             ${{ runner.os }}-cabal
-
     - name: Install ghc
       run: |
         ghcup install ghc --set 9.2.7
