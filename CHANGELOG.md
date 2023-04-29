@@ -1,3 +1,12 @@
+## 1.0.0
+* The new `--demo` flag allows one to try out fints2ledger without actually calling a banking API. Dummy transactions are used instead.
+* The `fills` key in the `config.yml` is no longer optional. At least an empty array must be specified.
+* `template.txt` in the config directory is no longer in use and can be removed. The previous version did not pick this up correctly and instead used the default template.
+* `*.auto` files are no longer in use. Credit and debit account will instead be autocompleted based on the ledger file that is passed in. This means that all existing accounts will be picked up in the autocompletion without having to add them to the `.auto` file first. This also means that other won't have any autocompletion anymore (if this was enabled by the user previously).
+* The prompt output is now slightly nicer (less `"` and `{}`)
+* The program should run properly on windows now
+* The installation process requires more steps now. Most of the program is now run as a binary, while the banking API is still accessed through the fints python library.
+
 ## 0.8.2
 
 * pyfints was updated to the current version 4
