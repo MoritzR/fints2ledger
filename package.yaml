@@ -69,13 +69,13 @@ library:
 
 executables:
   fints2ledger:
+    main: Main.hs
     when:
     - condition: (flag(bundle_data_dir))
       then:
-        main: MainBundled.hs
+        source-dirs: app/bundled
       else:
-        main: Main.hs
-    source-dirs:         app
+        source-dirs: app/default
     ghc-options:
     - -threaded
     - -rtsopts
