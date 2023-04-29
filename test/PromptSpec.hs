@@ -7,14 +7,14 @@ import Control.Monad (join)
 import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Trans.Reader (ReaderT (runReaderT))
 import Data.IORef (modifyIORef, newIORef, readIORef)
+import Data.List (isInfixOf)
 import Data.Map (empty, fromList)
 import Data.Text.Lazy qualified as TL
 import Data.Text.Lazy.IO qualified as TLIO
 import Data.Time.Calendar (Day (ModifiedJulianDay))
 import Prompt (transactionsToLedger)
-import Test.Syd (Spec, describe, it, shouldBe, shouldContain, goldenTextFile  )
+import Test.Syd (Spec, describe, goldenTextFile, it, shouldBe, shouldContain)
 import Transactions (Amount (Amount), Transaction (..))
-import Data.List (isInfixOf)
 
 spec :: Spec
 spec = do
@@ -62,12 +62,18 @@ spec = do
       output `shouldContain` "automatically filled in purpose"
 
     it "skips entries that have their md5 already in the journal" do
+      ioRef <- newIORef []
       let env =
             testEnv
               { readFile = const $ return "; md5sum: 5abd61b9de15c3115519a5f1b4ac7992"
+              , promptForEntry = \_templateMap key -> do
+                  liftIO $ modifyIORef ioRef (++ [key])
+                  return $ Result "test input"
               }
-      output <- runToLedger [testTransaction] env
-      output `shouldBe` []
+      runReaderT (transactionsToLedger [testTransaction]) env
+      promptedFor <- readIORef ioRef
+
+      promptedFor `shouldBe` []
 
     it "doesn't prompt for entries that are autofilled" do
       ioRef <- newIORef []
@@ -119,15 +125,14 @@ spec = do
 
       promptedFor `shouldBe` ["payee", "purpose"]
 
-  
     it "matches the snapshot" do
       let getSnapshot = do
             ioRef <- newIORef ""
             let env =
                   testEnv
                     { promptForEntry = \_templateMap _key -> do
-                        return $ Result "expenses:test",
-                      appendFile = \_filePath text -> modifyIORef ioRef (<> text)
+                        return $ Result "expenses:test"
+                    , appendFile = \_filePath text -> modifyIORef ioRef (<> text)
                     }
 
             output <- runToLedger [testTransaction] env
@@ -171,10 +176,10 @@ testEnv =
     { config = testConfig
     , promptForEntry = \_templateMap _key -> return Skip
     , putStrLn = const $ return ()
-    , readFile = \path -> if "template.txt" `isInfixOf` path
-        then TLIO.readFile path
-        else return ""
-
+    , readFile = \path ->
+        if "template.txt" `isInfixOf` path
+          then TLIO.readFile path
+          else return ""
     , appendFile = \_filePath _text -> return ()
     , sleep = return ()
     }
