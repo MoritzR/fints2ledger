@@ -1,5 +1,5 @@
 # fints2ledger
-[![Build Status](https://github.com/MoritzR/fints2ledger/actions/workflows/main.yml/badge.svg)](https://github.com/MoritzR/fints2ledger/actions) [![Coverage Status](https://coveralls.io/repos/github/MoritzR/fints2ledger/badge.svg?branch=master)](https://coveralls.io/github/MoritzR/fints2ledger?branch=master) [![PyPI version](https://badge.fury.io/py/fints2ledger.svg)](https://badge.fury.io/py/fints2ledger) [![languages](https://img.shields.io/pypi/pyversions/fints2ledger.svg)](https://pypi.org/project/fints2ledger)
+[![Build Status](https://github.com/MoritzR/fints2ledger/actions/workflows/main.yml/badge.svg)](https://github.com/MoritzR/fints2ledger/actions) [![languages](https://img.shields.io/pypi/pyversions/fints.svg)](https://pypi.org/project/fints)
 
 A tool for downloading transactions from FinTS banking APIs and sorting them into a [ledger journal](http://hledger.org/).
 
@@ -16,7 +16,7 @@ A tool for downloading transactions from FinTS banking APIs and sorting them int
 ## Install
 You need Python version 3.6 or higher. Install the Python dependencies using:
 ```
-python3 -m pip install "fints>=3,<4" "mt-940>=4.11,<5"
+pip3 install "fints>=3,<4" "mt-940>=4.11,<5"
 ```
 
 Next, you can install fints2ledger either from a pre-built binary or from source.
@@ -25,63 +25,47 @@ Next, you can install fints2ledger either from a pre-built binary or from source
 Simply grab the package from the [releases page](https://github.com/MoritzR/fints2ledger/releases)
 
 ### from source
-For the you need stack installed (or alternatively cabal). Then run
+For this you need [stack](https://docs.haskellstack.org/en/stable/#how-to-install-stack) installed (or alternatively [cabal](https://www.haskell.org/cabal/#install-upgrade)). Then run
 ```
 git clone git@github.com:MoritzR/fints2ledger.git
 cd fints2ledger
 stack install
 ```
+This might take a while.
 
 ## Usage
-Run
+You can try out the program with the `demo` flag, which does not call any banking API.
+```
+fints2ledger --demo
+```
+
+Next, go to your config to the newly created config file (default `~/.config/fints2ledger/config.yml`) and update your baning credentials in the `fints` section:
+```
+fints:
+  blz: "<your bank's BLZ>"
+  account: "<your account number>"
+  password: "<your banking password>"
+  endpoint: <your bank fints endpoint> # e.g.: https://fints.ing.de/fints for ING
+  selectedAccount: "<account number>" # defaults to the value from "account"
+                                      # useful when you have multiple accounts for the same login
+```
+
+When you are done, run
 ```
 fints2ledger
 ```
-This will download the transactions from the last year and tries to convert them to a ledger journal.
 
-A list of available command line arguments:
+This will download the transactions from the 90 days (by default) and tries to convert them to a ledger journal.
+
+For a list of available command line arguments, run
 ```
-usage: fints2ledger [-h] [--no-csv] [--no-ledger] [--csv-file CSVFILE]
-                    [--ledger-file LEDGERFILE] [--files-path FILES_PATH]
-                    [--date START] [--separator SEPARATOR]
-                    [--csv_date_format CSV_DATE_FORMAT]
-
-Converting transactions from fints apis to ledger.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --no-csv              exclude conversion from fints to csv (default: not
-                        excluded)
-  --no-ledger           exclude conversion from csv to ledger (default: not
-                        excluded)
-  --csv-file CSVFILE    file to store/load csv transactions to/from (default:
-                        transactions.csv)
-  --ledger-file LEDGERFILE
-                        file to store ledger entries to (default:
-                        ledger.journal)
-  --files-path FILES_PATH
-                        directory to store fints2ledger files (like
-                        config.yml) (default: ~/.config/fints2ledger/)
-  --date START          start date to pull the FinTS entries from (format:
-                        2017/12/31 or 17/12/31, default: last year)
-  --separator SEPARATOR
-                        character used as separator in csv file (default: ;)
-  --csv_date_format CSV_DATE_FORMAT
-                        Date format used in the donwloaded csv (and
-                        subsequently the ledger file). hledger supports 3 date
-                        formats (https://hledger.org/1.9/journal.html#simple-
-                        dates). Format needs to be compatible with pythons
-                        strftime(), see https://docs.python.org/3/library/date
-                        time.html#strftime-strptime-behavior
-                        (fints.csv_date_format in config.yml) (default:
-                        %Y/%m/%d)
-
+fints2ledger --help
 ```
 
 ### Automatically matching transactions
 In the `ledger` category you can use a regex match on any field of the transaction data to automatically fill other fields.
 
-Example: I do not want to enter a `credit_account` and `purpose` for my monthly recurring payments for the rent of my apartment. Same for my music streaming transactions. I can change the `config.yml` like this:
+Example: I do not want to enter a `creditAccount` and `purpose` for my monthly recurring payments for the rent of my apartment. Same for my music streaming transactions. I can change the `config.yml` like this:
 ```
 ledger:
   ...
@@ -90,12 +74,12 @@ ledger:
         payee: "The Landlord"
         purpose: "Rent for apartment B month.*"
       fill:
-        credit_account: "expenses:monthly:rent"
+        creditAccount: "expenses:monthly:rent"
         purpose: "monthly rent"
     - match:
         payee: "MUSIC COMPANY 123"
       fill:
-        credit_account: "expenses:monthly:musiccompany"
+        creditAccount: "expenses:monthly:musiccompany"
         purpose: "Monthly fee for music streaming"
 ```
 
