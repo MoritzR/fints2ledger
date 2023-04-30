@@ -111,8 +111,6 @@ getPromptResultForMatchingEntry fill templateMap = do
                   Nothing -> Left key
             )
           & partitionEithers
-  -- TODO add a small delay and some output so that one can see what is filled in
-
   let templateMapWithFills = fromList fills <> templateMap
 
   printTemplateMap templateMapWithFills
