@@ -30,7 +30,7 @@ jobs:
 
     - name: Build and install artifact
       run: |
-          export ARTIFACTS=linux/fints2ledger
+          export ARTIFACTS=linux-x64/fints2ledger
           mkdir -p ${ARTIFACTS}
           cabal install --installdir="${ARTIFACTS}" --install-method=copy --enable-executable-static -fbundle_data_dir 
           strip "${ARTIFACTS}/fints2ledger"
@@ -38,5 +38,81 @@ jobs:
 
     - uses: actions/upload-artifact@v3
       with:
-        name: linux
-        path: linux
+        name: linux-x64
+        path: linux-x64
+
+  macos:
+    runs-on: macos-latest
+    steps:
+
+    - name: Check out
+      uses: actions/checkout@v3
+
+    - name: Cache stack global package db
+      id:   stack-global
+      uses: actions/cache@v3
+      with:
+        path: ~/.stack
+        key: ${{ runner.os }}-stack-global-from20220817-${{ hashFiles('**.yaml') }}
+        restore-keys: |
+             ${{ runner.os }}-stack-global-from20220817
+
+    - name: Cache stack-installed programs in ~/.local/bin
+      id:   stack-programs
+      uses: actions/cache@v3
+      with:
+        path: ~/.local/bin
+        key: ${{ runner.os }}-stack-programs-from20220817-${{ hashFiles('**.yaml') }}
+        restore-keys: |
+             ${{ runner.os }}-stack-programs-from20220817
+
+    - name: Cache .stack-work
+      uses: actions/cache@v3
+      with:
+        path: .stack-work
+        key: ${{ runner.os }}-stack-work-from20220817-${{ hashFiles('**.yaml') }}
+        restore-keys: |
+             ${{ runner.os }}-stack-work-from20220817
+
+    - name: Cache fints2ledger/.stack-work
+      uses: actions/cache@v3
+      with:
+        path: fints2ledger/.stack-work
+        key: ${{ runner.os }}-fints2ledger-stack-work-from20220817-${{ hashFiles('fints2ledger/package.yaml') }}
+        restore-keys: |
+             ${{ runner.os }}-fints2ledger-stack-work-from20220817
+
+    - uses: haskell/actions/setup@v1.2
+      name: Setup Haskell Stack
+      with:
+        ghc-version: '9.2.7'
+        enable-stack: true
+
+    - name: Install haskell deps
+      run: |
+        stack build --test --only-dependencies
+
+    # - name: Build fints2ledger
+    #   run: |
+    #     $stack install --test --force-dirty --ghc-options=-fforce-recomp --ghc-options=-Werror
+
+    # - name: Gather binaries
+    #   run: |
+    #     mkdir tmp
+    #     cd tmp
+    #     cp ~/.local/bin/fints2ledger .
+    #     strip fints2ledger
+    #     tar cvf fints2ledger-mac-x64.tar fints2ledger
+    
+    - name: Build and install artifact
+      run: |
+          export ARTIFACTS=mac-x64/fints2ledger
+          mkdir -p ${ARTIFACTS}
+          cabal install --installdir="${ARTIFACTS}" --install-method=copy --enable-executable-static -fbundle_data_dir 
+          strip "${ARTIFACTS}/fints2ledger"
+          cp -r data "${ARTIFACTS}"
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: mac-x64
+        path: mac-x64
