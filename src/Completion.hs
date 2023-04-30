@@ -19,6 +19,16 @@ runCompletion config key
   | key `elem` ["credit_account", "debit_account"] = runWithAccountCompletion config
   | otherwise = runWithNoCompletion
 
+runWithAccountCompletion :: AppConfig -> InputT IO a -> IO a
+runWithAccountCompletion config input = do
+  journal <- getJournal config.journalFile
+  runInputT (makeSettings $ accountCompletion journal) input
+ where
+  accountCompletion journal = completeWord Nothing [] (return . getCompletions journal)
+
+runWithNoCompletion :: InputT IO a -> IO a
+runWithNoCompletion = runInputT $ makeSettings noCompletion
+
 getCompletions :: Journal -> String -> [Completion]
 getCompletions journal input =
   getAccounts journal
@@ -27,16 +37,5 @@ getCompletions journal input =
  where
   completion string = Completion string (stripPrefix input string ?? string) False
 
-accountCompletion :: Journal -> CompletionFunc IO
-accountCompletion journal = completeWord Nothing [] (return . getCompletions journal)
-
 makeSettings :: CompletionFunc m -> Settings m
 makeSettings completion = Settings completion Nothing False
-
-runWithAccountCompletion :: AppConfig -> InputT IO a -> IO a
-runWithAccountCompletion config input = do
-  journal <- getJournal config.journalFile
-  runInputT (makeSettings $ accountCompletion journal) input
-
-runWithNoCompletion :: InputT IO a -> IO a
-runWithNoCompletion = runInputT $ makeSettings noCompletion
