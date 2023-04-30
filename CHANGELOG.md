@@ -1,3 +1,5 @@
+# Changelog
+
 ## 1.0.0
 * The new `--demo` flag allows one to try out fints2ledger without actually calling a banking API. Dummy transactions are used instead.
 * For automatic matching, the amount field now allows values like "<=90" instead of a regex. This is useful if one wants double check on expensive transactions that would normally be automatically matched.
