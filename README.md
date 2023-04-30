@@ -40,7 +40,7 @@ You can try out the program with the `demo` flag, which does not call any bankin
 fints2ledger --demo
 ```
 
-Next, go to your config to the newly created config file (default `~/.config/fints2ledger/config.yml`) and update your baning credentials in the `fints` section:
+Next, go to your config to the newly created config file (default `~/.config/fints2ledger/config.yml`) and update your banking credentials in the `fints` section:
 ```
 fints:
   blz: "<your bank's BLZ>"
@@ -56,7 +56,7 @@ When you are done, run
 fints2ledger
 ```
 
-This will download the transactions from the 90 days (by default) and tries to convert them to a ledger journal.
+This will download the transactions from the last 90 days (by default) and tries to convert them to a ledger journal.
 
 For a list of available command line arguments, run
 ```
@@ -64,7 +64,8 @@ fints2ledger --help
 ```
 
 ### Automatically matching transactions
-In the `ledger` category you can use a regex match on any field of the transaction data to automatically fill other fields.
+In the `ledger` section you can use a regex match on any field of the transaction data to automatically fill other fields.
+The `amount` field uses comparison symbols instead of a regex. Valid values are for example "<=90.5", "120.13", "> 200"
 
 Example: I do not want to enter a `credit_account` and `purpose` for my monthly recurring payments for the rent of my apartment. Same for my music streaming transactions. I can change the `config.yml` like this:
 ```
