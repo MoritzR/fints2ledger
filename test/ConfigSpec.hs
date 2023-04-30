@@ -20,7 +20,7 @@ spec = do
       result <- Yaml.decodeThrow (Yaml.encode defaultYamlConfig)
       result `shouldBe` defaultYamlConfig
 
-    it "returns an error when md5 there are invalid md5 keys" do
+    it "returns an error when there are invalid md5 keys" do
       let validKeys = validateYamlConfig $ defaultYamlConfig{ledger = defaultYamlConfig.ledger{md5 = ["purpose"]}}
           hasInvalidKey = validateYamlConfig $ defaultYamlConfig{ledger = defaultYamlConfig.ledger{md5 = ["invalid", "purpose"]}}
 
