@@ -17,14 +17,13 @@ jobs:
     - name: Check out
       uses: actions/checkout@v3
 
-    - name: Install ghc
-      run: |
-        ghcup install ghc --set 9.2.7
+    - uses: haskell/actions/setup@v1.2
+      name: Setup Haskell Stack
+      with:
+        ghc-version: '9.2.7'
 
     - name: Install dependencies
       run: |
-          ghc --version
-          cabal --version
           cabal update
           cabal build --dependencies-only
 
@@ -48,62 +47,16 @@ jobs:
     - name: Check out
       uses: actions/checkout@v3
 
-    - name: Cache stack global package db
-      id:   stack-global
-      uses: actions/cache@v3
-      with:
-        path: ~/.stack
-        key: ${{ runner.os }}-stack-global-from20220817-${{ hashFiles('**.yaml') }}
-        restore-keys: |
-             ${{ runner.os }}-stack-global-from20220817
-
-    - name: Cache stack-installed programs in ~/.local/bin
-      id:   stack-programs
-      uses: actions/cache@v3
-      with:
-        path: ~/.local/bin
-        key: ${{ runner.os }}-stack-programs-from20220817-${{ hashFiles('**.yaml') }}
-        restore-keys: |
-             ${{ runner.os }}-stack-programs-from20220817
-
-    - name: Cache .stack-work
-      uses: actions/cache@v3
-      with:
-        path: .stack-work
-        key: ${{ runner.os }}-stack-work-from20220817-${{ hashFiles('**.yaml') }}
-        restore-keys: |
-             ${{ runner.os }}-stack-work-from20220817
-
-    - name: Cache fints2ledger/.stack-work
-      uses: actions/cache@v3
-      with:
-        path: fints2ledger/.stack-work
-        key: ${{ runner.os }}-fints2ledger-stack-work-from20220817-${{ hashFiles('fints2ledger/package.yaml') }}
-        restore-keys: |
-             ${{ runner.os }}-fints2ledger-stack-work-from20220817
-
     - uses: haskell/actions/setup@v1.2
       name: Setup Haskell Stack
       with:
         ghc-version: '9.2.7'
-        enable-stack: true
 
-    - name: Install haskell deps
+    - name: Install dependencies
       run: |
-        stack build --test --only-dependencies
+          cabal update
+          cabal build --dependencies-only
 
-    # - name: Build fints2ledger
-    #   run: |
-    #     $stack install --test --force-dirty --ghc-options=-fforce-recomp --ghc-options=-Werror
-
-    # - name: Gather binaries
-    #   run: |
-    #     mkdir tmp
-    #     cd tmp
-    #     cp ~/.local/bin/fints2ledger .
-    #     strip fints2ledger
-    #     tar cvf fints2ledger-mac-x64.tar fints2ledger
-    
     - name: Build and install artifact
       run: |
           export ARTIFACTS=mac-x64/fints2ledger
