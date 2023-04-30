@@ -8,6 +8,7 @@
 * `*.auto` files are no longer in use. Credit and debit account will instead be autocompleted based on the ledger file that is passed in. This means that all existing accounts will be picked up in the autocompletion without having to add them to the `.auto` file first. This also means that other won't have any autocompletion anymore (if this was enabled by the user previously).
 * The prompt output is now slightly nicer (less `"` and `{}`)
 * The program should run properly on windows now
+* There is no intermediate step anymore where all transactions are written to a csv file. This also means that importing from a csv file or exporting to a csv file is not supported anymore.
 * The installation process requires more steps now. Most of the program is now run as a binary, while the banking API is still accessed through the fints python library.
 
 ## 0.8.2
