@@ -1,4 +1,4 @@
-name: binaries-linux
+name: binaries
 
 on:
   push:
