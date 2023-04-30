@@ -10,26 +10,61 @@ permissions:
   contents: read
 
 jobs:
-  linux:
-    runs-on: ubuntu-latest
-    steps:
+  build-binaries:
+    name: build binaries on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
+    steps:
     - name: Check out
       uses: actions/checkout@v3
 
     - uses: haskell/actions/setup@v2
-      name: Setup Haskell Stack
+      name: Setup Haskell
       with:
         ghc-version: '9.2.7'
 
-    - name: Install dependencies
+    - name: Installed minor versions of GHC and Cabal
+      shell: bash
       run: |
-          cabal update
-          cabal build --dependencies-only
+        GHC_VERSION=$(ghc --numeric-version)
+        CABAL_VERSION=$(cabal --numeric-version)
+        echo "GHC_VERSION=${GHC_VERSION}"     >> "${GITHUB_ENV}"
+        echo "CABAL_VERSION=${CABAL_VERSION}" >> "${GITHUB_ENV}"
+
+    - name: Configure the build
+      run: |
+        cabal configure --disable-tests --disable-benchmarks --disable-documentation
+        cabal build --dry-run
+      # The last step generates dist-newstyle/cache/plan.json for the cache key.
+
+    - name: Restore cached dependencies
+      uses: actions/cache/restore@v3
+      id: cache
+      with:
+        path: ${{ steps.setup.outputs.cabal-store }}
+        key: ${{ runner.os }}-ghc-${{ env.GHC_VERSION }}-cabal-${{ env.CABAL_VERSION }}-plan-${{ hashFiles('**/plan.json') }}
+        restore-keys: |
+          ${{ runner.os }}-ghc-${{ env.GHC_VERSION }}-cabal-${{ env.CABAL_VERSION }}-
+
+    - name: Install dependencies
+      run: cabal build --dependencies-only
+
+    # Cache dependencies already here, so that we do not have to rebuild them should the subsequent steps fail.
+    - name: Save cached dependencies
+      uses: actions/cache/save@v3
+      # Caches are immutable, trying to save with the same key would error.
+      if: ${{ steps.cache.outputs.cache-primary-key != steps.cache.outputs.cache-matched-key }}
+      with:
+        path: ${{ steps.setup.outputs.cabal-store }}
+        key: ${{ steps.cache.outputs.cache-primary-key }}
 
     - name: Build and install artifact
       run: |
-          export ARTIFACTS=linux-x64/fints2ledger
+          export ARTIFACTS=${{ runner.os }}/fints2ledger
           mkdir -p ${ARTIFACTS}
           cabal install --installdir="${ARTIFACTS}" --install-method=copy --enable-executable-static -fbundle_data_dir 
           strip "${ARTIFACTS}/fints2ledger"
@@ -37,35 +72,5 @@ jobs:
 
     - uses: actions/upload-artifact@v3
       with:
-        name: linux-x64
-        path: linux-x64
-
-  macos:
-    runs-on: macos-latest
-    steps:
-
-    - name: Check out
-      uses: actions/checkout@v3
-
-    - uses: haskell/actions/setup@v2
-      name: Setup Haskell Stack
-      with:
-        ghc-version: '9.2.7'
-
-    - name: Install dependencies
-      run: |
-          cabal update
-          cabal build --dependencies-only
-
-    - name: Build and install artifact
-      run: |
-          export ARTIFACTS=mac-x64/fints2ledger
-          mkdir -p ${ARTIFACTS}
-          cabal install --installdir="${ARTIFACTS}" --install-method=copy --enable-executable-static -fbundle_data_dir 
-          strip "${ARTIFACTS}/fints2ledger"
-          cp -r data "${ARTIFACTS}"
-
-    - uses: actions/upload-artifact@v3
-      with:
-        name: mac-x64
-        path: mac-x64
+        name: ${{ runner.os }}
+        path: ${{ runner.os }}
