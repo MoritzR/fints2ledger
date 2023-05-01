@@ -47,6 +47,8 @@ library
       Matching.Parser
       Prompt
       Transactions
+      UI.ConfigFields
+      UI.ConfigUI
       Utils
   other-modules:
       Paths_fints2ledger
@@ -63,14 +65,17 @@ library
       aeson
     , base >=4.7 && <5
     , base16-bytestring
+    , brick
     , bytestring
     , containers
     , cryptohash-md5
     , dates
     , directory
     , filepath
+    , generic-lens
     , haskeline
     , hledger-lib >=1.27.1
+    , lens
     , optparse-applicative
     , regex-tdfa
     , text
@@ -78,6 +83,7 @@ library
     , time
     , transformers
     , typed-process
+    , vty
     , yaml
   default-language: GHC2021
 
@@ -96,6 +102,7 @@ executable fints2ledger
       aeson
     , base >=4.7 && <5
     , base16-bytestring
+    , brick
     , bytestring
     , containers
     , cryptohash-md5
@@ -103,8 +110,10 @@ executable fints2ledger
     , directory
     , filepath
     , fints2ledger
+    , generic-lens
     , haskeline
     , hledger-lib >=1.27.1
+    , lens
     , optparse-applicative
     , regex-tdfa
     , text
@@ -112,6 +121,7 @@ executable fints2ledger
     , time
     , transformers
     , typed-process
+    , vty
     , yaml
   default-language: GHC2021
   if (flag(bundle_data_dir))
@@ -150,6 +160,7 @@ test-suite fints2ledger-test
     , aeson
     , base >=4.7 && <5
     , base16-bytestring
+    , brick
     , bytestring
     , containers
     , cryptohash-md5
@@ -157,8 +168,10 @@ test-suite fints2ledger-test
     , directory
     , filepath
     , fints2ledger
+    , generic-lens
     , haskeline
     , hledger-lib >=1.27.1
+    , lens
     , optparse-applicative
     , regex-tdfa
     , sydtest
@@ -168,5 +181,6 @@ test-suite fints2ledger-test
     , time
     , transformers
     , typed-process
+    , vty
     , yaml
   default-language: GHC2021

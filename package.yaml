@@ -42,6 +42,10 @@ dependencies:
 - dates # for more flexible date parsing, like "30 days ago"
 - optparse-applicative # for parsing CLI arguments
 - transformers # For ReaderT
+- brick # terminal UI library
+- vty # underlying library for brick
+- lens # lenses to use with brick
+- generic-lens # automatically generate lenses
 
 language: GHC2021
 
