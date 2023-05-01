@@ -31,10 +31,10 @@ data YamlConfig = YamlConfig
   deriving (Show, Eq, Generic, FromJSON, ToJSON)
 
 data FintsConfig = FintsConfig
-  { account :: String
-  , blz :: String
-  , endpoint :: String
-  , selectedAccount :: Maybe String
+  { account :: Text
+  , blz :: Text
+  , endpoint :: Text
+  , selectedAccount :: Maybe Text
   , password :: Password
   }
   deriving (Show, Eq, Generic)
@@ -77,14 +77,14 @@ type Match = Map Text Text
 -- an empty filling means that this field should still be prompted for
 type Fill = Map Text (Maybe Text)
 
-newtype Password = Password {getPassword :: String}
+newtype Password = Password {get :: Text}
   deriving (Generic, Eq)
 
 instance FromJSON Password where
   parseJSON = fmap Password . parseJSON
 
 instance ToJSON Password where
-  toJSON value = toJSON value.getPassword
+  toJSON value = toJSON value.get
 
 instance Show Password where
   show = const "********"

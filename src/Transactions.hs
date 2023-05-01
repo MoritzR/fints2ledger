@@ -15,6 +15,7 @@ import Control.Exception (Exception, throwIO)
 import Data.Aeson (FromJSON, ToJSON)
 import Data.Aeson qualified as Aeson
 import Data.Text.Lazy (Text)
+import Data.Text.Lazy qualified as TL
 import Data.Text.Lazy.Encoding qualified as TL
 import Data.Text.Lazy.IO qualified as TLIO
 import Data.Time (Day, defaultTimeLocale, formatTime)
@@ -37,10 +38,10 @@ getTransactionsFromFinTS config = do
   pyfintsFilePath <- getDataFileName "data/pyfints.py"
   let pyfintsArgs =
         PyFintsArguments
-          { account = config.fintsConfig.account
-          , blz = config.fintsConfig.blz
-          , endpoint = config.fintsConfig.endpoint
-          , selectedAccount = config.fintsConfig.selectedAccount ?? config.fintsConfig.account
+          { account = TL.unpack config.fintsConfig.account
+          , blz = TL.unpack config.fintsConfig.blz
+          , endpoint = TL.unpack config.fintsConfig.endpoint
+          , selectedAccount = TL.unpack $ config.fintsConfig.selectedAccount ?? config.fintsConfig.account
           , password = config.fintsConfig.password
           , start = formatDayForPython config.startDate
           , end = formatDayForPython currentDay
