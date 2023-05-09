@@ -13,7 +13,7 @@ class Config:
         'fints': {
             'blz': "<your bank's BLZ>",
             'account': '<your account number>',
-            'password': '<your password> (set to empty string if you prefer being prompted)',
+            'password': '<your banking password> (set to empty string if you prefer being prompted)',
             'endpoint': '<your bank fints endpoint>',
         },
         'ledger': {
