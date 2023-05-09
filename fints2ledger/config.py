@@ -5,6 +5,7 @@ from mt940.models import Date
 import argparse
 import fints2ledger.utils as utils
 from pathlib import Path
+import getpass
 
 
 class Config:
@@ -12,7 +13,7 @@ class Config:
         'fints': {
             'blz': "<your bank's BLZ>",
             'account': '<your account number>',
-            'password': '<your banking password>',
+            'password': '<your password> (set to empty string if you prefer being prompted)',
             'endpoint': '<your bank fints endpoint>',
         },
         'ledger': {
