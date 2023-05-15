@@ -145,10 +145,11 @@ md5Regex = "; md5sum: ([A-Za-z0-9]{32})"
 
 getExistingMd5Sums :: Text -> Set Text
 getExistingMd5Sums textToSearchIn =
-  let regexMatch = getAllTextMatches $ textToSearchIn =~ md5Regex :: Array Int [Text]
-   in elems regexMatch
-        & map (!! 1)
-        & Set.fromList
+  textToSearchIn =~ md5Regex
+    & getAllTextMatches @(Array Int)
+    & elems
+    & map (!! 1)
+    & Set.fromList
 
 printTemplateMap :: TemplateMap -> App ()
 printTemplateMap templateMap = do
