@@ -42,7 +42,7 @@ transactionsToLedger transactions = do
   liftIO $ putStrLn "            - Ctrl + C to abort"
 
   forM_ transactions do
-    transactionToLedger existingMd5Sums (TL.unpack template)
+    transactionToLedger existingMd5Sums template
 
 insertTransaction :: Transaction -> TemplateMap -> TemplateMap
 insertTransaction transaction =
@@ -65,7 +65,7 @@ getMd5 ledgerConfig templateMap = calculateMd5Value md5Values
   -- This is validated, so fromJust should not error. TODO: find a way to not use fromJust
   md5Values = fromJust . flip Map.lookup templateMap <$> md5Keys
 
-transactionToLedger :: Set Text -> String -> Transaction -> App ()
+transactionToLedger :: Set Text -> Text -> Transaction -> App ()
 transactionToLedger existingMd5Sums template transaction = do
   config <- asks (.config)
   appendFile <- asks (.appendFile)
@@ -85,7 +85,7 @@ transactionToLedger existingMd5Sums template transaction = do
                 & insert "md5sum" md5Sum
                 & insertCreditDebit transaction
                 & insertAccountsWithUnderscore
-        let renderedTemplate = format (fromString template) templateMapFinal
+        let renderedTemplate = format (fromString $ TL.unpack template) templateMapFinal
         liftIO $ appendFile config.journalFile $ "\n\n" <> renderedTemplate
 
 -- This in needed because the library for the template rendering doesn't accept underscores
