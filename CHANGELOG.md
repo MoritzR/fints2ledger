@@ -1,3 +1,7 @@
+## 0.8.2
+
+The `password` field in the config can now be left empty. The password will then be prompted each time the application is run. Use this if you don't feel comfortable storing your banking password in a file.
+
 ## 0.8.0
 
 The auto-match config by default now skips all other values that would be prompted.

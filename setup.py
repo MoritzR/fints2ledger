@@ -8,7 +8,7 @@ def readme():
 
 setup(
     name='fints2ledger',
-    version='0.8.0',
+    version='0.8.2',
     description='A tool for downloading transactions from FinTS banking APIs and sorting them into a ledger journal.',
     long_description=readme(),
     long_description_content_type='text/markdown',
