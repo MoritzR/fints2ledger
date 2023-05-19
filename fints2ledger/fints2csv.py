@@ -15,7 +15,7 @@ class Fints2Csv:
         transactions = retrieve_transactions({
             "blz": self.config["fints"]["blz"],  # Your bank's BLZ
             "account": self.config["fints"]["account"],  # your account number
-            "password": self.config["fints"]["password"] if self.config["fints"]["password"] else getpass("Password: "),
+            "password": self.config["fints"]["password"] or getpass("Password: "),
             # e.g. 'https://fints.ing-diba.de/fints/'
             "endpoint": self.config["fints"]["endpoint"],
             "selected_account": self.config["fints"]["selectedAccount"],
