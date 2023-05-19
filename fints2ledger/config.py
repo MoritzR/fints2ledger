@@ -5,7 +5,6 @@ from mt940.models import Date
 import argparse
 import fints2ledger.utils as utils
 from pathlib import Path
-import getpass
 
 
 class Config:

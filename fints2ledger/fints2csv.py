@@ -1,8 +1,8 @@
 from fints2ledger.transaction_retriever import TRetriever
 from fints.client import FinTS3PinTanClient
 from fints2ledger.csv_converter import CsvConverter
-from fints2ledger.config import getpass
 from mt940.models import Date
+from getpass import getpass
 
 
 class Fints2Csv:
@@ -15,7 +15,7 @@ class Fints2Csv:
         transactions = retrieve_transactions({
             "blz": self.config["fints"]["blz"],  # Your bank's BLZ
             "account": self.config["fints"]["account"],  # your account number
-            "password": self.config["fints"]["password"] if self.config["fints"]["password"] else getpass.getpass("Password: "),
+            "password": self.config["fints"]["password"] if self.config["fints"]["password"] else getpass("Password: "),
             # e.g. 'https://fints.ing-diba.de/fints/'
             "endpoint": self.config["fints"]["endpoint"],
             "selected_account": self.config["fints"]["selectedAccount"],
