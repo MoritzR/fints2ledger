@@ -16,7 +16,7 @@ A tool for downloading transactions from FinTS banking APIs and sorting them int
 ## Install
 You need Python version 3.6 or higher. Install the Python dependencies using:
 ```
-pip3 install "fints>=3,<4" "mt-940>=4.11,<5"
+pip3 install "fints>=4,<5" "mt-940>=4.11,<5"
 ```
 
 Next, you can install fints2ledger either from a pre-built binary or from source.

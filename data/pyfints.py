@@ -7,7 +7,7 @@ import json
 def retrieve_transactions(
     account, blz, password, endpoint, selected_account, start, end
 ):
-    client = FinTS3PinTanClient(blz, account, password, endpoint)
+    client = FinTS3PinTanClient(blz, account, password, endpoint, product_id = "EC449295201FA9BE5040B9154")
     return TRetriever(client, selected_account).get_hbci_transactions(start, end)
 
 
