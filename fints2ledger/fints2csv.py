@@ -35,6 +35,7 @@ def retrieve_transactions(args):
         args["blz"],
         args["account"],
         args["password"],
-        args["endpoint"]
+        args["endpoint"],
+        product_id = "EC449295201FA9BE5040B9154"
     )
     return TRetriever(client, args["selected_account"]).get_hbci_transactions(args["start"], args["end"])

@@ -20,7 +20,7 @@ setup(
     entry_points={
         'console_scripts': ['fints2ledger=fints2ledger.main:main'],
     },
-    install_requires=['mt-940>=4.11,<5', 'fints>=3,<4', 'pyyaml>=6'],
+    install_requires=['mt-940>=4.11,<5', 'fints>=4,<5', 'pyyaml>=6'],
     setup_requires=['green'],
     packages=['fints2ledger'],
     zip_safe=False,
