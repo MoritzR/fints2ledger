@@ -25,7 +25,7 @@ Create config file at `~/.config/fints2ledger/config.yml` file with the followin
 fints:
   blz: "<your bank's BLZ>"
   account: "<your account number>"
-  password: "<your banking password>"
+  password: "<your banking password>  (set to empty string if you prefer being prompted)"
   endpoint: <your bank fints endpoint> # e.g.: https://fints.ing.de/fints for ING
   selectedAccount: "<account number>" # defaults to the value from "account"
                                       # useful when you have multiple accounts for the same login
