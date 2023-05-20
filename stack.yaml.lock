@@ -24,7 +24,7 @@ packages:
     git: https://github.com/mdippery/dates.git
 snapshots:
 - completed:
-    sha256: 9fa4bece7acfac1fc7930c5d6e24606004b09e80aa0e52e9f68b148201008db9
-    size: 649606
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/20/18.yaml
-  original: lts-20.18
+    sha256: 401a0e813162ba62f04517f60c7d25e93a0f867f94a902421ebf07d1fb5a8c46
+    size: 650044
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/20/21.yaml
+  original: lts-20.21
