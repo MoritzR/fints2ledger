@@ -10,6 +10,7 @@ module Config.YamlConfig (
   getYamlConfig,
   defaultYamlConfig,
   validateYamlConfig,
+  writeYamlConfig,
 )
 where
 
@@ -21,7 +22,7 @@ import Data.Map qualified as Map
 import Data.Set (Set, difference, isSubsetOf, toList)
 import Data.Set qualified as Set
 import Data.Text.Lazy (Text)
-import Data.Yaml (decodeFileThrow)
+import Data.Yaml qualified as Yaml
 import GHC.Generics (Generic)
 
 data YamlConfig = YamlConfig
@@ -91,7 +92,7 @@ instance Show Password where
 
 getYamlConfig :: ConfigDirectory -> IO YamlConfig
 getYamlConfig configDirectory = do
-  config <- decodeFileThrow $ getConfigFilePath configDirectory
+  config <- Yaml.decodeFileThrow $ getConfigFilePath configDirectory
   case validateYamlConfig config of
     Nothing -> return config
     Just err -> throwIO $ ValidationException err
@@ -131,6 +132,9 @@ defaultYamlConfig =
           , fills = []
           }
     }
+
+writeYamlConfig :: FilePath -> YamlConfig -> IO ()
+writeYamlConfig = Yaml.encodeFile
 
 newtype ValidationException = ValidationException String deriving (Show)
 

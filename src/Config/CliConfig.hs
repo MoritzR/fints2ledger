@@ -10,8 +10,9 @@ data CliConfig = CliConfig
   { configDirectory :: ConfigDirectory
   , journalFile :: FilePath
   , startDate :: Day
-  , isDemo :: Bool
   , pythonExecutable :: String
+  , isDemo :: Bool
+  , shouldEditConfig :: Bool
   }
   deriving (Show)
 
@@ -51,6 +52,12 @@ demoOption =
     long "demo"
       <> help "runs with a sample set of transactions, without actually calling a FinTS endpoint"
 
+configOption :: Parser Bool
+configOption =
+  switch $
+    long "config"
+      <> help "show a UI for editing the config"
+
 pythonExecutableOption :: Parser FilePath
 pythonExecutableOption =
   strOption $
@@ -69,8 +76,9 @@ getCliParser = do
       <$> configDirectoryOption defaultConfigDirectory
       <*> journalFileOption
       <*> startDateOption currentDateTime ninetyDaysAgo
-      <*> demoOption
       <*> pythonExecutableOption
+      <*> demoOption
+      <*> configOption
 
 getCliConfig :: IO (ParserInfo CliConfig)
 getCliConfig = do
