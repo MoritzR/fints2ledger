@@ -6,8 +6,10 @@ where
 import App (App, Env (..), PromptResult (..))
 import Completion (runCompletion)
 import Config.AppConfig (AppConfig (..), getConfig)
-import Config.CliConfig (getCliConfig)
+import Config.CliConfig (CliConfig (..), getCliConfig)
+import Config.Files (getConfigFilePath)
 import Config.StartupChecks (runStartupChecks)
+import Config.YamlConfig (YamlConfig (..), getYamlConfig, writeYamlConfig)
 import Control.Concurrent (threadDelay)
 import Control.Monad (unless)
 import Control.Monad.IO.Class (liftIO)
@@ -20,7 +22,8 @@ import Options.Applicative (execParser)
 import Prompt (transactionsToLedger)
 import System.Console.Haskeline (getInputLine)
 import System.Directory (doesFileExist)
-import Transactions (getExampleTransactions, getTransactionsFromFinTS)
+import Transactions (Transaction, getExampleTransactions, getTransactionsFromFinTS)
+import UI.ConfigUI (runConfigUI)
 import Utils (createFile)
 
 runFints2Ledger :: IO ()
@@ -33,12 +36,27 @@ runFints2Ledger = do
 
   ensureFileExists appConfig.journalFile
 
-  let getTransactions =
-        if appConfig.isDemo
-          then getExampleTransactions
-          else getTransactionsFromFinTS appConfig
-  transactions <- getTransactions
+  let
+    runDemo =
+      getExampleTransactions
+        >>= convertTransactionsForConfig appConfig
 
+    runFints =
+      getTransactionsFromFinTS appConfig
+        >>= convertTransactionsForConfig appConfig
+
+    editConfig = do
+      yamlConfig <- getYamlConfig cliConfig.configDirectory
+      fintsConfig <- runConfigUI yamlConfig cliConfig.configDirectory
+      writeYamlConfig (getConfigFilePath cliConfig.configDirectory) yamlConfig{fints = fintsConfig}
+
+  case getCommand cliConfig of
+    RunFints -> runFints
+    RunDemo -> runDemo
+    EditConfig -> editConfig
+
+convertTransactionsForConfig :: AppConfig -> [Transaction] -> IO ()
+convertTransactionsForConfig appConfig transactions = do
   let env =
         Env
           { config = appConfig
@@ -70,3 +88,10 @@ promptForEntry templateMap key = do
       -- TODO throw error instead? This can happen when the user doesn't provide an account and also sets no default
       Just "" -> return $ maybe Skip Result (templateMap !? key)
       Just value -> return $ Result $ TL.strip $ TL.pack value
+
+data Command = RunFints | RunDemo | EditConfig
+getCommand :: CliConfig -> Command
+getCommand config
+  | config.isDemo = RunDemo
+  | config.shouldEditConfig = EditConfig
+  | otherwise = RunFints
