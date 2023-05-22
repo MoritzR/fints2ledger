@@ -2,7 +2,7 @@
 
 module UI.ConfigUI (runConfigUI) where
 
-import Brick (AttrMap, BrickEvent (VtyEvent), Padding (Pad), Widget, attrMap, customMain, emptyWidget, fill, hLimit, halt, on, padBottom, str, strWrap, vLimit, zoom, (<+>), (<=>))
+import Brick (AttrMap, BrickEvent (VtyEvent), Padding (Pad), Widget, attrMap, attrName, customMain, emptyWidget, fill, hLimit, halt, on, padBottom, str, strWrap, vLimit, withAttr, zoom, (<+>), (<=>))
 import Brick.Focus (focusGetCurrent, focusRingCursor)
 import Brick.Forms (Form (formFocus, formState), FormFieldState, editPasswordField, editTextField, focusedFormInputAttr, handleFormEvent, invalidFormInputAttr, newForm, renderForm, (@@=))
 import Brick.Main qualified as Brick (App (..))
@@ -53,6 +53,7 @@ draw configDirectory state =
       <+> vBorder
       <+> hLimit 20 help
         <=> configText
+        <=> controls
   ]
  where
   form = renderForm state.form
@@ -61,7 +62,14 @@ draw configDirectory state =
     str $
       "The full config is available with more options is available at:\n"
         <> getConfigFilePath configDirectory
+  controls =
+    controlsPrimary (str " Ctrl+C ")
+      <+> controlSecondary (str " Quit without saving ")
+      <+> controlsPrimary (str " Esc ")
+      <+> controlSecondary (str " Save and quit ")
   currentFocus = focusGetCurrent $ formFocus state.form
+  controlsPrimary = withAttr $ attrName "primary"
+  controlSecondary = withAttr $ attrName "secondary"
 
 showFieldForUser :: Fields.Fields -> String
 showFieldForUser field = case field of
@@ -87,6 +95,8 @@ attributeMap =
     , (E.editFocusedAttr, V.black `on` V.yellow)
     , (invalidFormInputAttr, V.white `on` V.red)
     , (focusedFormInputAttr, V.black `on` V.yellow)
+    , (attrName "primary", V.white `on` V.brightBlue)
+    , (attrName "secondary", V.white `on` V.blue)
     ]
 
 formApp :: ConfigDirectory -> Brick.App (FormAppState e) e Name
