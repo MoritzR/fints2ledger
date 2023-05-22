@@ -9,7 +9,7 @@ import Brick.Main qualified as Brick (App (..))
 import Brick.Widgets.Border (vBorder)
 import Brick.Widgets.Edit qualified as E
 import Config.Files (ConfigDirectory, getConfigFilePath)
-import Config.YamlConfig (FintsConfig (..), YamlConfig (..))
+import Config.YamlConfig (FintsConfig (..), Password (..), YamlConfig (..))
 import Control.Lens (Iso', Lens', iso, (.=))
 import Data.Generics.Labels ()
 import Data.Text qualified as T
@@ -52,8 +52,8 @@ draw configDirectory state =
   [ form
       <+> vBorder
       <+> hLimit 20 help
-        <=> configText
-        <=> controls
+      <=> configText
+      <=> controls
   ]
  where
   form = renderForm state.form
@@ -131,8 +131,14 @@ mkForm =
     [ textInput Fields.Account #account
     , textInput Fields.Blz #blz
     , textInput Fields.Endpoint #endpoint
-    , passwordInput Fields.Password (#password . #get)
+    , passwordInput Fields.Password (#password . maybePasswordToPassword . #get)
     ]
+
+maybePasswordToPassword :: Iso' (Maybe Password) Password
+maybePasswordToPassword =
+  iso
+    (?? Password "")
+    (\password -> if TL.null password.get then Nothing else Just password)
 
 label :: Fields.Fields -> Widget n -> Widget n
 label field widgetToModify =

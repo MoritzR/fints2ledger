@@ -6,7 +6,7 @@ module Config.YamlConfig (
   LedgerConfig (..),
   Filling (..),
   Fill,
-  Password,
+  Password (..),
   getYamlConfig,
   defaultYamlConfig,
   validateYamlConfig,
@@ -36,7 +36,7 @@ data FintsConfig = FintsConfig
   , blz :: Text
   , endpoint :: Text
   , selectedAccount :: Maybe Text
-  , password :: Password
+  , password :: Maybe Password
   }
   deriving (Show, Eq, Generic)
 
@@ -120,7 +120,7 @@ defaultYamlConfig =
         FintsConfig
           { blz = "<your banks BLZ>"
           , account = "<your account number>"
-          , password = Password "<your banking password>"
+          , password = Just $ Password "<your banking password>"
           , endpoint = "<your bank fints endpoint>"
           , selectedAccount = Nothing
           }

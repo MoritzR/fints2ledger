@@ -10,7 +10,7 @@ module Transactions (
 where
 
 import Config.AppConfig (AppConfig (..))
-import Config.YamlConfig (FintsConfig (..), Password)
+import Config.YamlConfig (FintsConfig (..), Password (..))
 import Control.Exception (Exception, throwIO)
 import Data.Aeson (FromJSON, ToJSON)
 import Data.Aeson qualified as Aeson
@@ -22,6 +22,7 @@ import Data.Time (Day, defaultTimeLocale, formatTime)
 import GHC.Generics (Generic)
 import Hledger (getCurrentDay)
 import Paths_fints2ledger (getDataFileName)
+import System.Console.Haskeline qualified as Haskeline
 import System.Process.Typed (ExitCode (ExitFailure, ExitSuccess), readProcess, shell)
 import Utils (encodeAsString, orElseThrow, (??))
 
@@ -36,13 +37,15 @@ getTransactionsFromFinTS :: AppConfig -> IO [Transaction]
 getTransactionsFromFinTS config = do
   currentDay <- getCurrentDay
   pyfintsFilePath <- getDataFileName "data/pyfints.py"
+  password <- maybe getPassword return (config.fintsConfig.password)
+
   let pyfintsArgs =
         PyFintsArguments
           { account = TL.unpack config.fintsConfig.account
           , blz = TL.unpack config.fintsConfig.blz
           , endpoint = TL.unpack config.fintsConfig.endpoint
           , selectedAccount = TL.unpack $ config.fintsConfig.selectedAccount ?? config.fintsConfig.account
-          , password = config.fintsConfig.password
+          , password = password
           , start = formatDayForPython config.startDate
           , end = formatDayForPython currentDay
           }
@@ -60,6 +63,13 @@ getTransactionsFromFinTS config = do
     ExitFailure _ -> do
       TLIO.putStrLn $ TL.decodeUtf8 stdErr
       throwIO $ PyFintsError "Failed to get FinTS transactions, check the message above."
+
+getPassword :: IO Password
+getPassword = do
+  Haskeline.runInputT Haskeline.defaultSettings do
+    maybePassword <- Haskeline.getPassword (Just '*') "Password: "
+    Haskeline.outputStrLn ""
+    return $ Password $ TL.pack (maybePassword ?? "")
 
 formatDayForPython :: Day -> String
 formatDayForPython = formatTime defaultTimeLocale "%Y/%m/%d"
