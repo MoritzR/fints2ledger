@@ -60,7 +60,7 @@ draw configDirectory state =
   help = (strWrap . helpText <$> currentFocus) ?? emptyWidget
   configText =
     str $
-      "The full config is available with more options is available at:\n"
+      "The full config with more options is available at:\n"
         <> getConfigFilePath configDirectory
   controls =
     controlsPrimary (str " Ctrl+C ")
