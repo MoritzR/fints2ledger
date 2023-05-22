@@ -6,6 +6,7 @@ import Config.YamlConfig (YamlConfig (..), defaultYamlConfig, writeYamlConfig)
 import Control.Monad (unless)
 import System.Directory (createDirectoryIfMissing, doesFileExist)
 import UI.ConfigUI (runConfigUI)
+import Utils ((??))
 
 runStartupChecks :: CliConfig -> IO ()
 runStartupChecks cliConfig = do
@@ -14,5 +15,5 @@ runStartupChecks cliConfig = do
   let configFilePath = getConfigFilePath cliConfig.configDirectory
   configFileExists <- doesFileExist configFilePath
   unless configFileExists do
-    fintsConfig <- runConfigUI defaultYamlConfig cliConfig.configDirectory
-    writeYamlConfig configFilePath defaultYamlConfig{fints = fintsConfig}
+    maybeConfig <- runConfigUI defaultYamlConfig cliConfig.configDirectory
+    writeYamlConfig configFilePath defaultYamlConfig{fints = maybeConfig ?? defaultYamlConfig.fints}
