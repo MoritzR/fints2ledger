@@ -14,6 +14,7 @@ import Control.Concurrent (threadDelay)
 import Control.Monad (unless)
 import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Trans.Reader (ReaderT (runReaderT), ask)
+import Data.Foldable (for_)
 import Data.Map (Map, (!?))
 import Data.Text.Lazy (Text)
 import Data.Text.Lazy qualified as TL
@@ -47,8 +48,9 @@ runFints2Ledger = do
 
     editConfig = do
       yamlConfig <- getYamlConfig cliConfig.configDirectory
-      fintsConfig <- runConfigUI yamlConfig cliConfig.configDirectory
-      writeYamlConfig (getConfigFilePath cliConfig.configDirectory) yamlConfig{fints = fintsConfig}
+      maybeConfig <- runConfigUI yamlConfig cliConfig.configDirectory
+      for_ maybeConfig \fintsConfig ->
+        writeYamlConfig (getConfigFilePath cliConfig.configDirectory) yamlConfig{fints = fintsConfig}
 
   case getCommand cliConfig of
     RunFints -> runFints

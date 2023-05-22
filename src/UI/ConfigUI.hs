@@ -5,12 +5,12 @@ module UI.ConfigUI (runConfigUI) where
 import Brick (AttrMap, BrickEvent (VtyEvent), Padding (Pad), Widget, attrMap, customMain, emptyWidget, fill, hLimit, halt, on, padBottom, str, strWrap, vLimit, zoom, (<+>), (<=>))
 import Brick.Focus (focusGetCurrent, focusRingCursor)
 import Brick.Forms (Form (formFocus, formState), FormFieldState, editPasswordField, editTextField, focusedFormInputAttr, handleFormEvent, invalidFormInputAttr, newForm, renderForm, (@@=))
-import Brick.Main (App (..))
+import Brick.Main qualified as Brick (App (..))
 import Brick.Widgets.Border (vBorder)
 import Brick.Widgets.Edit qualified as E
 import Config.Files (ConfigDirectory, getConfigFilePath)
 import Config.YamlConfig (FintsConfig (..), YamlConfig (..))
-import Control.Lens (Iso', Lens', iso)
+import Control.Lens (Iso', Lens', iso, (.=))
 import Data.Generics.Labels ()
 import Data.Text qualified as T
 import Data.Text.Lazy qualified as TL
@@ -19,7 +19,7 @@ import Graphics.Vty qualified as V
 import UI.ConfigFields qualified as Fields
 import Utils ((??))
 
-runConfigUI :: YamlConfig -> ConfigDirectory -> IO FintsConfig
+runConfigUI :: YamlConfig -> ConfigDirectory -> IO (Maybe FintsConfig)
 runConfigUI initialConfig configDirectory = do
   initialVty <- buildVty
 
@@ -31,15 +31,19 @@ runConfigUI initialConfig configDirectory = do
       buildVty
       Nothing
       (formApp configDirectory)
-      (FormAppState initialForm)
+      (FormAppState initialForm False)
   let newFintsConfig = formState updatedForm.form
 
-  return newFintsConfig
+  return $
+    if updatedForm.aborted
+      then Nothing
+      else Just newFintsConfig
 
 type Name = Fields.Fields
 
-newtype FormAppState e = FormAppState
+data FormAppState e = FormAppState
   { form :: Form FintsConfig e Name
+  , aborted :: Bool
   }
   deriving (Generic)
 
@@ -85,13 +89,16 @@ attributeMap =
     , (focusedFormInputAttr, V.black `on` V.yellow)
     ]
 
-formApp :: ConfigDirectory -> App (FormAppState e) e Name
+formApp :: ConfigDirectory -> Brick.App (FormAppState e) e Name
 formApp configDirectory =
-  App
+  Brick.App
     { appDraw = draw configDirectory
     , appHandleEvent = \event -> do
         case event of
           VtyEvent (V.EvResize{}) -> return ()
+          VtyEvent (V.EvKey (V.KChar 'c') [V.MCtrl]) -> do
+            #aborted .= True
+            halt
           VtyEvent (V.EvKey V.KEsc []) -> halt
           _ -> zoom #form $ handleFormEvent event
     , appChooseCursor = focusRingCursor $ formFocus . (.form)
