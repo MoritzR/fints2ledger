@@ -9,8 +9,8 @@ import Control.Monad.Trans.Reader (ReaderT (runReaderT))
 import Data.IORef (modifyIORef, newIORef, readIORef)
 import Data.List (isInfixOf)
 import Data.Map (empty, fromList)
-import Data.Text.Lazy qualified as TL
-import Data.Text.Lazy.IO qualified as TLIO
+import Data.Text qualified as T
+import Data.Text.IO qualified as TIO
 import Data.Time.Calendar (Day (ModifiedJulianDay))
 import Prompt (transactionsToLedger)
 import Test.Syd (Spec, describe, goldenTextFile, it, shouldBe, shouldContain)
@@ -22,11 +22,11 @@ spec = do
     it "shows the transaction" do
       output <- runToLedger [testTransaction] testEnv
 
-      output `shouldContain` TL.unpack testTransaction.date
+      output `shouldContain` T.unpack testTransaction.date
       output `shouldContain` "99.99"
-      output `shouldContain` TL.unpack testTransaction.currency
-      output `shouldContain` TL.unpack testTransaction.posting
-      output `shouldContain` TL.unpack testTransaction.purpose
+      output `shouldContain` T.unpack testTransaction.currency
+      output `shouldContain` T.unpack testTransaction.posting
+      output `shouldContain` T.unpack testTransaction.purpose
 
     it "shows the default values" do
       let env =
@@ -137,7 +137,7 @@ spec = do
 
             output <- runToLedger [testTransaction] env
             putStrLn output
-            TL.toStrict <$> readIORef ioRef
+            readIORef ioRef
 
       goldenTextFile "test/files/snapshot.ledger" getSnapshot
 
@@ -178,7 +178,7 @@ testEnv =
     , putStrLn = const $ return ()
     , readFile = \path ->
         if "template.txt" `isInfixOf` path
-          then TLIO.readFile path
+          then TIO.readFile path
           else return ""
     , appendFile = \_filePath _text -> return ()
     , sleep = return ()

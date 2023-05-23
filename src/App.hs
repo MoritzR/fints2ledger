@@ -5,7 +5,7 @@ module App (App, PromptResult (..), Env (..)) where
 import Config.AppConfig (AppConfig)
 import Control.Monad.Trans.Reader (ReaderT)
 import Data.Map (Map)
-import Data.Text.Lazy (Text)
+import Data.Text (Text)
 
 type App a = ReaderT Env IO a
 

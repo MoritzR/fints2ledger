@@ -1,5 +1,6 @@
 module Matching.ParserSpec (spec) where
 
+import Data.Text qualified as T
 import Matching.Parser qualified as P
 import Test.QuickCheck (property)
 import Test.Syd (Spec, describe, it, shouldBe)
@@ -10,7 +11,7 @@ spec = do
     let runParswerWith = P.runParser P.endOnDecimal
     it "parses all doubles that end a string" do
       property \(number :: Double) ->
-        runParswerWith (show number) `shouldBe` Just number
+        runParswerWith (T.pack $ show number) `shouldBe` Just number
 
   describe "Parsing amount matches" do
     let runParserWith number = P.runParser (fmap ($ number) P.amountParser)

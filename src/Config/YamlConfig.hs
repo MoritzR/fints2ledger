@@ -21,7 +21,7 @@ import Data.Map (Map)
 import Data.Map qualified as Map
 import Data.Set (Set, difference, isSubsetOf, toList)
 import Data.Set qualified as Set
-import Data.Text.Lazy (Text)
+import Data.Text (Text)
 import Data.Yaml qualified as Yaml
 import GHC.Generics (Generic)
 

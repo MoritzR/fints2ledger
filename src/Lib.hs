@@ -16,9 +16,9 @@ import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Trans.Reader (ReaderT (runReaderT), ask)
 import Data.Foldable (for_)
 import Data.Map (Map, (!?))
-import Data.Text.Lazy (Text)
-import Data.Text.Lazy qualified as TL
-import Data.Text.Lazy.IO qualified as TLIO
+import Data.Text (Text)
+import Data.Text qualified as T
+import Data.Text.IO qualified as TIO
 import Options.Applicative (execParser)
 import Prompt (transactionsToLedger)
 import System.Console.Haskeline (getInputLine)
@@ -64,8 +64,8 @@ convertTransactionsForConfig appConfig transactions = do
           { config = appConfig
           , putStrLn = putStrLn
           , promptForEntry = promptForEntry
-          , readFile = TLIO.readFile
-          , appendFile = TLIO.appendFile
+          , readFile = TIO.readFile
+          , appendFile = TIO.appendFile
           , sleep = threadDelay 500_000
           }
 
@@ -83,13 +83,13 @@ promptForEntry templateMap key = do
   env <- ask
   liftIO $ runCompletion env.config key do
     liftIO $ env.putStrLn ""
-    line <- getInputLine $ TL.unpack ("> " <> key <> ": ")
+    line <- getInputLine $ T.unpack ("> " <> key <> ": ")
     case line of
       Nothing -> return Skip
       Just "s" -> return Skip
       -- TODO throw error instead? This can happen when the user doesn't provide an account and also sets no default
       Just "" -> return $ maybe Skip Result (templateMap !? key)
-      Just value -> return $ Result $ TL.strip $ TL.pack value
+      Just value -> return $ Result $ T.strip $ T.pack value
 
 data Command = RunFints | RunDemo | EditConfig
 getCommand :: CliConfig -> Command

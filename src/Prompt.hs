@@ -16,14 +16,15 @@ import Data.Maybe (fromJust)
 import Data.Set (Set, notMember)
 import Data.Set qualified as Set
 import Data.String (IsString (fromString))
+import Data.Text (Text)
+import Data.Text qualified as T
 import Data.Text.Format.Heavy (format)
-import Data.Text.Lazy (Text)
 import Data.Text.Lazy qualified as TL
 import GHC.Arr (Array, elems)
 import Matching.Matching (findMatch)
 import Text.Regex.TDFA (AllTextMatches (getAllTextMatches), (=~))
 import Transactions (Amount (..), Transaction (..))
-import Utils (calculateMd5Value, formatDouble)
+import Utils (calculateMd5Value, formatDouble, toLazyTemplateMap)
 import Prelude hiding (appendFile, putStrLn, readFile)
 
 -- a Map of key/value pairs that will be used to fill the template file
@@ -55,13 +56,13 @@ insertTransaction transaction =
 
 insertCreditDebit :: Transaction -> TemplateMap -> TemplateMap
 insertCreditDebit transaction =
-  insert "debit" (TL.pack $ show transaction.amount)
-    >>> insert "credit" (TL.pack $ show $ -transaction.amount)
+  insert "debit" (T.pack $ show transaction.amount)
+    >>> insert "credit" (T.pack $ show $ -transaction.amount)
 
 getMd5 :: LedgerConfig -> TemplateMap -> Text
 getMd5 ledgerConfig templateMap = calculateMd5Value md5Values
  where
-  md5Keys = TL.pack <$> ledgerConfig.md5
+  md5Keys = T.pack <$> ledgerConfig.md5
   -- This is validated, so fromJust should not error. TODO: find a way to not use fromJust
   md5Values = fromJust . flip Map.lookup templateMap <$> md5Keys
 
@@ -85,8 +86,15 @@ transactionToLedger existingMd5Sums template transaction = do
                 & insert "md5sum" md5Sum
                 & insertCreditDebit transaction
                 & insertAccountsWithUnderscore
-        let renderedTemplate = format (fromString $ TL.unpack template) templateMapFinal
+        let renderedTemplate = renderTemplate templateMapFinal template
         liftIO $ appendFile config.journalFile $ "\n\n" <> renderedTemplate
+
+renderTemplate :: TemplateMap -> Text -> Text
+renderTemplate templateMap template =
+  TL.toStrict $
+    format
+      (fromString $ T.unpack template)
+      (toLazyTemplateMap templateMap) -- `format` only accepts Maps with lazy text in it
 
 -- This in needed because the library for the template rendering doesn't accept underscores
 insertAccountsWithUnderscore :: TemplateMap -> TemplateMap
@@ -119,7 +127,7 @@ getPromptResultForMatchingEntry fill templateMap = do
   sleep <- asks (.sleep)
   printEmptyLine
   forM_ fills \(key, value) -> do
-    liftIO $ putStrLn $ "Set '" <> TL.unpack key <> "' to '" <> TL.unpack value <> "'"
+    liftIO $ putStrLn $ "Set '" <> T.unpack key <> "' to '" <> T.unpack value <> "'"
   liftIO sleep
 
   updateTemplateMapFromPrompts prompts templateMapWithFills
@@ -163,7 +171,7 @@ printTemplateMap templateMap = do
     case templateMap !? key of
       Just s -> do
         putStrLn <- asks (.putStrLn)
-        liftIO $ putStrLn $ TL.unpack $ "    " <> key <> ": " <> s
+        liftIO $ putStrLn $ T.unpack $ "    " <> key <> ": " <> s
       Nothing -> return ()
 
 printEmptyLine :: App ()

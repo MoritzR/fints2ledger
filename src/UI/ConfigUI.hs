@@ -12,8 +12,8 @@ import Config.Files (ConfigDirectory, getConfigFilePath)
 import Config.YamlConfig (FintsConfig (..), Password (..), YamlConfig (..))
 import Control.Lens (Iso', Lens', iso, (.=))
 import Data.Generics.Labels ()
-import Data.Text qualified as T
-import Data.Text.Lazy qualified as TL
+import Data.Text (Text)
+import Data.Text qualified as T (null)
 import GHC.Generics (Generic)
 import Graphics.Vty qualified as V
 import UI.ConfigFields qualified as Fields
@@ -52,8 +52,8 @@ draw configDirectory state =
   [ form
       <+> vBorder
       <+> hLimit 20 help
-      <=> configText
-      <=> controls
+        <=> configText
+        <=> controls
   ]
  where
   form = renderForm state.form
@@ -122,9 +122,6 @@ buildVty = do
   V.setMode (V.outputIface v) V.Mouse True
   return v
 
-lazyTextConverter :: Iso' TL.Text T.Text
-lazyTextConverter = iso TL.toStrict TL.fromStrict
-
 mkForm :: FintsConfig -> Form FintsConfig e Name
 mkForm =
   newForm
@@ -138,7 +135,7 @@ maybePasswordToPassword :: Iso' (Maybe Password) Password
 maybePasswordToPassword =
   iso
     (?? Password "")
-    (\password -> if TL.null password.get then Nothing else Just password)
+    (\password -> if T.null password.get then Nothing else Just password)
 
 label :: Fields.Fields -> Widget n -> Widget n
 label field widgetToModify =
@@ -146,10 +143,10 @@ label field widgetToModify =
     vLimit 1 (hLimit 15 $ str (showFieldForUser field) <+> fill ' ') <+> widgetToModify
 
 textInput :: Fields.Fields -> TextLens -> FintsConfig -> FintsFormFieldState e
-textInput field lens = label field @@= editTextField (lens . lazyTextConverter) field (Just 1)
+textInput field lens = label field @@= editTextField lens field (Just 1)
 
 passwordInput :: Fields.Fields -> TextLens -> FintsConfig -> FintsFormFieldState e
-passwordInput field lens = label field @@= editPasswordField (lens . lazyTextConverter) field
+passwordInput field lens = label field @@= editPasswordField lens field
 
 type FintsFormFieldState e = FormFieldState FintsConfig e Fields.Fields
-type TextLens = Lens' FintsConfig TL.Text
+type TextLens = Lens' FintsConfig Text
