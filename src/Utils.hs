@@ -5,6 +5,7 @@ import Crypto.Hash.MD5 qualified as MD5
 import Data.Aeson (ToJSON, encode)
 import Data.ByteString.Base16 qualified as Base16
 import Data.ByteString.Lazy (ByteString)
+import Data.Function ((&))
 import Data.Text.Encoding qualified as T
 import Data.Text.Lazy (Text)
 import Data.Text.Lazy qualified as TL
@@ -29,7 +30,14 @@ createFile :: FilePath -> IO ()
 createFile path = writeFile path ""
 
 calculateMd5Value :: [Text] -> Text
-calculateMd5Value md5Values = TL.fromStrict $ T.decodeUtf8 $ Base16.encode $ MD5.finalize $ foldl MD5.update MD5.init (T.encodeUtf8 . TL.toStrict <$> md5Values)
+calculateMd5Value md5Values =
+  map textToByteString md5Values
+    & foldl MD5.update MD5.init
+    & MD5.finalize
+    & byteStringToText
+ where
+  textToByteString = T.encodeUtf8 . TL.toStrict
+  byteStringToText = TL.fromStrict . T.decodeUtf8 . Base16.encode
 
 formatDouble :: Double -> Text
 formatDouble double
