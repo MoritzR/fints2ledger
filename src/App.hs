@@ -11,7 +11,7 @@ type App a = ReaderT Env IO a
 
 data Env = Env
   { config :: AppConfig
-  , putStrLn :: String -> IO ()
+  , putStrLn :: Text -> IO ()
   , readFile :: FilePath -> IO Text
   , appendFile :: FilePath -> Text -> IO ()
   , promptForEntry :: Map Text Text -> Text -> App (PromptResult Text)

@@ -3,7 +3,6 @@ module PromptSpec (spec) where
 import App (Env (..), PromptResult (Result, Skip))
 import Config.AppConfig (AppConfig (..))
 import Config.YamlConfig (Filling (Filling, match), LedgerConfig (..), fill)
-import Control.Monad (join)
 import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Trans.Reader (ReaderT (runReaderT))
 import Data.IORef (modifyIORef, newIORef, readIORef)
@@ -192,4 +191,4 @@ runToLedger transactions env = do
     env
       { putStrLn = \s -> modifyIORef ioRef (++ [s])
       }
-  join <$> readIORef ioRef
+  T.unpack . T.concat <$> readIORef ioRef

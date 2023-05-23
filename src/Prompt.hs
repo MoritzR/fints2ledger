@@ -127,7 +127,7 @@ getPromptResultForMatchingEntry fill templateMap = do
   sleep <- asks (.sleep)
   printEmptyLine
   forM_ fills \(key, value) -> do
-    liftIO $ putStrLn $ "Set '" <> T.unpack key <> "' to '" <> T.unpack value <> "'"
+    liftIO $ putStrLn $ "Set '" <> key <> "' to '" <> value <> "'"
   liftIO sleep
 
   updateTemplateMapFromPrompts prompts templateMapWithFills
@@ -171,7 +171,7 @@ printTemplateMap templateMap = do
     case templateMap !? key of
       Just s -> do
         putStrLn <- asks (.putStrLn)
-        liftIO $ putStrLn $ T.unpack $ "    " <> key <> ": " <> s
+        liftIO $ putStrLn $ "    " <> key <> ": " <> s
       Nothing -> return ()
 
 printEmptyLine :: App ()

@@ -62,7 +62,7 @@ convertTransactionsForConfig appConfig transactions = do
   let env =
         Env
           { config = appConfig
-          , putStrLn = putStrLn
+          , putStrLn = TIO.putStrLn
           , promptForEntry = promptForEntry
           , readFile = TIO.readFile
           , appendFile = TIO.appendFile
