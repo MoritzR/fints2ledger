@@ -1,11 +1,13 @@
 {-# LANGUAGE DataKinds #-}
 
-module App (App, PromptResult (..), Env (..)) where
+module App (App, PromptResult (..), Env (..), printText) where
 
 import Config.AppConfig (AppConfig)
-import Control.Monad.Trans.Reader (ReaderT)
+import Control.Monad.IO.Class (liftIO)
+import Control.Monad.Trans.Reader (ReaderT, asks)
 import Data.Map (Map)
 import Data.Text (Text)
+import Prelude hiding (putStrLn)
 
 type App a = ReaderT Env IO a
 
@@ -19,3 +21,8 @@ data Env = Env
   }
 
 data PromptResult a = Result a | Skip deriving (Show)
+
+printText :: Text -> App ()
+printText text = do
+  putStrLn <- asks (.putStrLn)
+  liftIO $ putStrLn text

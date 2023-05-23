@@ -1,6 +1,6 @@
 module Prompt (transactionsToLedger) where
 
-import App (App, Env (..), PromptResult (..))
+import App (App, Env (..), PromptResult (..), printText)
 import Config.AppConfig (AppConfig (..))
 import Config.Files (getTemplatePath)
 import Config.YamlConfig (Fill, Filling (..), LedgerConfig (..))
@@ -33,14 +33,13 @@ type TemplateMap = Map Text Text
 transactionsToLedger :: [Transaction] -> App ()
 transactionsToLedger transactions = do
   config <- asks (.config)
-  putStrLn <- asks (.putStrLn)
   readFile <- asks (.readFile)
   existingMd5Sums <- getExistingMd5Sums <$> liftIO (readFile config.journalFile)
   template <- liftIO $ readFile =<< getTemplatePath
 
-  liftIO $ putStrLn "        Controls:"
-  liftIO $ putStrLn "            - Ctrl + D or enter 's' to skip an entry"
-  liftIO $ putStrLn "            - Ctrl + C to abort"
+  printText "        Controls:"
+  printText "            - Ctrl + D or enter 's' to skip an entry"
+  printText "            - Ctrl + C to abort"
 
   forM_ transactions do
     transactionToLedger existingMd5Sums template
@@ -123,11 +122,10 @@ getPromptResultForMatchingEntry fill templateMap = do
 
   printTemplateMap templateMapWithFills
 
-  putStrLn <- asks (.putStrLn)
   sleep <- asks (.sleep)
-  printEmptyLine
+  printText ""
   forM_ fills \(key, value) -> do
-    liftIO $ putStrLn $ "Set '" <> key <> "' to '" <> value <> "'"
+    printText $ "Set '" <> key <> "' to '" <> value <> "'"
   liftIO sleep
 
   updateTemplateMapFromPrompts prompts templateMapWithFills
@@ -161,20 +159,12 @@ getExistingMd5Sums textToSearchIn =
 
 printTemplateMap :: TemplateMap -> App ()
 printTemplateMap templateMap = do
-  printEmptyLine
-  printEmptyLine
+  printText "\n"
   -- TODO make these string type safe
   let keysInOrder = ["date", "amount", "currency", "payee", "posting", "purpose", "credit_account", "debit_account"]
   forM_ keysInOrder printIfPresent
  where
   printIfPresent key = do
     case templateMap !? key of
-      Just s -> do
-        putStrLn <- asks (.putStrLn)
-        liftIO $ putStrLn $ "    " <> key <> ": " <> s
+      Just s -> printText $ "    " <> key <> ": " <> s
       Nothing -> return ()
-
-printEmptyLine :: App ()
-printEmptyLine = do
-  putStrLn <- asks (.putStrLn)
-  liftIO $ putStrLn ""
