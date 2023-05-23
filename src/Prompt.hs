@@ -66,9 +66,9 @@ insertCreditDebit transaction =
 getMd5 :: LedgerConfig -> TemplateMap -> Text
 getMd5 ledgerConfig templateMap = calculateMd5Value md5Values
  where
-  md5Keys = T.pack <$> ledgerConfig.md5
+  md5Keys = map T.pack ledgerConfig.md5
   -- This is validated, so fromJust should not error. TODO: find a way to not use fromJust
-  md5Values = fromJust . flip Map.lookup templateMap <$> md5Keys
+  md5Values = map (fromJust . flip Map.lookup templateMap) md5Keys
 
 transactionToLedger :: Set Text -> Text -> Transaction -> App ()
 transactionToLedger existingMd5Sums template transaction = do
