@@ -10,8 +10,8 @@ A tool for downloading transactions from FinTS banking APIs and sorting them int
 ## Contents
 - [Install](#install)
 - [Usage](#usage)
-- [Developing](#developing)
 - [Changelog](#changelog)
+- [Contributing](#contributing)
 
 ## Install
 You need Python version 3.6 or higher. Install the Python dependencies using:
@@ -87,6 +87,9 @@ ledger:
 
 ## Changelog
 The changelog can be found in [CHANGELOG.md](CHANGELOG.md)
+
+## Contributing
+For additional information on how to work with the repository, see [CONTRIBUTING.md](CONTRIBUTING.md)
 
 [ing-link]: https://www.ing.de
 [gls-link]: https://www.gls.de
