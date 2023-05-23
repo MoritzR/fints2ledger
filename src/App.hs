@@ -11,6 +11,12 @@ import Prelude hiding (putStrLn)
 
 type App a = ReaderT Env IO a
 
+{- | The environment defines the Apps dependencies.
+  This is useful for testing, as these dependencies
+  can be mocked easily. Apart from the AppConfig,
+  it contains all the IO functions, like printing to
+  the terminal or reading a file.
+-}
 data Env = Env
   { config :: AppConfig
   , putStrLn :: Text -> IO ()

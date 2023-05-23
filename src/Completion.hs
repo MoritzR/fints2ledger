@@ -12,6 +12,7 @@ import Ledger (getAccounts, getJournal)
 import System.Console.Haskeline (Completion (Completion), CompletionFunc, InputT, Settings (Settings), completeWord, noCompletion, runInputT)
 import Utils ((??))
 
+-- | Provides tab completion when prompting for input
 runCompletion :: AppConfig -> Text -> (forall a. InputT IO a -> IO a)
 runCompletion config key
   -- make this elem check more robust to renames

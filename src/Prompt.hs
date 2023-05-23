@@ -27,7 +27,12 @@ import Transactions (Amount (..), Transaction (..))
 import Utils (calculateMd5Value, formatDouble, toLazyTemplateMap)
 import Prelude hiding (appendFile, putStrLn, readFile)
 
--- a Map of key/value pairs that will be used to fill the template file
+{- | A Map of key/value pairs that will be used to fill the template file
+We fill these values step by step by:
+  * using default values from the config
+  * prompting the user for it
+  * using automatic filling rules from the config
+-}
 type TemplateMap = Map Text Text
 
 transactionsToLedger :: [Transaction] -> App ()
