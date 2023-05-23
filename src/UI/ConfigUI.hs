@@ -29,9 +29,9 @@ runConfigUI initialConfig configDirectory = do
     customMain
       initialVty
       buildVty
-      Nothing
-      (formApp configDirectory)
-      (FormAppState initialForm False)
+      Nothing -- not using custom events
+      (formApp configDirectory) -- the UI App
+      (FormAppState initialForm False) -- initial state
   let newFintsConfig = formState updatedForm.form
 
   return $
@@ -39,15 +39,13 @@ runConfigUI initialConfig configDirectory = do
       then Nothing
       else Just newFintsConfig
 
-type Name = Fields.Fields
-
 data FormAppState e = FormAppState
-  { form :: Form FintsConfig e Name
+  { form :: Form FintsConfig e Fields.Fields
   , aborted :: Bool
   }
   deriving (Generic)
 
-draw :: ConfigDirectory -> FormAppState e -> [Widget Name]
+draw :: ConfigDirectory -> FormAppState e -> [Widget Fields.Fields]
 draw configDirectory state =
   [ form
       <+> vBorder
@@ -79,7 +77,7 @@ showFieldForUser field = case field of
   Fields.Endpoint -> "FinTS Endpoint"
   _ -> "<missing field name>"
 
-helpText :: Name -> String
+helpText :: Fields.Fields -> String
 helpText field = case field of
   Fields.Account -> "The account number you use to log into your banking account."
   Fields.Blz -> "Your banks BLZ"
@@ -99,7 +97,7 @@ attributeMap =
     , (attrName "secondary", V.white `on` V.blue)
     ]
 
-formApp :: ConfigDirectory -> Brick.App (FormAppState e) e Name
+formApp :: ConfigDirectory -> Brick.App (FormAppState e) e Fields.Fields
 formApp configDirectory =
   Brick.App
     { appDraw = draw configDirectory
@@ -122,7 +120,7 @@ buildVty = do
   V.setMode (V.outputIface v) V.Mouse True
   return v
 
-mkForm :: FintsConfig -> Form FintsConfig e Name
+mkForm :: FintsConfig -> Form FintsConfig e Fields.Fields
 mkForm =
   newForm
     [ textInput Fields.Account #account
