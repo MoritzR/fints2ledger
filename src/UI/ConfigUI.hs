@@ -40,12 +40,12 @@ runConfigUI initialConfig configDirectory = do
       else Just newFintsConfig
 
 data FormAppState e = FormAppState
-  { form :: Form FintsConfig e Fields.Fields
+  { form :: Form FintsConfig e Fields.Field
   , aborted :: Bool
   }
   deriving (Generic)
 
-draw :: ConfigDirectory -> FormAppState e -> [Widget Fields.Fields]
+draw :: ConfigDirectory -> FormAppState e -> [Widget Fields.Field]
 draw configDirectory state =
   [ form
       <+> vBorder
@@ -69,7 +69,7 @@ draw configDirectory state =
   controlsPrimary = withAttr $ attrName "primary"
   controlSecondary = withAttr $ attrName "secondary"
 
-showFieldForUser :: Fields.Fields -> String
+showFieldForUser :: Fields.Field -> String
 showFieldForUser field = case field of
   Fields.Account -> "Account"
   Fields.Blz -> "BLZ"
@@ -77,7 +77,7 @@ showFieldForUser field = case field of
   Fields.Endpoint -> "FinTS Endpoint"
   _ -> "<missing field name>"
 
-helpText :: Fields.Fields -> String
+helpText :: Fields.Field -> String
 helpText field = case field of
   Fields.Account -> "The account number you use to log into your banking account."
   Fields.Blz -> "Your banks BLZ"
@@ -97,7 +97,7 @@ attributeMap =
     , (attrName "secondary", V.white `on` V.blue)
     ]
 
-formApp :: ConfigDirectory -> Brick.App (FormAppState e) e Fields.Fields
+formApp :: ConfigDirectory -> Brick.App (FormAppState e) e Fields.Field
 formApp configDirectory =
   Brick.App
     { appDraw = draw configDirectory
@@ -120,7 +120,7 @@ buildVty = do
   V.setMode (V.outputIface v) V.Mouse True
   return v
 
-mkForm :: FintsConfig -> Form FintsConfig e Fields.Fields
+mkForm :: FintsConfig -> Form FintsConfig e Fields.Field
 mkForm =
   newForm
     [ textInput Fields.Account #account
@@ -135,16 +135,16 @@ maybePasswordToPassword =
     (?? Password "")
     (\password -> if T.null password.get then Nothing else Just password)
 
-label :: Fields.Fields -> Widget n -> Widget n
+label :: Fields.Field -> Widget n -> Widget n
 label field widgetToModify =
   padBottom (Pad 1) $
     vLimit 1 (hLimit 15 $ str (showFieldForUser field) <+> fill ' ') <+> widgetToModify
 
-textInput :: Fields.Fields -> TextLens -> FintsConfig -> FintsFormFieldState e
+textInput :: Fields.Field -> TextLens -> FintsConfig -> FintsFormFieldState e
 textInput field lens = label field @@= editTextField lens field (Just 1)
 
-passwordInput :: Fields.Fields -> TextLens -> FintsConfig -> FintsFormFieldState e
+passwordInput :: Fields.Field -> TextLens -> FintsConfig -> FintsFormFieldState e
 passwordInput field lens = label field @@= editPasswordField lens field
 
-type FintsFormFieldState e = FormFieldState FintsConfig e Fields.Fields
+type FintsFormFieldState e = FormFieldState FintsConfig e Fields.Field
 type TextLens = Lens' FintsConfig Text
