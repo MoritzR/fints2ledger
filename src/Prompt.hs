@@ -110,7 +110,7 @@ insertAccountsWithUnderscore templateMap =
 getPromptResultForMatchingEntry :: Fill -> TemplateMap -> App (PromptResult TemplateMap)
 getPromptResultForMatchingEntry fill templateMap = do
   let fillAsList = toList fill
-  let (prompts, fills) =
+      (prompts, fills) =
         fillAsList
           & map
             ( \(key, maybeValue) ->
@@ -119,7 +119,7 @@ getPromptResultForMatchingEntry fill templateMap = do
                   Nothing -> Left key
             )
           & partitionEithers
-  let templateMapWithFills = fromList fills <> templateMap
+      templateMapWithFills = fromList fills <> templateMap
 
   printTemplateMap templateMapWithFills
 
