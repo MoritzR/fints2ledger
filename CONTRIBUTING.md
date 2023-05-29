@@ -37,6 +37,8 @@ stack install
 The Apps entrypoint is in the [app](app/) directory. There isn't much code there, so you can also skip right to [Lib.ts](src/Lib.ts).
 You can explore the code from there.
 
+The python code that is used to download the transaction can be found in [data/pyfints.py](data/pyfints.py).
+
 ### Dependency Injection
 Some functions, like
 ```haskell
