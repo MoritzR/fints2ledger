@@ -7,6 +7,8 @@ A tool for downloading transactions from FinTS banking APIs and sorting them int
 
 ![](demo.gif)
 
+There is a pure python implementation available on the [python branch](https://github.com/MoritzR/fints2ledger/tree/python).
+
 ## Contents
 - [Install](#install)
 - [Usage](#usage)
