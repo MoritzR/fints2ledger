@@ -49,27 +49,6 @@ transactionsToLedger transactions = do
   forM_ transactions do
     transactionToLedger existingMd5Sums template
 
-insertTransaction :: Transaction -> TemplateMap -> TemplateMap
-insertTransaction transaction =
-  insert "date" (transaction.date)
-    >>> insert "amount" (formatDouble transaction.amount.amount)
-    >>> insert "currency" (transaction.currency)
-    >>> insert "payee" (transaction.payee)
-    >>> insert "posting" (transaction.posting)
-    >>> insert "purpose" (transaction.purpose)
-
-insertCreditDebit :: Transaction -> TemplateMap -> TemplateMap
-insertCreditDebit transaction =
-  insert "debit" (T.pack $ show transaction.amount)
-    >>> insert "credit" (T.pack $ show $ -transaction.amount)
-
-getMd5 :: LedgerConfig -> TemplateMap -> Text
-getMd5 ledgerConfig templateMap = calculateMd5Value md5Values
- where
-  md5Keys = map T.pack ledgerConfig.md5
-  -- This is validated, so fromJust should not error. TODO: find a way to not use fromJust
-  md5Values = map (fromJust . flip Map.lookup templateMap) md5Keys
-
 transactionToLedger :: Set Text -> Text -> Transaction -> App ()
 transactionToLedger existingMd5Sums template transaction = do
   config <- asks (.config)
@@ -92,6 +71,27 @@ transactionToLedger existingMd5Sums template transaction = do
                 & insertAccountsWithUnderscore
         let renderedTemplate = renderTemplate templateMapFinal template
         liftIO $ appendFile config.journalFile $ "\n\n" <> renderedTemplate
+
+insertTransaction :: Transaction -> TemplateMap -> TemplateMap
+insertTransaction transaction =
+  insert "date" (transaction.date)
+    >>> insert "amount" (formatDouble transaction.amount.amount)
+    >>> insert "currency" (transaction.currency)
+    >>> insert "payee" (transaction.payee)
+    >>> insert "posting" (transaction.posting)
+    >>> insert "purpose" (transaction.purpose)
+
+insertCreditDebit :: Transaction -> TemplateMap -> TemplateMap
+insertCreditDebit transaction =
+  insert "debit" (T.pack $ show transaction.amount)
+    >>> insert "credit" (T.pack $ show $ -transaction.amount)
+
+getMd5 :: LedgerConfig -> TemplateMap -> Text
+getMd5 ledgerConfig templateMap = calculateMd5Value md5Values
+ where
+  md5Keys = map T.pack ledgerConfig.md5
+  -- This is validated, so fromJust should not error. TODO: find a way to not use fromJust
+  md5Values = map (fromJust . flip Map.lookup templateMap) md5Keys
 
 renderTemplate :: TemplateMap -> Text -> Text
 renderTemplate templateMap template =
