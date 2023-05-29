@@ -2,9 +2,9 @@ module Config.CliConfig (getCliConfig, CliConfig (..)) where
 
 import Config.Files (ConfigDirectory, getDefaultConfigDirectory)
 import Data.Dates (DateTime, dateTimeToDay, getCurrentDateTime, parseDate)
-import Data.Time (Day, addDays)
+import Data.Time (Day, addDays, defaultTimeLocale, formatTime)
 import Hledger (getCurrentDay)
-import Options.Applicative (Parser, ParserInfo, eitherReader, fullDesc, help, helper, info, long, metavar, option, progDesc, short, showDefault, strOption, switch, value, (<**>))
+import Options.Applicative (Parser, ParserInfo, eitherReader, fullDesc, help, helper, info, long, metavar, option, progDesc, short, showDefault, showDefaultWith, strOption, switch, value, (<**>))
 
 data CliConfig = CliConfig
   { configDirectory :: ConfigDirectory
@@ -40,9 +40,9 @@ startDateOption currentDateTime defaultValue =
   option
     (eitherReader $ fmap dateTimeToDay . mapLeft show . parseDate currentDateTime)
     ( long "date"
-        <> help "Start date to pull the FinTS transactions from" -- TODO better help text
+        <> help "Start date to pull the FinTS transactions from. Possible values are for example: '25.01.2023', '90 days ago', 'last monday'"
         <> metavar "DATE"
-        <> showDefault
+        <> showDefaultWith (formatTime defaultTimeLocale "%d.%m.%Y")
         <> value defaultValue
     )
 
