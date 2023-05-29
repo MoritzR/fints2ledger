@@ -1,8 +1,6 @@
 name: binaries
 
 on:
-  push:
-    branches: [ hs ]
   workflow_dispatch:
 
 
