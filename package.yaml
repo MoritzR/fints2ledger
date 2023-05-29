@@ -1,0 +1,108 @@
+name:                fints2ledger
+version:             1.0.0
+github:              "MoritzR/fints2ledger"
+license:             MIT
+author:              "Moritz Rumpf"
+maintainer:          "moritz.rumpf@gmail.com"
+copyright:           "2023 Moritz Rumpf"
+
+extra-source-files:
+- README.md
+- CHANGELOG.md
+
+data-files:
+- data/*
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/MoritzR/fints2ledger#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- typed-process # for calling to python
+- directory # for getting the users home directory
+- filepath # for concatenating file paths
+- yaml # for parsing yaml
+- aeson # for json/yml parsing
+- bytestring # for the ByteString Type, used by Aeson
+- text # used by libraries instead of String
+- haskeline # for autocompleting inputs
+- hledger-lib >= 1.27.1 # for autocompleting ledger accounts
+- containers # for Maps and Sets
+- text-format-heavy # for python like formatting of template strings
+- cryptohash-md5 # for md5
+- base16-bytestring # for md5 to hex
+- regex-tdfa # for regex matching
+- time # time library
+- dates # for more flexible date parsing, like "30 days ago"
+- optparse-applicative # for parsing CLI arguments
+- transformers # For ReaderT
+- brick # terminal UI library
+- vty # underlying library for brick
+- lens # lenses to use with brick
+- generic-lens # automatically generate lenses
+
+language: GHC2021
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wmissing-export-lists
+- -Wmissing-home-modules
+- -Wpartial-fields
+- -Wredundant-constraints
+- -Wno-unused-do-bind
+
+default-extensions:
+- DuplicateRecordFields
+- OverloadedRecordDot
+- OverloadedStrings
+- NoFieldSelectors
+- BlockArguments
+
+library:
+  source-dirs: src
+
+executables:
+  fints2ledger:
+    main: Main.hs
+    when:
+    - condition: (flag(bundle_data_dir))
+      then:
+        source-dirs: app/bundled
+      else:
+        source-dirs: app/default
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - fints2ledger
+
+tests:
+  fints2ledger-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - fints2ledger
+    - sydtest # testing library
+    - sydtest-discover # automatic test discovery
+    - QuickCheck # property based testing library
+
+flags:
+  bundle_data_dir:
+    description: Set the data dir to be relative to the executable for easier bundling
+    default: false
+    manual: true

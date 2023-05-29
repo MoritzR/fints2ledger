@@ -1,0 +1,3 @@
+packages: ./fints2ledger.cabal
+          dates/dates.cabal
+  

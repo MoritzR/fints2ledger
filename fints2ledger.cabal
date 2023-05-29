@@ -1,0 +1,186 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.35.1.
+--
+-- see: https://github.com/sol/hpack
+
+name:           fints2ledger
+version:        1.0.0
+description:    Please see the README on GitHub at <https://github.com/MoritzR/fints2ledger#readme>
+homepage:       https://github.com/MoritzR/fints2ledger#readme
+bug-reports:    https://github.com/MoritzR/fints2ledger/issues
+author:         Moritz Rumpf
+maintainer:     moritz.rumpf@gmail.com
+copyright:      2023 Moritz Rumpf
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    CHANGELOG.md
+data-files:
+    data/example.json
+    data/pyfints.py
+    data/template.txt
+
+source-repository head
+  type: git
+  location: https://github.com/MoritzR/fints2ledger
+
+flag bundle_data_dir
+  description: Set the data dir to be relative to the executable for easier bundling
+  manual: True
+  default: False
+
+library
+  exposed-modules:
+      App
+      Completion
+      Config.AppConfig
+      Config.CliConfig
+      Config.Files
+      Config.StartupChecks
+      Config.YamlConfig
+      Ledger
+      Lib
+      Matching.Matching
+      Matching.Parser
+      Prompt
+      Transactions
+      UI.ConfigFields
+      UI.ConfigUI
+      Utils
+  other-modules:
+      Paths_fints2ledger
+  hs-source-dirs:
+      src
+  default-extensions:
+      DuplicateRecordFields
+      OverloadedRecordDot
+      OverloadedStrings
+      NoFieldSelectors
+      BlockArguments
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wno-unused-do-bind
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , base16-bytestring
+    , brick
+    , bytestring
+    , containers
+    , cryptohash-md5
+    , dates
+    , directory
+    , filepath
+    , generic-lens
+    , haskeline
+    , hledger-lib >=1.27.1
+    , lens
+    , optparse-applicative
+    , regex-tdfa
+    , text
+    , text-format-heavy
+    , time
+    , transformers
+    , typed-process
+    , vty
+    , yaml
+  default-language: GHC2021
+
+executable fints2ledger
+  main-is: Main.hs
+  other-modules:
+      Paths_fints2ledger
+  default-extensions:
+      DuplicateRecordFields
+      OverloadedRecordDot
+      OverloadedStrings
+      NoFieldSelectors
+      BlockArguments
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wno-unused-do-bind -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , base16-bytestring
+    , brick
+    , bytestring
+    , containers
+    , cryptohash-md5
+    , dates
+    , directory
+    , filepath
+    , fints2ledger
+    , generic-lens
+    , haskeline
+    , hledger-lib >=1.27.1
+    , lens
+    , optparse-applicative
+    , regex-tdfa
+    , text
+    , text-format-heavy
+    , time
+    , transformers
+    , typed-process
+    , vty
+    , yaml
+  default-language: GHC2021
+  if (flag(bundle_data_dir))
+    other-modules:
+        Main
+    hs-source-dirs:
+        app/bundled
+  else
+    other-modules:
+        Main
+    hs-source-dirs:
+        app/default
+
+test-suite fints2ledger-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      ConfigSpec
+      Matching.MatchingSpec
+      Matching.ParserSpec
+      PromptSpec
+      TransactionSpec
+      UtilsSpec
+      Paths_fints2ledger
+  hs-source-dirs:
+      test
+  default-extensions:
+      DuplicateRecordFields
+      OverloadedRecordDot
+      OverloadedStrings
+      NoFieldSelectors
+      BlockArguments
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wno-unused-do-bind -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      QuickCheck
+    , aeson
+    , base >=4.7 && <5
+    , base16-bytestring
+    , brick
+    , bytestring
+    , containers
+    , cryptohash-md5
+    , dates
+    , directory
+    , filepath
+    , fints2ledger
+    , generic-lens
+    , haskeline
+    , hledger-lib >=1.27.1
+    , lens
+    , optparse-applicative
+    , regex-tdfa
+    , sydtest
+    , sydtest-discover
+    , text
+    , text-format-heavy
+    , time
+    , transformers
+    , typed-process
+    , vty
+    , yaml
+  default-language: GHC2021

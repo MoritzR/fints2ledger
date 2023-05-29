@@ -1,0 +1,16 @@
+fints:
+  account: <your account number>
+  blz: <your banks BLZ>
+  endpoint: <your bank fints endpoint>
+  password: <your banking password>
+ledger:
+  defaults:
+    debit_account: assets:bank:checking
+  fills: []
+  md5:
+  - date
+  - payee
+  - purpose
+  - amount
+  prompts:
+  - credit_account
