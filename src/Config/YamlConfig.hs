@@ -120,7 +120,7 @@ defaultYamlConfig =
         FintsConfig
           { blz = "<your banks BLZ>"
           , account = "<your account number>"
-          , password = Just $ Password "<your banking password>"
+          , password = Nothing
           , endpoint = "<your bank fints endpoint>"
           , selectedAccount = Nothing
           }
