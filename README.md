@@ -46,7 +46,8 @@ To use a real connection run
 ```
 fints2ledger
 ```
-and enter your banking transaction in the following form. This only needs to be done once.
+and enter your banking credentials in the following form. This only needs to be done once.
+The full configuration is stored in `~/.config/fints2ledger/config.yml`.
 
 For a list of available command line arguments, run
 ```
