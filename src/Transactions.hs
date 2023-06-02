@@ -68,7 +68,7 @@ getTransactionsFromFinTS config = do
 getPassword :: IO Password
 getPassword = do
   Haskeline.runInputT Haskeline.defaultSettings do
-    maybePassword <- Haskeline.getPassword (Just '*') "Password: "
+    maybePassword <- Haskeline.getPassword (Just '*') "Banking Password: "
     Haskeline.outputStrLn ""
     return $ Password $ T.pack (maybePassword ?? "")
 
