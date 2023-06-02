@@ -42,23 +42,11 @@ You can try out the program with the `demo` flag, which does not call any bankin
 fints2ledger --demo
 ```
 
-Next, go to your config to the newly created config file (default `~/.config/fints2ledger/config.yml`) and update your banking credentials in the `fints` section:
-```
-fints:
-  blz: "<your bank's BLZ>"
-  account: "<your account number>"
-  password: "<your banking password>"
-  endpoint: <your bank fints endpoint> # e.g.: https://fints.ing.de/fints for ING
-  selectedAccount: "<account number>" # defaults to the value from "account"
-                                      # useful when you have multiple accounts for the same login
-```
-
-When you are done, run
+To use a real connection run
 ```
 fints2ledger
 ```
-
-This will download the transactions from the last 90 days (by default) and tries to convert them to a ledger journal.
+and enter your banking transaction in the following form. This only needs to be done once.
 
 For a list of available command line arguments, run
 ```
