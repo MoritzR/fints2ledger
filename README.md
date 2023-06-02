@@ -58,7 +58,7 @@ In the `ledger` section you can use a regex match on any field of the transactio
 The `amount` field uses comparison symbols instead of a regex. Valid values are for example "<=90.5", "120.13", "> 200"
 
 Example: I do not want to enter a `credit_account` and `purpose` for my monthly recurring payments for the rent of my apartment. Same for my music streaming transactions. I can change the `config.yml` like this:
-```
+```yaml
 ledger:
   ...
   fills:
@@ -73,6 +73,18 @@ ledger:
       fill:
         credit_account: "expenses:monthly:musiccompany"
         purpose: "Monthly fee for music streaming"
+```
+To only fill out parts of the transaction while still being prompted for others, leave the value empty for the fields that you like to be prompted for.
+The following will fill out `credit_account` but still prompt for `purpose` (instead of taking the purpose from the original transaction).
+```yaml
+ledger:
+  ...
+  fills:
+    - match:
+        payee: "The Landlord"
+      fill:
+        credit_account: "expenses:monthly:rent"
+        purpose:
 ```
 
 ## Changelog
