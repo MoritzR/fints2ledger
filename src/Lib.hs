@@ -35,7 +35,7 @@ runFints2Ledger = do
 
   appConfig <- case command of
     RunDemo -> return $ makeAppConfig cliConfig defaultYamlConfig
-    _ -> do
+    _otherwise -> do
       runStartupChecks cliConfig
       yamlConfig <- getYamlConfig cliConfig.configDirectory
       return $ makeAppConfig cliConfig yamlConfig

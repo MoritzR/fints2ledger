@@ -75,7 +75,7 @@ showFieldForUser field = case field of
   Fields.Blz -> "BLZ"
   Fields.Password -> "Password"
   Fields.Endpoint -> "FinTS Endpoint"
-  _ -> "<missing field name>"
+  _otherwise -> "<missing field name>"
 
 helpText :: Fields.Field -> String
 helpText field = case field of
@@ -83,7 +83,7 @@ helpText field = case field of
   Fields.Blz -> "Your banks BLZ"
   Fields.Password -> "Your banking password.\nLeave empty if you don't want to store it."
   Fields.Endpoint -> "Your banks FinTS endpoint.\nFor example for ING this is: https://fints.ing.de/fints"
-  _ -> "<missing help text>"
+  _otherwise -> "<missing help text>"
 
 attributeMap :: AttrMap
 attributeMap =
@@ -108,7 +108,7 @@ formApp configDirectory =
             #aborted .= True
             halt
           VtyEvent (V.EvKey V.KEsc []) -> halt
-          _ -> zoom #form $ handleFormEvent event
+          _otherwise -> zoom #form $ handleFormEvent event
     , appChooseCursor = focusRingCursor $ formFocus . (.form)
     , appStartEvent = return ()
     , appAttrMap = const attributeMap
