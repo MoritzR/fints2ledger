@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           fints2ledger
-version:        1.0.0
+version:        1.0.1
 description:    Please see the README on GitHub at <https://github.com/MoritzR/fints2ledger#readme>
 homepage:       https://github.com/MoritzR/fints2ledger#readme
 bug-reports:    https://github.com/MoritzR/fints2ledger/issues

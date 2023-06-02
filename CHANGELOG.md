@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.1
+* When run with the `--demo` flag, the app will not ask for banking credentials anymore when there is no config file (which is the case when there was no 'real' run yet).
+* When aborting the config form on the first start, no default config with dummy credentials will be stored anymore. This allows the config form to popup on the next start, instead of trying to access the bank with dummy credentials.
+* The default password is now empty, which should be a better default instead of some dummy value. The user will be prompted later for the password
+
 ## 1.0.0
 * The new `--demo` flag allows one to try out fints2ledger without actually calling a banking API. Dummy transactions are used instead.
 * For automatic matching, the amount field now allows values like "<=90" instead of a regex. This is useful if one wants double check on expensive transactions that would normally be automatically matched.
