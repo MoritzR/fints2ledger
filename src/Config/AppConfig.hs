@@ -1,8 +1,8 @@
-module Config.AppConfig (AppConfig (..), getConfig) where
+module Config.AppConfig (AppConfig (..), makeAppConfig) where
 
 import Config.CliConfig (CliConfig (..))
 import Config.Files (ConfigDirectory)
-import Config.YamlConfig (FintsConfig, LedgerConfig, YamlConfig (..), getYamlConfig)
+import Config.YamlConfig (FintsConfig, LedgerConfig, YamlConfig (..))
 import Data.Time (Day)
 
 data AppConfig = Config
@@ -18,16 +18,14 @@ data AppConfig = Config
   }
   deriving (Show)
 
-getConfig :: CliConfig -> IO AppConfig
-getConfig cliConfig = do
-  yamlConfig <- getYamlConfig cliConfig.configDirectory
-  return $
-    Config
-      { fintsConfig = yamlConfig.fints
-      , ledgerConfig = yamlConfig.ledger
-      , configDirectory = cliConfig.configDirectory
-      , journalFile = cliConfig.journalFile
-      , startDate = cliConfig.startDate
-      , isDemo = cliConfig.isDemo
-      , pythonExecutable = cliConfig.pythonExecutable
-      }
+makeAppConfig :: CliConfig -> YamlConfig -> AppConfig
+makeAppConfig cliConfig yamlConfig =
+  Config
+    { fintsConfig = yamlConfig.fints
+    , ledgerConfig = yamlConfig.ledger
+    , configDirectory = cliConfig.configDirectory
+    , journalFile = cliConfig.journalFile
+    , startDate = cliConfig.startDate
+    , isDemo = cliConfig.isDemo
+    , pythonExecutable = cliConfig.pythonExecutable
+    }

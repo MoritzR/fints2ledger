@@ -26,4 +26,4 @@ matches templateMap filling =
         amount = read $ T.unpack $ templateMap ! key
        in
         matchesAmount amount
-    _ -> (templateMap ! key) =~ regex
+    _otherwise -> (templateMap ! key) =~ regex

@@ -5,11 +5,11 @@ where
 
 import App (App, Env (..), PromptResult (..))
 import Completion (runCompletion)
-import Config.AppConfig (AppConfig (..), getConfig)
+import Config.AppConfig (AppConfig (..), makeAppConfig)
 import Config.CliConfig (CliConfig (..), getCliConfig)
 import Config.Files (getConfigFilePath)
 import Config.StartupChecks (runStartupChecks)
-import Config.YamlConfig (YamlConfig (..), getYamlConfig, writeYamlConfig)
+import Config.YamlConfig (YamlConfig (..), defaultYamlConfig, getYamlConfig, writeYamlConfig)
 import Control.Concurrent (threadDelay)
 import Control.Monad (unless)
 import Control.Monad.IO.Class (liftIO)
@@ -31,9 +31,14 @@ runFints2Ledger :: IO ()
 runFints2Ledger = do
   cliConfig <- execParser =<< getCliConfig
 
-  runStartupChecks cliConfig
+  let command = getCommand cliConfig
 
-  appConfig <- getConfig cliConfig
+  appConfig <- case command of
+    RunDemo -> return $ makeAppConfig cliConfig defaultYamlConfig
+    _otherwise -> do
+      runStartupChecks cliConfig
+      yamlConfig <- getYamlConfig cliConfig.configDirectory
+      return $ makeAppConfig cliConfig yamlConfig
 
   ensureFileExists appConfig.journalFile
 
