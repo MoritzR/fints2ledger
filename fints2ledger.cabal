@@ -6,7 +6,9 @@ cabal-version: 1.12
 
 name:           fints2ledger
 version:        1.0.1
+synopsis:       Download transactions from FinTS into a ledger journal
 description:    Please see the README on GitHub at <https://github.com/MoritzR/fints2ledger#readme>
+category:       Finance, Console
 homepage:       https://github.com/MoritzR/fints2ledger#readme
 bug-reports:    https://github.com/MoritzR/fints2ledger/issues
 author:         Moritz Rumpf

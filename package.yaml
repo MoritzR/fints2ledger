@@ -14,8 +14,8 @@ data-files:
 - data/*
 
 # Metadata used when publishing your package
-# synopsis:            Short description of your package
-# category:            Web
+synopsis:            Download transactions from FinTS into a ledger journal 
+category:            Finance, Console
 
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
