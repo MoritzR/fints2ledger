@@ -69,7 +69,7 @@ is equivalent to the following
 putStrLn (show (head someList))
 ```
 
-`>>=` is known as `flatMap`, `bind` or `chain` and is also known behind the scenes by the do-notation. `=<<` is the same but with flipped arguments. All of the following are equivalent.
+`>>=` is known as `flatMap`, `bind` or `chain` and is also used behind the scenes by the do-notation. `=<<` is the same but with flipped arguments. All of the following are equivalent.
 For example
 ```haskell
 -- using >>=
