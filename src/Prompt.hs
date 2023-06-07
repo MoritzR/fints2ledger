@@ -100,7 +100,7 @@ renderTemplate templateMap template =
       (fromString $ T.unpack template)
       (toLazyTemplateMap templateMap) -- `format` only accepts Maps with lazy text in it
 
--- This in needed because the library for the template rendering doesn't accept underscores
+-- This is needed because the library for the template rendering doesn't accept underscores
 insertAccountsWithUnderscore :: TemplateMap -> TemplateMap
 insertAccountsWithUnderscore templateMap =
   templateMap
