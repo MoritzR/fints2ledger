@@ -116,12 +116,7 @@ getPromptResultForMatchingEntry fill templateMap = do
   let fillAsList = toList fill
       (prompts, fills) =
         fillAsList
-          & map
-            ( \(key, maybeValue) ->
-                case maybeValue of
-                  Just value -> Right (key, value)
-                  Nothing -> Left key
-            )
+          & map toEither
           & partitionEithers
       templateMapWithFills = fromList fills <> templateMap
 
@@ -134,6 +129,9 @@ getPromptResultForMatchingEntry fill templateMap = do
   liftIO sleep
 
   updateTemplateMapFromPrompts prompts templateMapWithFills
+ where
+  toEither (key, Just value) = Right (key, value)
+  toEither (key, Nothing) = Left key
 
 getPromptResultForManualEntry :: TemplateMap -> App (PromptResult TemplateMap)
 getPromptResultForManualEntry templateMap = do
