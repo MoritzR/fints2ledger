@@ -46,6 +46,15 @@ transactionsToLedger :: [Transaction] -> App ()
 ```
 have the `App` return type. Every function that returns this type has access to all the dependencies listed in the `Env` type (see [here](src/App.hs)).
 This is mainly useful for testing, as it allows to provide mock dependencies instead.
+To call an `IO ()` function inside an `App ()` function you need to call `liftIO` on it, which converts from `IO` to `App`.
+Aditionally, only `IO` functions from the `Env` should be used, so that they can be mocked in tests.
+For example, to make the app sleep for the configured amount of time, first ask for the `sleep` function from the env, then convert it
+from `IO` to `App` (if it is called inside an `App` function):
+```haskell
+someFunction = do
+  sleep <- ask (.sleep)
+  liftIO sleep
+```
 
 ### String Types
 Annoyingly, there are multiple String types in use, as different libraries require different String types. There is:
