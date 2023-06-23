@@ -3,7 +3,6 @@ from mt940.models import Date
 import os
 import json
 
-
 def retrieve_transactions(
     account, blz, password, endpoint, selected_account, start, end
 ):
@@ -31,34 +30,24 @@ class TRetriever:
             f"Could not find a matching account for account number '{accountnumber}'. Possible accounts: {accounts}"
         )
 
+date_format="%Y/%m/%d"
+def transaction_to_object(transaction):
+    hbci_data = transaction.data
 
-class CsvConverter:
-    def __init__(self, separator, date_format="%Y/%m/%d"):
-        self.separator = separator
-        self.date_format = date_format
-
-    def get_headline(self):
-        return self.separator.join(
-            ["date", "amount", "currency", "payee", "posting", "purpose"]
-        )
-
-    def convert(self, transaction):
-        hbci_data = transaction.data
-
-        date = hbci_data["date"].strftime(self.date_format)
-        amount = str(hbci_data["amount"].amount)
-        currency = hbci_data["amount"].currency
-        posting_text = hbci_data["posting_text"]
-        applicant_name = hbci_data["applicant_name"]
-        purpose = hbci_data["purpose"]
-        return {
-            "date": date,
-            "amount": amount,
-            "currency": currency,
-            "posting": (posting_text or "").strip(),
-            "payee": (applicant_name or "").strip(),
-            "purpose": (purpose or "").strip(),
-        }
+    date = hbci_data["date"].strftime(date_format)
+    amount = str(hbci_data["amount"].amount)
+    currency = hbci_data["amount"].currency
+    posting_text = hbci_data["posting_text"]
+    applicant_name = hbci_data["applicant_name"]
+    purpose = hbci_data["purpose"]
+    return {
+        "date": date,
+        "amount": amount,
+        "currency": currency,
+        "posting": (posting_text or "").strip(),
+        "payee": (applicant_name or "").strip(),
+        "purpose": (purpose or "").strip(),
+    }
 
 
 def main():
@@ -72,8 +61,7 @@ def main():
         start=date_string_to_mt940_date(args["start"]),
         end=date_string_to_mt940_date(args["end"]),
     )
-    converter = CsvConverter(",")
-    converted = json.dumps(list(map(converter.convert, transactions)))
+    converted = json.dumps(list(map(transaction_to_object, transactions)))
     print(converted)
 
 
