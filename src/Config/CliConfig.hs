@@ -4,7 +4,7 @@ import Config.Files (ConfigDirectory, getDefaultConfigDirectory)
 import Data.Dates (DateTime, dateTimeToDay, getCurrentDateTime, parseDate)
 import Data.Time (Day, addDays, defaultTimeLocale, formatTime)
 import Hledger (getCurrentDay)
-import Options.Applicative (Parser, ParserInfo, eitherReader, fullDesc, help, helper, info, long, metavar, option, progDesc, short, showDefault, showDefaultWith, strOption, switch, value, (<**>))
+import Options.Applicative (Parser, ParserInfo, eitherReader, fullDesc, help, helper, info, long, metavar, option, optional, progDesc, short, showDefault, showDefaultWith, strOption, switch, value, (<**>))
 
 data CliConfig = CliConfig
   { configDirectory :: ConfigDirectory
@@ -13,6 +13,8 @@ data CliConfig = CliConfig
   , pythonExecutable :: String
   , isDemo :: Bool
   , shouldEditConfig :: Bool
+  , toCsvFile :: Maybe FilePath
+  , fromCsvFile :: Maybe FilePath
   }
   deriving (Show)
 
@@ -66,6 +68,20 @@ pythonExecutableOption =
       <> showDefault
       <> value "python3"
 
+toCsvFile :: Parser (Maybe FilePath)
+toCsvFile =
+  optional $
+    strOption $
+      long "to-csv-file"
+        <> help "Write transactions to this csv file instead of to a ledger journal"
+
+fromCsvFile :: Parser (Maybe FilePath)
+fromCsvFile =
+  optional $
+    strOption $
+      long "from-csv-file"
+        <> help "Read transactions from this csv file instead of from a FinTS endpoint"
+
 getCliParser :: IO (Parser CliConfig)
 getCliParser = do
   defaultConfigDirectory <- getDefaultConfigDirectory
@@ -79,6 +95,8 @@ getCliParser = do
       <*> pythonExecutableOption
       <*> demoOption
       <*> configOption
+      <*> toCsvFile
+      <*> fromCsvFile
 
 getCliConfig :: IO (ParserInfo CliConfig)
 getCliConfig = do
