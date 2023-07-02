@@ -43,8 +43,7 @@ getExampleTransactions = do
 getTransactionsFromCsv :: FilePath -> IO [Transaction]
 getTransactionsFromCsv path = do
   csvContents <- BS.readFile path
-  let result = Csv.decodeByName csvContents
-  case result of
+  case Csv.decodeByName csvContents of
     Right (_header, rows) -> return $ toList rows
     Left message -> throw $ CsvDecodeError message
 
