@@ -13,7 +13,6 @@ data AppConfig = Config
   , journalFile :: FilePath
   , -- the start date to pull the FinTS entries from (format YYYY/MM/DD)
     startDate :: Day
-  , isDemo :: Bool
   , pythonExecutable :: String
   }
   deriving (Show)
@@ -26,6 +25,5 @@ makeAppConfig cliConfig yamlConfig =
     , configDirectory = cliConfig.configDirectory
     , journalFile = cliConfig.journalFile
     , startDate = cliConfig.startDate
-    , isDemo = cliConfig.isDemo
     , pythonExecutable = cliConfig.pythonExecutable
     }
