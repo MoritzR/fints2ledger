@@ -3,7 +3,7 @@ module Config.StartupChecks (runStartupChecks) where
 import Config.CliConfig (CliConfig (..))
 import Config.Files (ConfigDirectory (..), getConfigFilePath)
 import Config.YamlConfig (YamlConfig (..), defaultYamlConfig, writeYamlConfig)
-import Control.Exception (Exception, throw)
+import Control.Exception (Exception, throwIO)
 import Control.Monad (unless)
 import System.Directory (createDirectoryIfMissing, doesFileExist)
 import UI.ConfigUI (runConfigUI)
@@ -22,4 +22,4 @@ runStartupChecks cliConfig = do
     maybeConfig <- runConfigUI defaultYamlConfig cliConfig.configDirectory
     case maybeConfig of
       Just config -> writeYamlConfig configFilePath defaultYamlConfig{fints = config}
-      Nothing -> throw $ ConfigSetupAborted "Please fill out and save the config form before continuing."
+      Nothing -> throwIO $ ConfigSetupAborted "Please fill out and save the config form before continuing."

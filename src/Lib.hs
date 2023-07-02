@@ -11,7 +11,7 @@ import Config.Files (getConfigFilePath)
 import Config.StartupChecks (runStartupChecks)
 import Config.YamlConfig (YamlConfig (..), defaultYamlConfig, getYamlConfig, writeYamlConfig)
 import Control.Concurrent (threadDelay)
-import Control.Exception (Exception, throw)
+import Control.Exception (Exception, throwIO)
 import Control.Monad (unless)
 import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Trans.Reader (ReaderT (runReaderT), ask)
@@ -64,7 +64,7 @@ run cliConfig appConfig
       ToFile path ->
         getTransactionsFromFinTS appConfig
           >>= convertTransactionsToCsv path
-      FromTo -> throw $ CliOptionsError "don't use both from csv file and to csv file flags simultaniously"
+      FromTo -> throwIO $ CliOptionsError "don't use both from csv file and to csv file flags simultaniously"
 
 convertTransactionsForConfig :: AppConfig -> [Transaction] -> IO ()
 convertTransactionsForConfig appConfig transactions = do

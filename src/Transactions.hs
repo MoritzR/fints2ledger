@@ -13,7 +13,7 @@ where
 
 import Config.AppConfig (AppConfig (..))
 import Config.YamlConfig (FintsConfig (..), Password (..))
-import Control.Exception (Exception, throw)
+import Control.Exception (Exception, throwIO)
 import Data.Aeson (FromJSON, ToJSON)
 import Data.Aeson qualified as Aeson
 import Data.ByteString.Lazy qualified as BS
@@ -45,7 +45,7 @@ getTransactionsFromCsv path = do
   csvContents <- BS.readFile path
   case Csv.decodeByName csvContents of
     Right (_header, rows) -> return $ toList rows
-    Left message -> throw $ CsvDecodeError message
+    Left message -> throwIO $ CsvDecodeError message
 
 convertTransactionsToCsv :: FilePath -> [Transaction] -> IO ()
 convertTransactionsToCsv path = BS.writeFile path . Csv.encodeDefaultOrderedByName
@@ -79,7 +79,7 @@ getTransactionsFromFinTS config = do
     ExitSuccess -> Aeson.eitherDecode stdOut `orElseThrow` TransactionDecodeError
     ExitFailure _ -> do
       TIO.putStrLn $ TL.toStrict $ TL.decodeUtf8 stdErr
-      throw $ PyFintsError "Failed to get FinTS transactions, check the message above."
+      throwIO $ PyFintsError "Failed to get FinTS transactions, check the message above."
 
 getPassword :: IO Password
 getPassword = do
