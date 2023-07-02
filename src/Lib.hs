@@ -32,47 +32,39 @@ runFints2Ledger :: IO ()
 runFints2Ledger = do
   cliConfig <- execParser =<< getCliConfig
 
-  let command = getCommand cliConfig
-
-  appConfig <- case command of
-    RunDemo -> return $ makeAppConfig cliConfig defaultYamlConfig
-    _otherwise -> do
-      runStartupChecks cliConfig
-      yamlConfig <- getYamlConfig cliConfig.configDirectory
-      return $ makeAppConfig cliConfig yamlConfig
+  appConfig <-
+    if cliConfig.isDemo
+      then return $ makeAppConfig cliConfig defaultYamlConfig
+      else do
+        runStartupChecks cliConfig
+        yamlConfig <- getYamlConfig cliConfig.configDirectory
+        return $ makeAppConfig cliConfig yamlConfig
 
   ensureFileExists appConfig.journalFile
 
-  let
-    runDemo =
+  run cliConfig appConfig
+
+run :: CliConfig -> AppConfig -> IO ()
+run cliConfig appConfig
+  | cliConfig.isDemo =
       getExampleTransactions
         >>= convertTransactionsForConfig appConfig
-
-    runFints =
-      getTransactionsFromFinTS appConfig
-        >>= convertTransactionsForConfig appConfig
-
-    convertToCsvFile path =
-      getTransactionsFromFinTS appConfig
-        >>= convertTransactionsToCsv path
-
-    convertFromCsvFile path =
-      getTransactionsFromCsv path
-        >>= convertTransactionsForConfig appConfig
-
-    editConfig = do
-      yamlConfig <- getYamlConfig cliConfig.configDirectory
-      maybeConfig <- runConfigUI yamlConfig cliConfig.configDirectory
+  | cliConfig.shouldEditConfig = do
+      yamlConfig <- getYamlConfig appConfig.configDirectory
+      maybeConfig <- runConfigUI yamlConfig appConfig.configDirectory
       for_ maybeConfig \fintsConfig ->
-        writeYamlConfig (getConfigFilePath cliConfig.configDirectory) yamlConfig{fints = fintsConfig}
-
-  case getCommand cliConfig of
-    RunFints -> runFints
-    RunDemo -> runDemo
-    EditConfig -> editConfig
-    FromCsvFile path -> convertFromCsvFile path
-    ToCsvFile path -> convertToCsvFile path
-    Error e -> throw e
+        writeYamlConfig (getConfigFilePath appConfig.configDirectory) yamlConfig{fints = fintsConfig}
+  | otherwise = case csvModeFromConfig cliConfig of
+      NoCsv ->
+        getTransactionsFromFinTS appConfig
+          >>= convertTransactionsForConfig appConfig
+      FromFile path ->
+        getTransactionsFromCsv path
+          >>= convertTransactionsForConfig appConfig
+      ToFile path ->
+        getTransactionsFromFinTS appConfig
+          >>= convertTransactionsToCsv path
+      FromTo -> throw $ CliOptionsError "don't use both from csv file and to csv file flags simultaniously"
 
 convertTransactionsForConfig :: AppConfig -> [Transaction] -> IO ()
 convertTransactionsForConfig appConfig transactions = do
@@ -107,19 +99,6 @@ promptForEntry templateMap key = do
       -- TODO throw error instead? This can happen when the user doesn't provide an account and also sets no default
       Just "" -> return $ maybe Skip Result (templateMap !? key)
       Just value -> return $ Result $ T.strip $ T.pack value
-
-data Command = RunFints | RunDemo | EditConfig | FromCsvFile FilePath | ToCsvFile FilePath | Error CliOptionsError
-getCommand :: CliConfig -> Command
-getCommand config
-  | config.isDemo = RunDemo
-  | config.shouldEditConfig = EditConfig
-  | otherwise = case csvMode of
-      NoCsv -> RunFints
-      FromFile path -> FromCsvFile path
-      ToFile path -> ToCsvFile path
-      FromTo -> Error $ CliOptionsError "don't use both from csv file and to csv file flags simultaniously"
- where
-  csvMode = csvModeFromConfig config
 
 newtype CliOptionsError = CliOptionsError String deriving (Show)
 instance Exception CliOptionsError
