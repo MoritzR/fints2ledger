@@ -143,8 +143,7 @@ spec = do
 testConfig :: AppConfig
 testConfig =
   Config
-    { isDemo = True
-    , journalFile = "testJournal.ledger"
+    { journalFile = "testJournal.ledger"
     , startDate = ModifiedJulianDay 0
     , configDirectory = "testConfigDirectory"
     , fintsConfig = error "Tests should need a fintsConfig"

@@ -6,11 +6,12 @@ where
 import App (App, Env (..), PromptResult (..))
 import Completion (runCompletion)
 import Config.AppConfig (AppConfig (..), makeAppConfig)
-import Config.CliConfig (CliConfig (..), getCliConfig)
+import Config.CliConfig (CliConfig (..), CsvMode (..), csvModeFromConfig, getCliConfig)
 import Config.Files (getConfigFilePath)
 import Config.StartupChecks (runStartupChecks)
 import Config.YamlConfig (YamlConfig (..), defaultYamlConfig, getYamlConfig, writeYamlConfig)
 import Control.Concurrent (threadDelay)
+import Control.Exception (Exception, throw)
 import Control.Monad (unless)
 import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Trans.Reader (ReaderT (runReaderT), ask)
@@ -23,7 +24,7 @@ import Options.Applicative (execParser)
 import Prompt (transactionsToLedger)
 import System.Console.Haskeline (getInputLine)
 import System.Directory (doesFileExist)
-import Transactions (Transaction, getExampleTransactions, getTransactionsFromFinTS)
+import Transactions (Transaction, convertTransactionsToCsv, getExampleTransactions, getTransactionsFromCsv, getTransactionsFromFinTS)
 import UI.ConfigUI (runConfigUI)
 import Utils (createFile)
 
@@ -31,36 +32,39 @@ runFints2Ledger :: IO ()
 runFints2Ledger = do
   cliConfig <- execParser =<< getCliConfig
 
-  let command = getCommand cliConfig
-
-  appConfig <- case command of
-    RunDemo -> return $ makeAppConfig cliConfig defaultYamlConfig
-    _otherwise -> do
-      runStartupChecks cliConfig
-      yamlConfig <- getYamlConfig cliConfig.configDirectory
-      return $ makeAppConfig cliConfig yamlConfig
+  appConfig <-
+    if cliConfig.isDemo
+      then return $ makeAppConfig cliConfig defaultYamlConfig
+      else do
+        runStartupChecks cliConfig
+        yamlConfig <- getYamlConfig cliConfig.configDirectory
+        return $ makeAppConfig cliConfig yamlConfig
 
   ensureFileExists appConfig.journalFile
 
-  let
-    runDemo =
+  run cliConfig appConfig
+
+run :: CliConfig -> AppConfig -> IO ()
+run cliConfig appConfig
+  | cliConfig.isDemo =
       getExampleTransactions
         >>= convertTransactionsForConfig appConfig
-
-    runFints =
-      getTransactionsFromFinTS appConfig
-        >>= convertTransactionsForConfig appConfig
-
-    editConfig = do
-      yamlConfig <- getYamlConfig cliConfig.configDirectory
-      maybeConfig <- runConfigUI yamlConfig cliConfig.configDirectory
+  | cliConfig.shouldEditConfig = do
+      yamlConfig <- getYamlConfig appConfig.configDirectory
+      maybeConfig <- runConfigUI yamlConfig appConfig.configDirectory
       for_ maybeConfig \fintsConfig ->
-        writeYamlConfig (getConfigFilePath cliConfig.configDirectory) yamlConfig{fints = fintsConfig}
-
-  case getCommand cliConfig of
-    RunFints -> runFints
-    RunDemo -> runDemo
-    EditConfig -> editConfig
+        writeYamlConfig (getConfigFilePath appConfig.configDirectory) yamlConfig{fints = fintsConfig}
+  | otherwise = case csvModeFromConfig cliConfig of
+      NoCsv ->
+        getTransactionsFromFinTS appConfig
+          >>= convertTransactionsForConfig appConfig
+      FromFile path ->
+        getTransactionsFromCsv path
+          >>= convertTransactionsForConfig appConfig
+      ToFile path ->
+        getTransactionsFromFinTS appConfig
+          >>= convertTransactionsToCsv path
+      FromTo -> throw $ CliOptionsError "don't use both from csv file and to csv file flags simultaniously"
 
 convertTransactionsForConfig :: AppConfig -> [Transaction] -> IO ()
 convertTransactionsForConfig appConfig transactions = do
@@ -96,9 +100,5 @@ promptForEntry templateMap key = do
       Just "" -> return $ maybe Skip Result (templateMap !? key)
       Just value -> return $ Result $ T.strip $ T.pack value
 
-data Command = RunFints | RunDemo | EditConfig
-getCommand :: CliConfig -> Command
-getCommand config
-  | config.isDemo = RunDemo
-  | config.shouldEditConfig = EditConfig
-  | otherwise = RunFints
+newtype CliOptionsError = CliOptionsError String deriving (Show)
+instance Exception CliOptionsError

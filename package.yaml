@@ -46,6 +46,8 @@ dependencies:
 - vty # underlying library for brick
 - lens # lenses to use with brick
 - generic-lens # automatically generate lenses
+- cassava # csv encoding/decoding
+- vector # list-like type, used by cassava
 
 language: GHC2021
 
