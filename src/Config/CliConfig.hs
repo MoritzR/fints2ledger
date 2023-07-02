@@ -78,6 +78,7 @@ toCsvFileOption =
   optional $
     strOption $
       long "to-csv-file"
+        <> metavar "FILE"
         <> help "Write transactions to this csv file instead of to a ledger journal"
 
 fromCsvFileOption :: Parser (Maybe FilePath)
@@ -85,6 +86,7 @@ fromCsvFileOption =
   optional $
     strOption $
       long "from-csv-file"
+        <> metavar "FILE"
         <> help "Read transactions from this csv file instead of from a FinTS endpoint"
 
 getCliParser :: IO (Parser CliConfig)
