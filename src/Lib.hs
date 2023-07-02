@@ -6,11 +6,12 @@ where
 import App (App, Env (..), PromptResult (..))
 import Completion (runCompletion)
 import Config.AppConfig (AppConfig (..), makeAppConfig)
-import Config.CliConfig (CliConfig (..), getCliConfig)
+import Config.CliConfig (CliConfig (..), CsvMode (..), csvModeFromConfig, getCliConfig)
 import Config.Files (getConfigFilePath)
 import Config.StartupChecks (runStartupChecks)
 import Config.YamlConfig (YamlConfig (..), defaultYamlConfig, getYamlConfig, writeYamlConfig)
 import Control.Concurrent (threadDelay)
+import Control.Exception (Exception, throw)
 import Control.Monad (unless)
 import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Trans.Reader (ReaderT (runReaderT), ask)
@@ -23,7 +24,7 @@ import Options.Applicative (execParser)
 import Prompt (transactionsToLedger)
 import System.Console.Haskeline (getInputLine)
 import System.Directory (doesFileExist)
-import Transactions (Transaction, getExampleTransactions, getTransactionsFromFinTS)
+import Transactions (Transaction, convertTransactionsToCsv, getExampleTransactions, getTransactionsFromCsv, getTransactionsFromFinTS)
 import UI.ConfigUI (runConfigUI)
 import Utils (createFile)
 
@@ -51,6 +52,14 @@ runFints2Ledger = do
       getTransactionsFromFinTS appConfig
         >>= convertTransactionsForConfig appConfig
 
+    convertToCsvFile path =
+      getTransactionsFromFinTS appConfig
+        >>= convertTransactionsToCsv path
+
+    convertFromCsvFile path =
+      getTransactionsFromCsv path
+        >>= convertTransactionsForConfig appConfig
+
     editConfig = do
       yamlConfig <- getYamlConfig cliConfig.configDirectory
       maybeConfig <- runConfigUI yamlConfig cliConfig.configDirectory
@@ -61,6 +70,9 @@ runFints2Ledger = do
     RunFints -> runFints
     RunDemo -> runDemo
     EditConfig -> editConfig
+    FromCsvFile path -> convertFromCsvFile path
+    ToCsvFile path -> convertToCsvFile path
+    Error e -> throw e
 
 convertTransactionsForConfig :: AppConfig -> [Transaction] -> IO ()
 convertTransactionsForConfig appConfig transactions = do
@@ -96,9 +108,18 @@ promptForEntry templateMap key = do
       Just "" -> return $ maybe Skip Result (templateMap !? key)
       Just value -> return $ Result $ T.strip $ T.pack value
 
-data Command = RunFints | RunDemo | EditConfig
+data Command = RunFints | RunDemo | EditConfig | FromCsvFile FilePath | ToCsvFile FilePath | Error CliOptionsError
 getCommand :: CliConfig -> Command
 getCommand config
   | config.isDemo = RunDemo
   | config.shouldEditConfig = EditConfig
-  | otherwise = RunFints
+  | otherwise = case csvMode of
+      NoCsv -> RunFints
+      FromFile path -> FromCsvFile path
+      ToFile path -> ToCsvFile path
+      FromTo -> Error $ CliOptionsError "don't use both from csv file and to csv file flags simultaniously"
+ where
+  csvMode = csvModeFromConfig config
+
+newtype CliOptionsError = CliOptionsError String deriving (Show)
+instance Exception CliOptionsError

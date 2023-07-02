@@ -69,6 +69,7 @@ library
     , base16-bytestring
     , brick
     , bytestring
+    , cassava
     , containers
     , cryptohash-md5
     , dates
@@ -85,6 +86,7 @@ library
     , time
     , transformers
     , typed-process
+    , vector
     , vty
     , yaml
   default-language: GHC2021
@@ -106,6 +108,7 @@ executable fints2ledger
     , base16-bytestring
     , brick
     , bytestring
+    , cassava
     , containers
     , cryptohash-md5
     , dates
@@ -123,6 +126,7 @@ executable fints2ledger
     , time
     , transformers
     , typed-process
+    , vector
     , vty
     , yaml
   default-language: GHC2021
@@ -164,6 +168,7 @@ test-suite fints2ledger-test
     , base16-bytestring
     , brick
     , bytestring
+    , cassava
     , containers
     , cryptohash-md5
     , dates
@@ -183,6 +188,7 @@ test-suite fints2ledger-test
     , time
     , transformers
     , typed-process
+    , vector
     , vty
     , yaml
   default-language: GHC2021
