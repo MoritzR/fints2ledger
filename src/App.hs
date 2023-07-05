@@ -1,5 +1,3 @@
-{-# LANGUAGE DataKinds #-}
-
 module App (App, PromptResult (..), Env (..), printText) where
 
 import Config.AppConfig (AppConfig)
