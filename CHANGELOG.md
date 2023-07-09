@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.0
+* Added `--to-csv-file` and `from-csv-file` flags, which can be used to either read transaction from a csv file instead of a FinTS API, or to write them to a csv file instead of a ledger journal
+
 ## 1.0.1
 * When run with the `--demo` flag, the app will not ask for banking credentials anymore when there is no config file (which is the case when there was no 'real' run yet).
 * When aborting the config form on the first start, no default config with dummy credentials will be stored anymore. This allows the config form to popup on the next start, instead of trying to access the bank with dummy credentials.
