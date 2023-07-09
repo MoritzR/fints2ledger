@@ -64,31 +64,31 @@ library
       BlockArguments
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wno-unused-do-bind
   build-depends:
-      aeson
-    , base >=4.7 && <5
-    , base16-bytestring
-    , brick
-    , bytestring
-    , cassava
-    , containers
-    , cryptohash-md5
-    , dates
-    , directory
-    , filepath
-    , generic-lens
-    , haskeline
-    , hledger-lib >=1.27.1
-    , lens
-    , optparse-applicative
-    , regex-tdfa
-    , text
-    , text-format-heavy
-    , time
-    , transformers
-    , typed-process
-    , vector
-    , vty
-    , yaml
+      aeson ==2.0.3.*
+    , base ==4.16.4.*
+    , base16-bytestring ==1.0.2.*
+    , brick ==1.4
+    , bytestring ==0.11.4.*
+    , cassava ==0.5.3.*
+    , containers ==0.6.5.*
+    , cryptohash-md5 ==0.11.101.*
+    , dates >=0.2.3.2 && <0.2.4
+    , directory ==1.3.6.*
+    , filepath ==1.4.2.*
+    , generic-lens ==2.2.2.*
+    , haskeline ==0.8.2.*
+    , hledger-lib ==1.27.1.*
+    , lens ==5.1.1
+    , optparse-applicative ==0.17.0.*
+    , regex-tdfa ==1.3.2.*
+    , text ==1.2.5.*
+    , text-format-heavy ==0.1.5.3
+    , time ==1.11.1.*
+    , transformers ==0.5.6.*
+    , typed-process ==0.2.11.*
+    , vector ==0.12.3.*
+    , vty ==5.37
+    , yaml ==0.11.11.*
   default-language: GHC2021
 
 executable fints2ledger
@@ -103,32 +103,32 @@ executable fints2ledger
       BlockArguments
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wno-unused-do-bind -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      aeson
-    , base >=4.7 && <5
-    , base16-bytestring
-    , brick
-    , bytestring
-    , cassava
-    , containers
-    , cryptohash-md5
-    , dates
-    , directory
-    , filepath
+      aeson ==2.0.3.*
+    , base ==4.16.4.*
+    , base16-bytestring ==1.0.2.*
+    , brick ==1.4
+    , bytestring ==0.11.4.*
+    , cassava ==0.5.3.*
+    , containers ==0.6.5.*
+    , cryptohash-md5 ==0.11.101.*
+    , dates >=0.2.3.2 && <0.2.4
+    , directory ==1.3.6.*
+    , filepath ==1.4.2.*
     , fints2ledger
-    , generic-lens
-    , haskeline
-    , hledger-lib >=1.27.1
-    , lens
-    , optparse-applicative
-    , regex-tdfa
-    , text
-    , text-format-heavy
-    , time
-    , transformers
-    , typed-process
-    , vector
-    , vty
-    , yaml
+    , generic-lens ==2.2.2.*
+    , haskeline ==0.8.2.*
+    , hledger-lib ==1.27.1.*
+    , lens ==5.1.1
+    , optparse-applicative ==0.17.0.*
+    , regex-tdfa ==1.3.2.*
+    , text ==1.2.5.*
+    , text-format-heavy ==0.1.5.3
+    , time ==1.11.1.*
+    , transformers ==0.5.6.*
+    , typed-process ==0.2.11.*
+    , vector ==0.12.3.*
+    , vty ==5.37
+    , yaml ==0.11.11.*
   default-language: GHC2021
   if (flag(bundle_data_dir))
     other-modules:
@@ -163,32 +163,32 @@ test-suite fints2ledger-test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wno-unused-do-bind -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       QuickCheck
-    , aeson
-    , base >=4.7 && <5
-    , base16-bytestring
-    , brick
-    , bytestring
-    , cassava
-    , containers
-    , cryptohash-md5
-    , dates
-    , directory
-    , filepath
+    , aeson ==2.0.3.*
+    , base ==4.16.4.*
+    , base16-bytestring ==1.0.2.*
+    , brick ==1.4
+    , bytestring ==0.11.4.*
+    , cassava ==0.5.3.*
+    , containers ==0.6.5.*
+    , cryptohash-md5 ==0.11.101.*
+    , dates >=0.2.3.2 && <0.2.4
+    , directory ==1.3.6.*
+    , filepath ==1.4.2.*
     , fints2ledger
-    , generic-lens
-    , haskeline
-    , hledger-lib >=1.27.1
-    , lens
-    , optparse-applicative
-    , regex-tdfa
+    , generic-lens ==2.2.2.*
+    , haskeline ==0.8.2.*
+    , hledger-lib ==1.27.1.*
+    , lens ==5.1.1
+    , optparse-applicative ==0.17.0.*
+    , regex-tdfa ==1.3.2.*
     , sydtest
     , sydtest-discover
-    , text
-    , text-format-heavy
-    , time
-    , transformers
-    , typed-process
-    , vector
-    , vty
-    , yaml
+    , text ==1.2.5.*
+    , text-format-heavy ==0.1.5.3
+    , time ==1.11.1.*
+    , transformers ==0.5.6.*
+    , typed-process ==0.2.11.*
+    , vector ==0.12.3.*
+    , vty ==5.37
+    , yaml ==0.11.11.*
   default-language: GHC2021
