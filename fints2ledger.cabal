@@ -163,7 +163,7 @@ test-suite fints2ledger-test
       BlockArguments
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wno-unused-do-bind -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      QuickCheck
+      QuickCheck ==2.14.3
     , aeson ==2.0.3.*
     , base ==4.16.4.*
     , base16-bytestring ==1.0.2.*
@@ -182,8 +182,8 @@ test-suite fints2ledger-test
     , lens ==5.1.1
     , optparse-applicative ==0.17.1.*
     , regex-tdfa ==1.3.2.*
-    , sydtest
-    , sydtest-discover
+    , sydtest ==0.13.0.*
+    , sydtest-discover ==0.0.0.*
     , text ==1.2.5.*
     , text-format-heavy ==0.1.5.3
     , time ==1.11.1.*

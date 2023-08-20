@@ -100,9 +100,9 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - fints2ledger
-    - sydtest # testing library
-    - sydtest-discover # automatic test discovery
-    - QuickCheck # property based testing library
+    - sydtest >= 0.13.0 && < 0.13.1 # testing library
+    - sydtest-discover >= 0.0.0 && < 0.0.1 # automatic test discovery
+    - QuickCheck == 2.14.3 # property based testing library
 
 flags:
   bundle_data_dir:
