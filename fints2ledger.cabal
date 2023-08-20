@@ -80,7 +80,7 @@ library
     , haskeline ==0.8.2.*
     , hledger-lib ==1.27.1.*
     , lens ==5.1.1
-    , optparse-applicative ==0.17.0.*
+    , optparse-applicative ==0.17.1.*
     , regex-tdfa ==1.3.2.*
     , text ==1.2.5.*
     , text-format-heavy ==0.1.5.3
@@ -120,7 +120,7 @@ executable fints2ledger
     , haskeline ==0.8.2.*
     , hledger-lib ==1.27.1.*
     , lens ==5.1.1
-    , optparse-applicative ==0.17.0.*
+    , optparse-applicative ==0.17.1.*
     , regex-tdfa ==1.3.2.*
     , text ==1.2.5.*
     , text-format-heavy ==0.1.5.3
@@ -180,7 +180,7 @@ test-suite fints2ledger-test
     , haskeline ==0.8.2.*
     , hledger-lib ==1.27.1.*
     , lens ==5.1.1
-    , optparse-applicative ==0.17.0.*
+    , optparse-applicative ==0.17.1.*
     , regex-tdfa ==1.3.2.*
     , sydtest
     , sydtest-discover
