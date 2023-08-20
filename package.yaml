@@ -9,6 +9,7 @@ copyright:           "2023 Moritz Rumpf"
 extra-source-files:
 - README.md
 - CHANGELOG.md
+- LICENSE
 
 data-files:
 - data/*

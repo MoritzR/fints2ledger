@@ -20,6 +20,7 @@ build-type:     Simple
 extra-source-files:
     README.md
     CHANGELOG.md
+    LICENSE
 data-files:
     data/example.json
     data/pyfints.py
