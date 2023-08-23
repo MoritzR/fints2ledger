@@ -21,9 +21,8 @@ runCompletion config key
 runWithAccountCompletion :: AppConfig -> InputT IO a -> IO a
 runWithAccountCompletion config input = do
   accounts <- getAccounts config.journalFile
-  runInputT (makeSettings $ accountCompletion accounts) input
- where
-  accountCompletion accounts = completeWord Nothing [] (return . getCompletions accounts . pack)
+  let accountCompletion = completeWord Nothing [] (return . getCompletions accounts . pack)
+  runInputT (makeSettings accountCompletion) input
 
 runWithNoCompletion :: InputT IO a -> IO a
 runWithNoCompletion = runInputT $ makeSettings noCompletion
