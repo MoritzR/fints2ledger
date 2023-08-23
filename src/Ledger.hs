@@ -1,4 +1,4 @@
-module Ledger (getAccounts, getJournal) where
+module Ledger (getAccounts) where
 
 import Control.Exception (Exception, throwIO)
 import Data.List (nub)
@@ -8,12 +8,12 @@ newtype JournalReadException = JournalReadException String deriving (Show)
 
 instance Exception JournalReadException
 
-getAccounts :: Journal -> [AccountName]
-getAccounts = nub . map paccount . journalPostings
+accounts :: Journal -> [AccountName]
+accounts = nub . map paccount . journalPostings
 
-getJournal :: FilePath -> IO Journal
-getJournal path = do
+getAccounts :: FilePath -> IO [AccountName]
+getAccounts path = do
   maybeJournal <- runExceptT $ readJournalFile definputopts path
   case maybeJournal of
     Left err -> throwIO $ JournalReadException err
-    Right journal -> return journal
+    Right journal -> return $ accounts journal

@@ -6,8 +6,8 @@ where
 import Config.AppConfig (AppConfig (..))
 import Data.Function ((&))
 import Data.Text (Text, isPrefixOf, pack, stripPrefix, unpack)
-import Hledger (Journal)
-import Ledger (getAccounts, getJournal)
+import Hledger (AccountName)
+import Ledger (getAccounts)
 import System.Console.Haskeline (Completion (Completion), CompletionFunc, InputT, Settings (Settings), completeWord, noCompletion, runInputT)
 import Utils ((??))
 
@@ -20,17 +20,17 @@ runCompletion config key
 
 runWithAccountCompletion :: AppConfig -> InputT IO a -> IO a
 runWithAccountCompletion config input = do
-  journal <- getJournal config.journalFile
-  runInputT (makeSettings $ accountCompletion journal) input
+  accounts <- getAccounts config.journalFile
+  runInputT (makeSettings $ accountCompletion accounts) input
  where
-  accountCompletion journal = completeWord Nothing [] (return . getCompletions journal . pack)
+  accountCompletion accounts = completeWord Nothing [] (return . getCompletions accounts . pack)
 
 runWithNoCompletion :: InputT IO a -> IO a
 runWithNoCompletion = runInputT $ makeSettings noCompletion
 
-getCompletions :: Journal -> Text -> [Completion]
-getCompletions journal input =
-  getAccounts journal
+getCompletions :: [AccountName] -> Text -> [Completion]
+getCompletions accounts input =
+  accounts
     & filter isPrefixOfInput
     & map completion
  where
