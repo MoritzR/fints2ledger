@@ -134,8 +134,7 @@ spec = do
                     , appendFile = \_filePath text -> modifyIORef ioRef (<> text)
                     }
 
-            output <- runToLedger [testTransaction] env
-            putStrLn output
+            runToLedger [testTransaction] env
             readIORef ioRef
 
       goldenTextFile "test/files/snapshot.ledger" getSnapshot
