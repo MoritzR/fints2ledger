@@ -104,11 +104,11 @@ renderTemplate templateMap template =
 insertAccountsWithUnderscore :: TemplateMap -> TemplateMap
 insertAccountsWithUnderscore templateMap =
   templateMap
-    & maybeInsert "creditAccount" maybeCreditAccount
-    & maybeInsert "debitAccount" maybeDebitAccount
+    & maybeInsert "creditAccount" creditAccount
+    & maybeInsert "debitAccount" debitAccount
  where
-  maybeCreditAccount = templateMap !? "credit_account"
-  maybeDebitAccount = templateMap !? "debit_account"
+  creditAccount = templateMap !? "credit_account"
+  debitAccount = templateMap !? "debit_account"
   maybeInsert key maybeValue theMap = maybe theMap (\value -> insert key value theMap) maybeValue
 
 getPromptResultForMatchingEntry :: Fill -> TemplateMap -> App (PromptResult TemplateMap)
