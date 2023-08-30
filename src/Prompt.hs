@@ -124,7 +124,7 @@ getPromptResultForMatchingEntry fill templateMap = do
 
   sleep <- asks (.sleep)
   printText ""
-  forM_ fills \(key, value) -> do
+  forM_ fills \(key, value) ->
     printText $ "Set '" <> key <> "' to '" <> value <> "'"
   liftIO sleep
 
@@ -167,7 +167,6 @@ printTemplateMap templateMap = do
   let keysInOrder = ["date", "amount", "currency", "payee", "posting", "purpose", "credit_account", "debit_account"]
   forM_ keysInOrder printIfPresent
  where
-  printIfPresent key = do
-    case templateMap !? key of
-      Just s -> printText $ "    " <> key <> ": " <> s
-      Nothing -> return ()
+  printIfPresent key = case templateMap !? key of
+    Just s -> printText $ "    " <> key <> ": " <> s
+    Nothing -> return ()
