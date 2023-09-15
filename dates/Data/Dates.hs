@@ -102,7 +102,7 @@ uppercase ∷ String → String
 uppercase = map toUpper
 
 isPrefixOfI ∷  String → String → Bool
-p `isPrefixOfI` s = (uppercase p) `isPrefixOf` (uppercase s)
+p `isPrefixOfI` s = uppercase p `isPrefixOf` uppercase s
 
 lookupS ∷ String → [(String,a)] → Maybe a
 lookupS _ [] = Nothing
@@ -139,8 +139,7 @@ americanDate = do
   char '/'
   m ← pMonth
   char '/'
-  d ← pDay
-  return $ date y m d
+  date y m <$> pDay
 
 euroNumDate' ∷ Stream s m Char => Int → ParsecT s st m DateTime
 euroNumDate' year = do
@@ -153,8 +152,7 @@ americanDate' ∷ Stream s m Char => Int → ParsecT s st m DateTime
 americanDate' year = do
   m ← pMonth
   char '/'
-  d ← pDay
-  return $ date year m d
+  date year m <$> pDay
 
 strDate ∷ Stream s m Char => ParsecT s st m DateTime
 strDate = do
@@ -217,7 +215,7 @@ pTime = choice $ map try [time12, time24]
 
 pAbsDateTime ∷ Stream s m Char => Int → ParsecT s st m DateTime
 pAbsDateTime year = do
-  date ← choice $ map try $ map ($ year) $ [
+  date ← choice $ map (try . ($ year)) [
                               const euroNumDate,
                               const americanDate,
                               const strDate,
@@ -234,7 +232,7 @@ pAbsDateTime year = do
 
 pAbsDate ∷ Stream s m Char => Int → ParsecT s st m DateTime
 pAbsDate year =
-  choice $ map try $ map ($ year) $ [
+  choice $ map (try . ($ year)) [
                           const euroNumDate,
                           const americanDate,
                           const strDate,
@@ -248,7 +246,7 @@ dateTimeToDay dt = fromGregorian (fromIntegral $ year dt) (month dt) (day dt)
 
 -- | Convert date from Day to DateTime
 dayToDateTime ∷  Day → DateTime
-dayToDateTime dt = 
+dayToDateTime dt =
   let (y,m,d) = toGregorian dt
   in  date (fromIntegral y) m d
 
@@ -424,27 +422,27 @@ pByWeek date =
 pDateTime ∷ Stream s m Char => DateTime       -- ^ Current date / time, to use as base for relative dates
           → ParsecT s st m DateTime
 pDateTime date =
-      (try $ pRelDate date)
-  <|> (try $ pByWeek date)
-  <|> (try $ pAbsDateTime $ year date)
+      try (pRelDate date)
+  <|> try (pByWeek date)
+  <|> try (pAbsDateTime $ year date)
 
 -- | Parsec parser for Date only.
 pDate ∷ Stream s m Char => DateTime       -- ^ Current date / time, to use as base for relative dates
           → ParsecT s st m DateTime
 pDate date =
-      (try $ pRelDate date)
-  <|> (try $ pByWeek date)
-  <|> (try $ pAbsDate $ year date)
+      try (pRelDate date)
+  <|> try (pByWeek date)
+  <|> try (pAbsDate $ year date)
 
 -- | Parse date
 parseDate ∷ DateTime  -- ^ Current date / time, to use as base for relative dates
           → String    -- ^ String to parse
           → Either ParseError DateTime
-parseDate date s = runParser (pDate date) () "" s
+parseDate date = runParser (pDate date) () ""
 
 -- | Parse date and time
 parseDateTime ∷ DateTime  -- ^ Current date / time, to use as base for relative dates
           → String    -- ^ String to parse
           → Either ParseError DateTime
-parseDateTime date s = runParser (pDateTime date) () "" s
+parseDateTime date = runParser (pDateTime date) () ""
 
