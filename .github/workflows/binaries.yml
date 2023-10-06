@@ -63,7 +63,7 @@ jobs:
       run: |
           export ARTIFACTS=${{ runner.os }}/fints2ledger
           mkdir -p ${ARTIFACTS}
-          cabal install --installdir="${ARTIFACTS}" --install-method=copy --enable-executable-static -fbundle_data_dir 
+          cabal install --installdir="${ARTIFACTS}" --install-method=copy --enable-executable-static
           strip "${ARTIFACTS}/fints2ledger"
           cp -r data "${ARTIFACTS}"
 

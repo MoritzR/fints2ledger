@@ -49,6 +49,8 @@ dependencies:
 - generic-lens >= 2.2.2 && < 2.2.3 # automatically generate lenses
 - cassava >= 0.5.3 && < 0.5.4 # csv encoding/decoding
 - vector >= 0.12.3 && < 0.12.4 # list-like type, used by cassava
+- file-embed >= 0.0.15 && < 0.0.16 # for embedding files into the executable
+- temporary # for creating temporary files
 
 language: GHC2021
 
@@ -77,12 +79,7 @@ library:
 executables:
   fints2ledger:
     main: Main.hs
-    when:
-    - condition: (flag(bundle_data_dir))
-      then:
-        source-dirs: app/bundled
-      else:
-        source-dirs: app/default
+    source-dirs: app
     ghc-options:
     - -threaded
     - -rtsopts
@@ -103,9 +100,3 @@ tests:
     - sydtest >= 0.13.0 && < 0.13.1 # testing library
     - sydtest-discover >= 0.0.0 && < 0.0.1 # automatic test discovery
     - QuickCheck == 2.14.3 # property based testing library
-
-flags:
-  bundle_data_dir:
-    description: Set the data dir to be relative to the executable for easier bundling
-    default: false
-    manual: true

@@ -12,6 +12,7 @@ module Transactions (
 where
 
 import Config.AppConfig (AppConfig (..))
+import Config.Files (exampleFile, pyfintsFile)
 import Config.YamlConfig (FintsConfig (..), Password (..))
 import Control.Exception (Exception, throwIO)
 import Data.Aeson (FromJSON, ToJSON)
@@ -28,15 +29,15 @@ import Data.Time (Day, defaultTimeLocale, formatTime)
 import Data.Vector (toList)
 import GHC.Generics (Generic)
 import Hledger (getCurrentDay)
-import Paths_fints2ledger (getDataFileName)
 import System.Console.Haskeline qualified as Haskeline
+import System.IO.Temp (withSystemTempFile)
 import System.Process.Typed (ExitCode (ExitFailure, ExitSuccess), readProcess, shell)
 import Utils (encodeAsString, orElseThrow, (??))
+import System.IO (hFlush)
 
 getExampleTransactions :: IO [Transaction]
 getExampleTransactions = do
-  contents <- TIO.readFile =<< getDataFileName "data/example.json"
-  decodeTransactions contents `orElseThrow` TransactionDecodeError
+  decodeTransactions exampleFile `orElseThrow` TransactionDecodeError
  where
   decodeTransactions = Aeson.eitherDecode . TL.encodeUtf8 . TL.fromStrict
 
@@ -53,7 +54,6 @@ convertTransactionsToCsv path = BS.writeFile path . Csv.encodeDefaultOrderedByNa
 getTransactionsFromFinTS :: AppConfig -> IO [Transaction]
 getTransactionsFromFinTS config = do
   currentDay <- getCurrentDay
-  pyfintsFilePath <- getDataFileName "data/pyfints.py"
   password <- maybe getPassword return config.fintsConfig.password
 
   let pyfintsArgs =
@@ -66,20 +66,25 @@ getTransactionsFromFinTS config = do
           , start = formatDayForPython config.startDate
           , end = formatDayForPython currentDay
           }
-  let shellCommand =
-        shell $
-          "FINTS2LEDGER_ARGS='"
+
+  withSystemTempFile "fints2ledger.py" \path handle -> do
+    TIO.hPutStr handle pyfintsFile
+    hFlush handle
+
+    let shellCommand =
+          shell
+            $ "FINTS2LEDGER_ARGS='"
             ++ encodeAsString pyfintsArgs
             ++ "' "
             ++ config.pythonExecutable
             ++ " "
-            ++ pyfintsFilePath
-  (exitCode, stdOut, stdErr) <- readProcess shellCommand
-  case exitCode of
-    ExitSuccess -> Aeson.eitherDecode stdOut `orElseThrow` TransactionDecodeError
-    ExitFailure _ -> do
-      TIO.putStrLn $ TL.toStrict $ TL.decodeUtf8 stdErr
-      throwIO $ PyFintsError "Failed to get FinTS transactions, check the message above."
+            ++ path
+    (exitCode, stdOut, stdErr) <- readProcess shellCommand
+    case exitCode of
+      ExitSuccess -> Aeson.eitherDecode stdOut `orElseThrow` TransactionDecodeError
+      ExitFailure _ -> do
+        TIO.putStrLn $ TL.toStrict $ TL.decodeUtf8 stdErr
+        throwIO $ PyFintsError "Failed to get FinTS transactions, check the message above."
 
 getPassword :: IO Password
 getPassword = do
