@@ -94,7 +94,7 @@ getCliParser = do
   defaultConfigDirectory <- getDefaultConfigDirectory
   ninetyDaysAgo <- addDays (-90) <$> getCurrentDay
   currentDateTime <- getCurrentDateTime
-  return $ do
+  return do
     configDirectory <- configDirectoryOption defaultConfigDirectory
     journalFile <- journalFileOption
     startDate <- startDateOption currentDateTime ninetyDaysAgo
@@ -122,5 +122,5 @@ mapLeft _ (Right x) = Right x
 csvModeFromConfig :: CliConfig -> CsvMode
 csvModeFromConfig config =
   case config.toCsvFile of
-    Just toCsvPath -> maybe (ToFile toCsvPath) (const FromTo) (config.fromCsvFile)
-    Nothing -> maybe NoCsv FromFile (config.fromCsvFile)
+    Just toCsvPath -> maybe (ToFile toCsvPath) (const FromTo) config.fromCsvFile
+    Nothing -> maybe NoCsv FromFile config.fromCsvFile

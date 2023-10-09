@@ -74,12 +74,12 @@ transactionToLedger existingMd5Sums template transaction = do
 
 insertTransaction :: Transaction -> TemplateMap -> TemplateMap
 insertTransaction transaction =
-  insert "date" (transaction.date)
+  insert "date" transaction.date
     >>> insert "amount" (formatDouble transaction.amount.amount)
-    >>> insert "currency" (transaction.currency)
-    >>> insert "payee" (transaction.payee)
-    >>> insert "posting" (transaction.posting)
-    >>> insert "purpose" (transaction.purpose)
+    >>> insert "currency" transaction.currency
+    >>> insert "payee" transaction.payee
+    >>> insert "posting" transaction.posting
+    >>> insert "purpose" transaction.purpose
 
 insertCreditDebit :: Transaction -> TemplateMap -> TemplateMap
 insertCreditDebit transaction =
@@ -145,8 +145,7 @@ updateTemplateMapFromPrompts (prompt : restPrompts) templateMap = do
   promptForEntry <- asks (.promptForEntry)
   maybeResult <- promptForEntry templateMap prompt
   case maybeResult of
-    Result result -> do
-      updateTemplateMapFromPrompts restPrompts $ insert prompt result templateMap
+    Result result -> updateTemplateMapFromPrompts restPrompts $ insert prompt result templateMap
     Skip -> return Skip
 
 md5Regex :: Text

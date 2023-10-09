@@ -54,7 +54,7 @@ getTransactionsFromFinTS :: AppConfig -> IO [Transaction]
 getTransactionsFromFinTS config = do
   currentDay <- getCurrentDay
   pyfintsFilePath <- getDataFileName "data/pyfints.py"
-  password <- maybe getPassword return (config.fintsConfig.password)
+  password <- maybe getPassword return config.fintsConfig.password
 
   let pyfintsArgs =
         PyFintsArguments
