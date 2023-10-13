@@ -17,14 +17,14 @@ import Data.Text.Lazy.Encoding qualified as TL
 byteStringToString :: ByteString -> String
 byteStringToString = TL.unpack . TL.decodeUtf8
 
-encodeAsString :: ToJSON a => a -> String
+encodeAsString :: (ToJSON a) => a -> String
 encodeAsString = byteStringToString . encode
 
 (??) :: Maybe a -> a -> a
 Nothing ?? a = a
 Just a ?? _ = a
 
-orElseThrow :: Exception e => Either String a -> (String -> e) -> IO a
+orElseThrow :: (Exception e) => Either String a -> (String -> e) -> IO a
 orElseThrow eitherAB toException = case eitherAB of
   Left err -> throwIO $ toException err
   Right value -> return value

@@ -50,8 +50,8 @@ draw configDirectory state =
   [ form
       <+> vBorder
       <+> hLimit 20 help
-        <=> configText
-        <=> controls
+      <=> configText
+      <=> controls
   ]
  where
   form = renderForm state.form
