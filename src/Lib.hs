@@ -6,12 +6,12 @@ where
 import App (App, Env (..), PromptResult (..))
 import Completion (runCompletion)
 import Config.AppConfig (AppConfig (..), makeAppConfig)
-import Config.CliConfig (CliConfig (..), CsvMode (..), csvModeFromConfig, getCliConfig)
+import Config.CliConfig (CliConfig (..), getCliConfig)
 import Config.Files (getConfigFilePath)
 import Config.StartupChecks (runStartupChecks)
 import Config.YamlConfig (YamlConfig (..), defaultYamlConfig, getYamlConfig, writeYamlConfig)
 import Control.Concurrent (threadDelay)
-import Control.Exception (Exception, throwIO)
+import Control.Exception (Exception)
 import Control.Monad (unless)
 import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Trans.Reader (ReaderT (runReaderT), ask)
@@ -42,29 +42,25 @@ runFints2Ledger = do
 
   ensureFileExists appConfig.journalFile
 
-  run cliConfig appConfig
+  if cliConfig.shouldEditConfig
+    then editConfig appConfig
+    else run cliConfig appConfig
 
 run :: CliConfig -> AppConfig -> IO ()
-run cliConfig appConfig
-  | cliConfig.isDemo =
-      getExampleTransactions
-        >>= convertTransactionsForConfig appConfig
-  | cliConfig.shouldEditConfig = do
-      yamlConfig <- getYamlConfig appConfig.configDirectory
-      maybeConfig <- runConfigUI yamlConfig appConfig.configDirectory
-      for_ maybeConfig \fintsConfig ->
-        writeYamlConfig (getConfigFilePath appConfig.configDirectory) yamlConfig{fints = fintsConfig}
-  | otherwise = case csvModeFromConfig cliConfig of
-      NoCsv ->
-        getTransactionsFromFinTS appConfig
-          >>= convertTransactionsForConfig appConfig
-      FromFile path ->
-        getTransactionsFromCsv path
-          >>= convertTransactionsForConfig appConfig
-      ToFile path ->
-        getTransactionsFromFinTS appConfig
-          >>= convertTransactionsToCsv path
-      FromTo -> throwIO $ CliOptionsError "don't use both from csv file and to csv file flags simultaniously"
+run cliConfig appConfig = getTransactions >>= convertTransactions
+ where
+  getTransactions =
+    if cliConfig.isDemo
+      then getExampleTransactions
+      else maybe (getTransactionsFromFinTS appConfig) getTransactionsFromCsv cliConfig.fromCsvFile
+  convertTransactions = maybe (convertTransactionsForConfig appConfig) convertTransactionsToCsv cliConfig.toCsvFile
+
+editConfig :: AppConfig -> IO ()
+editConfig appConfig = do
+  yamlConfig <- getYamlConfig appConfig.configDirectory
+  maybeConfig <- runConfigUI yamlConfig appConfig.configDirectory
+  for_ maybeConfig \fintsConfig ->
+    writeYamlConfig (getConfigFilePath appConfig.configDirectory) yamlConfig{fints = fintsConfig}
 
 convertTransactionsForConfig :: AppConfig -> [Transaction] -> IO ()
 convertTransactionsForConfig appConfig transactions = do

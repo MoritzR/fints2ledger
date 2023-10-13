@@ -1,15 +1,13 @@
 {-# LANGUAGE ApplicativeDo #-}
 {-# LANGUAGE RecordWildCards #-}
 
-module Config.CliConfig (getCliConfig, CliConfig (..), CsvMode (..), csvModeFromConfig) where
+module Config.CliConfig (getCliConfig, CliConfig (..)) where
 
 import Config.Files (ConfigDirectory, getDefaultConfigDirectory)
 import Data.Dates (DateTime, dateTimeToDay, getCurrentDateTime, parseDate)
 import Data.Time (Day, addDays, defaultTimeLocale, formatTime)
 import Hledger (getCurrentDay)
 import Options.Applicative (Parser, ParserInfo, eitherReader, fullDesc, help, helper, info, long, metavar, option, optional, progDesc, short, showDefault, showDefaultWith, strOption, switch, value, (<**>))
-
-data CsvMode = ToFile FilePath | FromFile FilePath | NoCsv | FromTo deriving (Show)
 
 data CliConfig = CliConfig
   { configDirectory :: ConfigDirectory
@@ -118,9 +116,3 @@ getCliConfig = do
 mapLeft :: (a -> c) -> Either a b -> Either c b
 mapLeft f (Left x) = Left $ f x
 mapLeft _ (Right x) = Right x
-
-csvModeFromConfig :: CliConfig -> CsvMode
-csvModeFromConfig config =
-  case config.toCsvFile of
-    Just toCsvPath -> maybe (ToFile toCsvPath) (const FromTo) config.fromCsvFile
-    Nothing -> maybe NoCsv FromFile config.fromCsvFile
