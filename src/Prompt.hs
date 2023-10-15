@@ -2,7 +2,6 @@ module Prompt (transactionsToLedger) where
 
 import App (App, Env (..), PromptResult (..), printText)
 import Config.AppConfig (AppConfig (..))
-import Config.Files (getTemplatePath)
 import Config.YamlConfig (Fill, Filling (..), LedgerConfig (..))
 import Control.Arrow ((>>>))
 import Control.Monad (forM_, when)
@@ -26,6 +25,7 @@ import Text.Regex.TDFA (AllTextMatches (getAllTextMatches), (=~))
 import Transactions (Amount (..), Transaction (..))
 import Utils (calculateMd5Value, formatDouble, toLazyTemplateMap)
 import Prelude hiding (appendFile, putStrLn, readFile)
+import Config.Files (templateFile)
 
 {- | A Map of key/value pairs that will be used to fill the template file
 We fill these values step by step by:
@@ -40,14 +40,13 @@ transactionsToLedger transactions = do
   config <- asks (.config)
   readFile <- asks (.readFile)
   existingMd5Sums <- getExistingMd5Sums <$> liftIO (readFile config.journalFile)
-  template <- liftIO $ readFile =<< getTemplatePath
 
   printText "        Controls:"
   printText "            - Ctrl + D or enter 's' to skip an entry"
   printText "            - Ctrl + C to abort"
 
   forM_ transactions do
-    transactionToLedger existingMd5Sums template
+    transactionToLedger existingMd5Sums templateFile
 
 transactionToLedger :: Set Text -> Text -> Transaction -> App ()
 transactionToLedger existingMd5Sums template transaction = do
