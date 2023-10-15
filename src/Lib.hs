@@ -24,7 +24,7 @@ import Options.Applicative (execParser)
 import Prompt (transactionsToLedger)
 import System.Console.Haskeline (getInputLine)
 import System.Directory (doesFileExist)
-import Transactions (Transaction, writeTransactionsToCsv, getExampleTransactions, getTransactionsFromCsv, getTransactionsFromFinTS)
+import Transactions (Transaction, getExampleTransactions, getTransactionsFromCsv, getTransactionsFromFinTS, writeTransactionsToCsv)
 import UI.ConfigUI (runConfigUI)
 import Utils (createFile)
 

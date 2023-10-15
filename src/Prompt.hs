@@ -2,6 +2,7 @@ module Prompt (transactionsToLedger) where
 
 import App (App, Env (..), PromptResult (..), printText)
 import Config.AppConfig (AppConfig (..))
+import Config.Files (templateFile)
 import Config.YamlConfig (Fill, Filling (..), LedgerConfig (..))
 import Control.Arrow ((>>>))
 import Control.Monad (forM_, when)
@@ -25,7 +26,6 @@ import Text.Regex.TDFA (AllTextMatches (getAllTextMatches), (=~))
 import Transactions (Amount (..), Transaction (..))
 import Utils (calculateMd5Value, formatDouble, toLazyTemplateMap)
 import Prelude hiding (appendFile, putStrLn, readFile)
-import Config.Files (templateFile)
 
 {- | A Map of key/value pairs that will be used to fill the template file
 We fill these values step by step by:
@@ -82,8 +82,8 @@ insertTransaction transaction =
 
 insertCreditDebit :: Transaction -> TemplateMap -> TemplateMap
 insertCreditDebit transaction =
-  insert "debit" (T.pack $ show transaction.amount)
-    >>> insert "credit" (T.pack $ show $ -transaction.amount)
+  insert "debit" (formatDouble transaction.amount.amount)
+    >>> insert "credit" (formatDouble $ -transaction.amount.amount)
 
 getMd5 :: LedgerConfig -> TemplateMap -> Text
 getMd5 ledgerConfig templateMap = calculateMd5Value md5Values

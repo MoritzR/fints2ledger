@@ -13,6 +13,7 @@ import Data.Text qualified as T
 import Data.Text.Encoding qualified as T
 import Data.Text.Lazy qualified as TL
 import Data.Text.Lazy.Encoding qualified as TL
+import Text.Printf (printf)
 
 byteStringToString :: ByteString -> String
 byteStringToString = TL.unpack . TL.decodeUtf8
@@ -45,7 +46,7 @@ calculateMd5Value md5Values =
 formatDouble :: Double -> Text
 formatDouble double
   | fromInteger floored == double = T.pack $ show floored
-  | otherwise = T.pack $ show double
+  | otherwise = T.pack $ printf "%0.2f" double
  where
   floored = floor double :: Integer
 

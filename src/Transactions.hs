@@ -6,6 +6,7 @@ module Transactions (
   getExampleTransactions,
   getTransactionsFromCsv,
   writeTransactionsToCsv,
+  transactionsToCsv,
   Transaction (..),
   Amount (..),
 )
@@ -22,6 +23,7 @@ import Data.Csv (DefaultOrdered, FromField, FromNamedRecord, ToField, ToNamedRec
 import Data.Csv qualified as Csv
 import Data.Text (Text)
 import Data.Text qualified as T
+import Data.Text.Encoding qualified as T
 import Data.Text.IO qualified as TIO
 import Data.Text.Lazy qualified as TL
 import Data.Text.Lazy.Encoding qualified as TL
@@ -30,10 +32,10 @@ import Data.Vector (toList)
 import GHC.Generics (Generic)
 import Hledger (getCurrentDay)
 import System.Console.Haskeline qualified as Haskeline
+import System.IO (hFlush)
 import System.IO.Temp (withSystemTempFile)
 import System.Process.Typed (ExitCode (ExitFailure, ExitSuccess), readProcess, shell)
-import Utils (encodeAsString, orElseThrow, (??))
-import System.IO (hFlush)
+import Utils (encodeAsString, formatDouble, orElseThrow, (??))
 
 getExampleTransactions :: IO [Transaction]
 getExampleTransactions = do
@@ -49,7 +51,10 @@ getTransactionsFromCsv path = do
     Left message -> throwIO $ CsvDecodeError message
 
 writeTransactionsToCsv :: FilePath -> [Transaction] -> IO ()
-writeTransactionsToCsv path = BS.writeFile path . Csv.encodeDefaultOrderedByNameWith Csv.defaultEncodeOptions{Csv.encUseCrLf = False}
+writeTransactionsToCsv path = BS.writeFile path . transactionsToCsv
+
+transactionsToCsv :: [Transaction] -> BS.ByteString
+transactionsToCsv = Csv.encodeDefaultOrderedByNameWith Csv.defaultEncodeOptions{Csv.encUseCrLf = False}
 
 getTransactionsFromFinTS :: AppConfig -> IO [Transaction]
 getTransactionsFromFinTS config = do
@@ -72,13 +77,13 @@ getTransactionsFromFinTS config = do
     hFlush handle
 
     let shellCommand =
-          shell
-            $ "FINTS2LEDGER_ARGS='"
-            ++ encodeAsString pyfintsArgs
-            ++ "' "
-            ++ config.pythonExecutable
-            ++ " "
-            ++ path
+          shell $
+            "FINTS2LEDGER_ARGS='"
+              ++ encodeAsString pyfintsArgs
+              ++ "' "
+              ++ config.pythonExecutable
+              ++ " "
+              ++ path
     (exitCode, stdOut, stdErr) <- readProcess shellCommand
     case exitCode of
       ExitSuccess -> Aeson.eitherDecode stdOut `orElseThrow` TransactionDecodeError
@@ -108,13 +113,16 @@ data PyFintsArguments = PyFintsArguments
   deriving (Generic, ToJSON)
 
 newtype Amount = Amount {amount :: Double}
-  deriving newtype (Num, Show, Eq, FromField, ToField)
+  deriving newtype (Num, Show, Eq, FromField)
+
+instance ToField Amount where
+  toField amount = T.encodeUtf8 $ formatDouble amount.amount
 
 instance FromJSON Amount where
   parseJSON value = Amount . read <$> Aeson.parseJSON value
 
 instance ToJSON Amount where
-  toJSON value = Aeson.toJSON value.amount
+  toJSON value = Aeson.toJSON $ formatDouble value.amount
 
 data Transaction = Transaction
   { date :: Text
