@@ -48,7 +48,7 @@ getTransactionsFromCsv path = do
     Left message -> throwIO $ CsvDecodeError message
 
 convertTransactionsToCsv :: FilePath -> [Transaction] -> IO ()
-convertTransactionsToCsv path = BS.writeFile path . Csv.encodeDefaultOrderedByName
+convertTransactionsToCsv path = BS.writeFile path . Csv.encodeDefaultOrderedByNameWith Csv.defaultEncodeOptions{Csv.encUseCrLf = False}
 
 getTransactionsFromFinTS :: AppConfig -> IO [Transaction]
 getTransactionsFromFinTS config = do
