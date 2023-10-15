@@ -24,7 +24,7 @@ import Options.Applicative (execParser)
 import Prompt (transactionsToLedger)
 import System.Console.Haskeline (getInputLine)
 import System.Directory (doesFileExist)
-import Transactions (Transaction, convertTransactionsToCsv, getExampleTransactions, getTransactionsFromCsv, getTransactionsFromFinTS)
+import Transactions (Transaction, getExampleTransactions, getTransactionsFromCsv, getTransactionsFromFinTS, writeTransactionsToCsv)
 import UI.ConfigUI (runConfigUI)
 import Utils (createFile)
 
@@ -53,7 +53,7 @@ run cliConfig appConfig = getTransactions >>= convertTransactions
     if cliConfig.isDemo
       then getExampleTransactions
       else maybe (getTransactionsFromFinTS appConfig) getTransactionsFromCsv cliConfig.fromCsvFile
-  convertTransactions = maybe (convertTransactionsForConfig appConfig) convertTransactionsToCsv cliConfig.toCsvFile
+  convertTransactions = maybe (convertTransactionsForConfig appConfig) writeTransactionsToCsv cliConfig.toCsvFile
 
 editConfig :: AppConfig -> IO ()
 editConfig appConfig = do
