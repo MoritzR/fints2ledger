@@ -5,7 +5,7 @@ module Transactions (
   getTransactionsFromFinTS,
   getExampleTransactions,
   getTransactionsFromCsv,
-  convertTransactionsToCsv,
+  writeTransactionsToCsv,
   Transaction (..),
   Amount (..),
 )
@@ -48,8 +48,8 @@ getTransactionsFromCsv path = do
     Right (_header, rows) -> return $ toList rows
     Left message -> throwIO $ CsvDecodeError message
 
-convertTransactionsToCsv :: FilePath -> [Transaction] -> IO ()
-convertTransactionsToCsv path = BS.writeFile path . Csv.encodeDefaultOrderedByNameWith Csv.defaultEncodeOptions{Csv.encUseCrLf = False}
+writeTransactionsToCsv :: FilePath -> [Transaction] -> IO ()
+writeTransactionsToCsv path = BS.writeFile path . Csv.encodeDefaultOrderedByNameWith Csv.defaultEncodeOptions{Csv.encUseCrLf = False}
 
 getTransactionsFromFinTS :: AppConfig -> IO [Transaction]
 getTransactionsFromFinTS config = do
