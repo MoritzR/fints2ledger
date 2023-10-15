@@ -9,13 +9,11 @@ import Data.Map (Map, fromList, (!))
 import Data.String (IsString)
 import Data.Text (Text)
 import Data.Text.Encoding qualified as T
-import System.Directory (doesFileExist, getHomeDirectory)
+import System.Directory (XdgDirectory (XdgConfig), doesFileExist, getXdgDirectory)
 import System.FilePath ((</>))
 
 getDefaultConfigDirectory :: IO ConfigDirectory
-getDefaultConfigDirectory = do
-  homeDirectory <- getHomeDirectory
-  return $ ConfigDirectory $ homeDirectory </> ".config" </> "fints2ledger"
+getDefaultConfigDirectory = ConfigDirectory <$> getXdgDirectory XdgConfig "fints2ledger"
 
 getConfigFilePath :: ConfigDirectory -> FilePath
 getConfigFilePath configDirectory = configDirectory.get </> "config.yml"
