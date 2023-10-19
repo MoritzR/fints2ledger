@@ -17,6 +17,11 @@ git clone https://github.com/MoritzR/fints2ledger
 cd fints2ledger
 stack test
 ```
+There are some snapshot tests, which can be updated with
+```
+stack test --test-arguments="--golden-reset"
+```
+in case they fail because of an intentional change.
 
 You can run the application with
 ```
