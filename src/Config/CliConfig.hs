@@ -6,8 +6,10 @@ module Config.CliConfig (getCliConfig, CliConfig (..)) where
 import Config.Files (ConfigDirectory, getDefaultConfigDirectory)
 import Data.Dates (DateTime, dateTimeToDay, getCurrentDateTime, parseDate)
 import Data.Time (Day, addDays, defaultTimeLocale, formatTime)
+import Data.Version (showVersion)
 import Hledger (getCurrentDay)
-import Options.Applicative (Parser, ParserInfo, eitherReader, fullDesc, help, helper, info, long, metavar, option, optional, progDesc, short, showDefault, showDefaultWith, strOption, switch, value, (<**>))
+import Options.Applicative (Parser, ParserInfo, eitherReader, fullDesc, help, helper, info, long, metavar, option, optional, progDesc, short, showDefault, showDefaultWith, simpleVersioner, strOption, switch, value, (<**>))
+import Paths_fints2ledger (version)
 
 data CliConfig = CliConfig
   { configDirectory :: ConfigDirectory
@@ -108,7 +110,7 @@ getCliConfig = do
   parser <- getCliParser
   return $
     info
-      (parser <**> helper)
+      (parser <**> helper <**> simpleVersioner (showVersion version))
       ( fullDesc
           <> progDesc "Convert banking transactions from a FinTS endpoint to a ledger journal."
       )
