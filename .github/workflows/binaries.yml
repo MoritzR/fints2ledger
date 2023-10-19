@@ -65,7 +65,6 @@ jobs:
           mkdir -p ${ARTIFACTS}
           cabal install --installdir="${ARTIFACTS}" --install-method=copy --enable-executable-static
           strip "${ARTIFACTS}/fints2ledger"
-          cp -r data "${ARTIFACTS}"
 
     - uses: actions/upload-artifact@v3
       with:
