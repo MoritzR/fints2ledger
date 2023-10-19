@@ -2,7 +2,7 @@ module Prompt (transactionsToLedger) where
 
 import App (App, Env (..), PromptResult (..), printText)
 import Config.AppConfig (AppConfig (..))
-import Config.Files (templateFile)
+import Config.Files (getTemplateFile)
 import Config.YamlConfig (Fill, Filling (..), LedgerConfig (..))
 import Control.Arrow ((>>>))
 import Control.Monad (forM_, when)
@@ -40,13 +40,14 @@ transactionsToLedger transactions = do
   config <- asks (.config)
   readFile <- asks (.readFile)
   existingMd5Sums <- getExistingMd5Sums <$> liftIO (readFile config.journalFile)
+  template <- liftIO $ getTemplateFile config.configDirectory readFile
 
   printText "        Controls:"
   printText "            - Ctrl + D or enter 's' to skip an entry"
   printText "            - Ctrl + C to abort"
 
   forM_ transactions do
-    transactionToLedger existingMd5Sums templateFile
+    transactionToLedger existingMd5Sums template
 
 transactionToLedger :: Set Text -> Text -> Transaction -> App ()
 transactionToLedger existingMd5Sums template transaction = do
@@ -152,7 +153,8 @@ md5Regex = "; md5sum: ([A-Za-z0-9]{32})"
 
 getExistingMd5Sums :: Text -> Set Text
 getExistingMd5Sums textToSearchIn =
-  textToSearchIn =~ md5Regex
+  textToSearchIn
+    =~ md5Regex
     & getAllTextMatches @(Array Int)
     & elems
     & map (!! 1)
