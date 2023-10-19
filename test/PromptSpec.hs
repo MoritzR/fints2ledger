@@ -9,11 +9,11 @@ import Data.IORef (modifyIORef, newIORef, readIORef)
 import Data.List (isInfixOf)
 import Data.Map (empty, fromList)
 import Data.Text qualified as T
-import Data.Text.IO qualified as TIO
 import Data.Time.Calendar (Day (ModifiedJulianDay))
 import Prompt (transactionsToLedger)
 import Test.Syd (Spec, describe, goldenTextFile, it, shouldBe, shouldContain)
 import Transactions (Amount (Amount), Transaction (..))
+import Config.Files (defaultTemplateFile)
 
 spec :: Spec
 spec = do
@@ -65,6 +65,11 @@ spec = do
       let env =
             testEnv
               { readFile = const $ return "; md5sum: 5abd61b9de15c3115519a5f1b4ac7992"
+              , config = testConfig {
+                ledgerConfig = testConfig.ledgerConfig {
+                  md5 = ["purpose"]
+                }
+              }
               , promptForEntry = \_templateMap key -> do
                   liftIO $ modifyIORef ioRef (++ [key])
                   return $ Result "test input"
@@ -134,7 +139,7 @@ spec = do
                     , appendFile = \_filePath text -> modifyIORef ioRef (<> text)
                     }
 
-            runToLedger [testTransaction, testTransaction{amount = Amount 0.01}] env
+            runToLedger [testTransaction, testTransaction{amount = Amount 0.01}, testTransaction {amount = Amount 6.2}] env
             readIORef ioRef
 
       goldenTextFile "test/files/snapshot.ledger" getSnapshot
@@ -149,7 +154,7 @@ testConfig =
     , ledgerConfig =
         LedgerConfig
           { defaults = fromList [("debit_account", "assets:test")]
-          , md5 = ["purpose"]
+          , md5 = ["date", "payee", "purpose", "amount"]
           , prompts = ["credit_account"]
           , fills = []
           }
@@ -175,7 +180,7 @@ testEnv =
     , putStrLn = const $ return ()
     , readFile = \path ->
         if "template.txt" `isInfixOf` path
-          then TIO.readFile path
+          then return defaultTemplateFile
           else return ""
     , appendFile = \_filePath _text -> return ()
     , sleep = return ()

@@ -46,7 +46,7 @@ calculateMd5Value md5Values =
 formatDouble :: Double -> Text
 formatDouble double
   | fromInteger floored == double = T.pack $ show floored
-  | otherwise = T.pack $ printf "%0.2f" double
+  | otherwise = T.pack $ printf "%f" double
  where
   floored = floor double :: Integer
 
