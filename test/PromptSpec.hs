@@ -65,6 +65,11 @@ spec = do
       let env =
             testEnv
               { readFile = const $ return "; md5sum: 5abd61b9de15c3115519a5f1b4ac7992"
+              , config = testConfig {
+                ledgerConfig = testConfig.ledgerConfig {
+                  md5 = ["purpose"]
+                }
+              }
               , promptForEntry = \_templateMap key -> do
                   liftIO $ modifyIORef ioRef (++ [key])
                   return $ Result "test input"
@@ -149,7 +154,7 @@ testConfig =
     , ledgerConfig =
         LedgerConfig
           { defaults = fromList [("debit_account", "assets:test")]
-          , md5 = ["purpose"]
+          , md5 = ["date", "payee", "purpose", "amount"]
           , prompts = ["credit_account"]
           , fills = []
           }
