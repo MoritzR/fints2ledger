@@ -9,11 +9,11 @@ import Data.IORef (modifyIORef, newIORef, readIORef)
 import Data.List (isInfixOf)
 import Data.Map (empty, fromList)
 import Data.Text qualified as T
-import Data.Text.IO qualified as TIO
 import Data.Time.Calendar (Day (ModifiedJulianDay))
 import Prompt (transactionsToLedger)
 import Test.Syd (Spec, describe, goldenTextFile, it, shouldBe, shouldContain)
 import Transactions (Amount (Amount), Transaction (..))
+import Config.Files (defaultTemplateFile)
 
 spec :: Spec
 spec = do
@@ -180,7 +180,7 @@ testEnv =
     , putStrLn = const $ return ()
     , readFile = \path ->
         if "template.txt" `isInfixOf` path
-          then TIO.readFile path
+          then return defaultTemplateFile
           else return ""
     , appendFile = \_filePath _text -> return ()
     , sleep = return ()

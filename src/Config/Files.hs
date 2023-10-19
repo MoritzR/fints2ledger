@@ -1,7 +1,7 @@
 {-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE TemplateHaskell #-}
 
-module Config.Files (getDefaultConfigDirectory, getConfigFilePath, getTemplateFile, exampleFile, pyfintsFile, ConfigDirectory (..)) where
+module Config.Files (getDefaultConfigDirectory, defaultTemplateFile, getConfigFilePath, getTemplateFile, exampleFile, pyfintsFile, ConfigDirectory (..)) where
 
 import Data.ByteString (ByteString)
 import Data.FileEmbed (embedDir)
@@ -24,7 +24,10 @@ getTemplateFile configDirectory readTextFile = do
   fileExists <- doesFileExist templateFilePath
   if fileExists
     then readTextFile templateFilePath
-    else return $ T.decodeUtf8 $ dataFiles ! "template.txt"
+    else return defaultTemplateFile
+
+defaultTemplateFile :: Text
+defaultTemplateFile = T.decodeUtf8 $ dataFiles ! "template.txt"
 
 exampleFile :: Text
 exampleFile = T.decodeUtf8 $ dataFiles ! "example.json"
