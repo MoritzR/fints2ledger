@@ -2,6 +2,7 @@ module PromptSpec (spec) where
 
 import App (Env (..), PromptResult (Result, Skip))
 import Config.AppConfig (AppConfig (..))
+import Config.Files (defaultTemplateFile)
 import Config.YamlConfig (Filling (Filling, match), LedgerConfig (..), fill)
 import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Trans.Reader (ReaderT (runReaderT))
@@ -13,7 +14,6 @@ import Data.Time.Calendar (Day (ModifiedJulianDay))
 import Prompt (transactionsToLedger)
 import Test.Syd (Spec, describe, goldenTextFile, it, shouldBe, shouldContain)
 import Transactions (Amount (Amount), Transaction (..))
-import Config.Files (defaultTemplateFile)
 
 spec :: Spec
 spec = do
@@ -65,11 +65,13 @@ spec = do
       let env =
             testEnv
               { readFile = const $ return "; md5sum: 5abd61b9de15c3115519a5f1b4ac7992"
-              , config = testConfig {
-                ledgerConfig = testConfig.ledgerConfig {
-                  md5 = ["purpose"]
-                }
-              }
+              , config =
+                  testConfig
+                    { ledgerConfig =
+                        testConfig.ledgerConfig
+                          { md5 = ["purpose"]
+                          }
+                    }
               , promptForEntry = \_templateMap key -> do
                   liftIO $ modifyIORef ioRef (++ [key])
                   return $ Result "test input"
@@ -139,7 +141,7 @@ spec = do
                     , appendFile = \_filePath text -> modifyIORef ioRef (<> text)
                     }
 
-            runToLedger [testTransaction, testTransaction{amount = Amount 0.01}, testTransaction {amount = Amount 6.2}] env
+            runToLedger [testTransaction, testTransaction{amount = Amount 0.01}, testTransaction{amount = Amount 6.2}] env
             readIORef ioRef
 
       goldenTextFile "test/files/snapshot.ledger" getSnapshot
