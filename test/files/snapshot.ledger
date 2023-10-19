@@ -11,6 +11,6 @@
     expenses:test                                                   EUR -0.01
 
 01/01/2023 test payee test posting test purpose
-    ; md5sum: 850b1e3adaa6a79806bc6c5792bf0ef4
+    ; md5sum: 743a882437a289416cee64fba47fe22f
     assets:test                                                     EUR 6.2
     expenses:test                                                   EUR -6.2
