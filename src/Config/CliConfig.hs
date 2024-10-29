@@ -4,12 +4,13 @@
 module Config.CliConfig (getCliConfig, CliConfig (..)) where
 
 import Config.Files (ConfigDirectory, getDefaultConfigDirectory)
-import Data.Dates (DateTime, dateTimeToDay, getCurrentDateTime, parseDate)
 import Data.Time (Day, addDays, defaultTimeLocale, formatTime)
 import Data.Version (showVersion)
 import Hledger (getCurrentDay)
 import Options.Applicative (Parser, ParserInfo, eitherReader, fullDesc, help, helper, info, long, metavar, option, optional, progDesc, short, showDefault, showDefaultWith, simpleVersioner, strOption, switch, value, (<**>))
 import Paths_fints2ledger (version)
+import Data.Time (localDay, getZonedTime, zonedTimeToLocalTime)
+import Dates.Parser (parseDate)
 
 data CliConfig = CliConfig
   { configDirectory :: ConfigDirectory
@@ -42,10 +43,10 @@ journalFileOption =
       <> showDefault
       <> value "journal.ledger"
 
-startDateOption :: DateTime -> Day -> Parser Day
-startDateOption currentDateTime defaultValue =
+startDateOption :: Day -> Day -> Parser Day
+startDateOption currentDay defaultValue =
   option
-    (eitherReader $ fmap dateTimeToDay . mapLeft show . parseDate currentDateTime)
+    (eitherReader $ parseDate currentDay)
     ( long "date"
         <> help "Start date to pull the FinTS transactions from. Possible values are for example: '25.01.2023', '90 days ago', 'last monday'"
         <> metavar "DATE"
@@ -92,12 +93,12 @@ fromCsvFileOption =
 getCliParser :: IO (Parser CliConfig)
 getCliParser = do
   defaultConfigDirectory <- getDefaultConfigDirectory
-  ninetyDaysAgo <- addDays (-90) <$> getCurrentDay
-  currentDateTime <- getCurrentDateTime
+  currentDay <- getCurrentDay
+  let ninetyDaysAgo = addDays (-90) currentDay
   return do
     configDirectory <- configDirectoryOption defaultConfigDirectory
     journalFile <- journalFileOption
-    startDate <- startDateOption currentDateTime ninetyDaysAgo
+    startDate <- startDateOption currentDay ninetyDaysAgo
     pythonExecutable <- pythonExecutableOption
     isDemo <- demoOption
     shouldEditConfig <- configOption
@@ -118,3 +119,4 @@ getCliConfig = do
 mapLeft :: (a -> c) -> Either a b -> Either c b
 mapLeft f (Left x) = Left $ f x
 mapLeft _ (Right x) = Right x
+

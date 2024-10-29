@@ -24,32 +24,31 @@ category:            Finance, Console
 description:         Please see the README on GitHub at <https://github.com/MoritzR/fints2ledger#readme>
 
 dependencies:
-- base >= 4.16.4 && < 4.16.5
-- typed-process >= 0.2.11 && < 0.2.12  # for calling to python
-- directory >= 1.3.6 && < 1.3.7 # for getting the users home directory
-- filepath >= 1.4.2 && < 1.4.3 # for concatenating file paths
-- yaml >= 0.11.11 && < 0.11.12 # for parsing yaml
-- aeson >= 2.0.3 && < 2.0.4 # for json/yml parsing
-- bytestring >= 0.11.4 && < 0.11.5 # for the ByteString Type, used by Aeson
-- text >= 1.2.5 && < 1.2.6 # used by libraries instead of String
-- haskeline >= 0.8.2 && < 0.8.3 # for autocompleting inputs
-- hledger-lib >= 1.27.1 && < 1.27.2 # for autocompleting ledger accounts
-- containers >= 0.6.5 && < 0.6.6 # for Maps and Sets
+- base >= 4.16.4 && < 5
+- typed-process >= 0.2.11 && < 1  # for calling to python
+- directory >= 1.3.6 && < 2 # for getting the users home directory
+- filepath >= 1.4.2 && < 2 # for concatenating file paths
+- yaml >= 0.11.11 && < 1 # for parsing yaml
+- aeson >= 2.0.3 && < 3 # for json/yml parsing
+- bytestring >= 0.11.4 && < 1 # for the ByteString Type, used by Aeson
+- text >= 1.2.5 && < 2 # used by libraries instead of String
+- haskeline >= 0.8.2 && < 1 # for autocompleting inputs
+- hledger-lib >= 1.27.1 && < 2 # for autocompleting ledger accounts
+- containers >= 0.6.5 && < 1 # for Maps and Sets
 - text-format-heavy == 0.1.5.3 # for python like formatting of template strings
-- cryptohash-md5 >= 0.11.101 && < 0.11.102 # for md5
-- base16-bytestring >= 1.0.2 && < 1.0.3 # for md5 to hex
-- regex-tdfa >= 1.3.2 && < 1.3.3 # for regex matching
-- time >= 1.11.1 && < 1.11.2 # time library
-- dates >= 0.2.3.2 && < 0.2.4 # for more flexible date parsing, like "30 days ago"
-- optparse-applicative >= 0.17.1 && < 0.17.2 # for parsing CLI arguments
-- transformers >= 0.5.6 && < 0.5.7 # For ReaderT
-- brick == 1.4 # terminal UI library
-- vty == 5.37 # underlying library for brick
-- lens == 5.1.1 # lenses to use with brick
-- generic-lens >= 2.2.2 && < 2.2.3 # automatically generate lenses
-- cassava >= 0.5.3 && < 0.5.4 # csv encoding/decoding
-- vector >= 0.12.3 && < 0.12.4 # list-like type, used by cassava
-- file-embed >= 0.0.15 && < 0.0.16 # for embedding files into the executable
+- cryptohash-md5 >= 0.11.101 && < 1 # for md5
+- base16-bytestring >= 1.0.2 && < 2 # for md5 to hex
+- regex-tdfa >= 1.3.2 && < 2 # for regex matching
+- time >= 1.11.1 && < 2 # time library
+- optparse-applicative >= 0.17.1 && < 1 # for parsing CLI arguments
+- transformers >= 0.5.6 && < 1 # For ReaderT
+- brick >= 1.4 && < 2 # terminal UI library
+- vty >= 5.37 && < 6 # underlying library for brick
+- lens >= 5.1.1 && < 6 # lenses to use with brick
+- generic-lens >= 2.2.2 && < 3 # automatically generate lenses
+- cassava >= 0.5.3 && < 1 # csv encoding/decoding
+- vector >= 0.12.3 && < 1 # list-like type, used by cassava
+- file-embed >= 0.0.15 && < 0.1 # for embedding files into the executable
 - temporary # for creating temporary files
 
 language: GHC2021
