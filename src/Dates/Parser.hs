@@ -11,14 +11,10 @@ import Text.ParserCombinators.ReadP
     string,
     satisfy, eof, char, manyTill
   )
-import Control.Monad (guard)
 import Data.Char (isNumber)
 import Control.Applicative ((<|>))
 import Data.Time (parseTimeM, defaultTimeLocale, readPTime, getZonedTime, LocalTime (localDay), ZonedTime (..), addDays)
 import Data.Time.Calendar (Day)
-import Data.Functor ((<&>))
-
-getCurrentDay = localDay . zonedTimeToLocalTime <$> getZonedTime
 
 parseDate :: Day -> String -> Either String Day
 parseDate currentDay toParse = case listToMaybe . map fst . readP_to_S (dateParser currentDay) $ toParse of
