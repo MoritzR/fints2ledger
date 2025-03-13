@@ -114,8 +114,3 @@ getCliConfig = do
       ( fullDesc
           <> progDesc "Convert banking transactions from a FinTS endpoint to a ledger journal."
       )
-
-mapLeft :: (a -> c) -> Either a b -> Either c b
-mapLeft f (Left x) = Left $ f x
-mapLeft _ (Right x) = Right x
-
