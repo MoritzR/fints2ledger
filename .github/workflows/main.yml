@@ -21,9 +21,9 @@ jobs:
 
         include:
           - os: windows-latest
-            ghc-version: '9.8'
+            ghc-version: '9.4'
           - os: macos-latest
-            ghc-version: '9.8'
+            ghc-version: '9.4'
 
     steps:
     - uses: actions/checkout@v4
