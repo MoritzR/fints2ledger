@@ -143,7 +143,6 @@ test-suite fints2ledger-test
       PromptSpec
       TransactionSpec
       UtilsSpec
-      Paths_fints2ledger
   hs-source-dirs:
       test
   default-extensions:
