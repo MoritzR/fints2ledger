@@ -28,11 +28,11 @@ Simply grab the package from the [releases page](https://github.com/MoritzR/fint
 On Unix, don't forget to make the binary executable with `chmod +x fints2ledger`.
 
 ### from source
-For this you need [stack](https://docs.haskellstack.org/en/stable/#how-to-install-stack) installed (or alternatively [cabal](https://www.haskell.org/cabal/#install-upgrade)). Then run
+For this you need [cabal](https://www.haskell.org/cabal/#install-upgrade) installed. Then run
 ```
 git clone git@github.com:MoritzR/fints2ledger.git
 cd fints2ledger
-stack install
+cabal install
 ```
 This might take a while.
 
