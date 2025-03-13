@@ -43,8 +43,6 @@ packages:
 #
 extra-deps:
 - text-format-heavy-0.1.5.3
-- git: https://github.com/mdippery/dates.git # fork of 'dates' for LTS 20.17
-  commit: a9bfaf0248aca1e3d3b872838ea74ecc54f04ed1
 
 # Override default flag values for local packages and extra-deps
 # flags:

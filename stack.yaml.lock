@@ -11,17 +11,6 @@ packages:
       size: 1256
   original:
     hackage: text-format-heavy-0.1.5.3
-- completed:
-    commit: a9bfaf0248aca1e3d3b872838ea74ecc54f04ed1
-    git: https://github.com/mdippery/dates.git
-    name: dates
-    pantry-tree:
-      sha256: 2a540faa34c89c5850c77da07f042ca956be27b87b36ac1b480dc24f96d6427b
-      size: 748
-    version: 0.2.3.3
-  original:
-    commit: a9bfaf0248aca1e3d3b872838ea74ecc54f04ed1
-    git: https://github.com/mdippery/dates.git
 snapshots:
 - completed:
     sha256: 5a59b2a405b3aba3c00188453be172b85893cab8ebc352b1ef58b0eae5d248a2
