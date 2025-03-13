@@ -157,30 +157,11 @@ test-suite fints2ledger-test
       QuickCheck ==2.14.3
     , aeson
     , base
-    , base16-bytestring
-    , brick
-    , bytestring
-    , cassava
     , containers
-    , cryptohash-md5
-    , directory
-    , file-embed
-    , filepath
     , fints2ledger-lib
-    , generic-lens
-    , haskeline
-    , hledger-lib
-    , lens
-    , optparse-applicative
-    , regex-tdfa
     , sydtest >= 0.19 && <= 0.20
-    , temporary
-    , text
-    , text-format-heavy
-    , time
     , transformers
-    , typed-process
-    , vector
-    , vty
+    , text
+    , time
     , yaml
   default-language: GHC2021
