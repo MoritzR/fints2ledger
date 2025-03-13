@@ -97,7 +97,7 @@ executable fints2ledger
       OverloadedStrings
       NoFieldSelectors
       BlockArguments
-  ghc-options: -Wall -Wcompat -Widentities -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wno-unused-do-bind -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       fints2ledger-lib
     , base
@@ -122,7 +122,7 @@ test-suite fints2ledger-test
       OverloadedStrings
       NoFieldSelectors
       BlockArguments
-  ghc-options: -Wall -Wcompat -Widentities -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wno-unused-do-bind -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       QuickCheck >= 2.15 && <= 2.16
     , aeson
