@@ -101,12 +101,6 @@ executable fints2ledger
   main-is: Main.hs
   hs-source-dirs:
       app
-  default-extensions:
-      DuplicateRecordFields
-      OverloadedRecordDot
-      OverloadedStrings
-      NoFieldSelectors
-      BlockArguments
   ghc-options:
     -Wall
     -threaded
