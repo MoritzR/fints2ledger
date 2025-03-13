@@ -1,9 +1,5 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.36.0.
---
--- see: https://github.com/sol/hpack
-
 name:           fints2ledger
 version:        1.2.0
 synopsis:       Download transactions from FinTS into a ledger journal
