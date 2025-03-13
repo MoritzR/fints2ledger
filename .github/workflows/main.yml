@@ -6,9 +6,9 @@ on:
     types: [synchronize, opened, reopened]
   push:
     branches: [master]
-  schedule:
-    # additionally run once per week (At 00:00 on Sunday) to maintain cache
-    - cron: '0 0 * * 0'
+  # schedule:
+  #   # additionally run once per week (At 00:00 on Sunday) to maintain cache
+  #   - cron: '0 0 * * 0'
 
 jobs:
   stack:
