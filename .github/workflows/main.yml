@@ -12,12 +12,12 @@ on:
 
 jobs:
   build:
-    name: ${{ matrix.os }} / build
+    name: GHC ${{ matrix.ghc-version }} on ${{ matrix.os }} / build
     runs-on: ubuntu-latest
     strategy:
       matrix:
         os: [ubuntu-latest]
-        ghc-version: ['9.4', '9.2']
+        ghc-version: ['9.8', '9.4']
 
         include:
           - os: windows-latest

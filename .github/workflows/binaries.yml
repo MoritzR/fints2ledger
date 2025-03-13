@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   build-binaries:
-    name: ${{ matrix.os }}
+    name: ${{ matrix.os }} / create binary
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -22,7 +22,7 @@ jobs:
     - uses: haskell-actions/setup@v2
       id: setup
       with:
-        ghc-version: '9.2.7'
+        ghc-version: '9.8'
 
     - name: Installed minor versions of GHC and Cabal
       shell: bash

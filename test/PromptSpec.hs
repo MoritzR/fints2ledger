@@ -3,7 +3,7 @@ module PromptSpec (spec) where
 import App (Env (..), PromptResult (Result, Skip))
 import Config.AppConfig (AppConfig (..))
 import Config.Files (defaultTemplateFile)
-import Config.YamlConfig (Filling (Filling, match), LedgerConfig (..), fill)
+import Config.YamlConfig (Filling (Filling, match, fill), LedgerConfig (..))
 import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Trans.Reader (ReaderT (runReaderT))
 import Data.IORef (modifyIORef, newIORef, readIORef)

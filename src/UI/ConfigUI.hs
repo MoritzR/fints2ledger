@@ -17,6 +17,8 @@ import Data.Text qualified as T (null)
 import GHC.Generics (Generic)
 import Graphics.Vty qualified as V
 import UI.ConfigFields qualified as Fields
+import qualified Graphics.Vty.CrossPlatform
+import qualified Graphics.Vty.Config
 import Utils ((??))
 
 runConfigUI :: YamlConfig -> ConfigDirectory -> IO (Maybe FintsConfig)
@@ -116,7 +118,7 @@ formApp configDirectory =
 
 buildVty :: IO V.Vty
 buildVty = do
-  v <- V.mkVty =<< V.standardIOConfig
+  v <- Graphics.Vty.CrossPlatform.mkVty Graphics.Vty.Config.defaultConfig
   V.setMode (V.outputIface v) V.Mouse True
   return v
 
