@@ -7,9 +7,9 @@ description:    Please see the README on GitHub at <https://github.com/MoritzR/f
 category:       Finance, Console
 homepage:       https://github.com/MoritzR/fints2ledger#readme
 bug-reports:    https://github.com/MoritzR/fints2ledger/issues
-author:         Moritz Rumpf
+author:         Moritz Andrich
 maintainer:     moritz.rumpf@gmail.com
-copyright:      2023 Moritz Rumpf
+copyright:      2025 Moritz Andrich
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple
