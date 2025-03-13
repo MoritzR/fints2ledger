@@ -174,7 +174,6 @@ test-suite fints2ledger-test
     , optparse-applicative
     , regex-tdfa
     , sydtest >= 0.19 && <= 0.20
-    , sydtest-discover >= 0.0 && <= 0.1
     , temporary
     , text
     , text-format-heavy
