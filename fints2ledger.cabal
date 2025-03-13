@@ -72,7 +72,7 @@ library fints2ledger-lib
       aeson >=2.0.3 && <3
     , base >=4.16.4 && <5
     , base16-bytestring >=1.0.2 && <2
-    , brick >=1.4 && <2
+    , brick >=1.4 && <2.9
     , bytestring >=0.11.4 && <1
     , cassava >=0.5.3 && <1
     , containers >=0.6.5 && <1
@@ -93,7 +93,8 @@ library fints2ledger-lib
     , transformers >=0.5.6 && <1
     , typed-process >=0.2.11 && <1
     , vector >=0.12.3 && <1
-    , vty >=5.37 && <6
+    , vty >=6.0 && <6.5
+    , vty-crossplatform >=0.4 && <0.5
     , yaml >=0.11.11 && <1
   default-language: GHC2021
 
