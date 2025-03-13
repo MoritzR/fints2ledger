@@ -1,1 +1,3 @@
-packages: ./fints2ledger.cabal 
+packages: ./fints2ledger.cabal
+ignore-project: False
+tests: True

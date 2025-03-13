@@ -15,26 +15,26 @@ Next, set up the project:
 ```
 git clone https://github.com/MoritzR/fints2ledger
 cd fints2ledger
-stack test
+cabal test
 ```
 There are some snapshot tests, which can be updated with
 ```
-stack test --test-arguments="--golden-reset"
+cabal test --test-options="--golden-reset"
 ```
 in case they fail because of an intentional change.
 
 You can run the application with
 ```
-stack run
+cabal run
 ```
-and pass arguments with an additional `--` like this:
+and pass arguments by specifying the executable and addting an additional `--` like this:
 ```
-stack run -- --demo
+cabal run fints2ledger -- --demo
 ```
 
 To make the `fints2ledger` executable available in the bin directory run
 ```
-stack install
+cabal install
 ```
 
 ## Navigating the code
