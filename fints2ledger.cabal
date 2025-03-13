@@ -99,33 +99,8 @@ executable fints2ledger
       BlockArguments
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wno-unused-do-bind -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      aeson
+      fints2ledger-lib
     , base
-    , base16-bytestring
-    , brick
-    , bytestring
-    , cassava
-    , containers
-    , cryptohash-md5
-    , directory
-    , file-embed
-    , filepath
-    , fints2ledger-lib
-    , generic-lens
-    , haskeline
-    , hledger-lib
-    , lens
-    , optparse-applicative
-    , regex-tdfa
-    , temporary
-    , text
-    , text-format-heavy
-    , time
-    , transformers
-    , typed-process
-    , vector
-    , vty
-    , yaml
   default-language: GHC2021
 
 test-suite fints2ledger-test
