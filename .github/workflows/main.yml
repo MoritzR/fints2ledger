@@ -11,8 +11,8 @@ on:
   #   - cron: '0 0 * * 0'
 
 jobs:
-  stack:
-    name: ${{ matrix.os }} / stack
+  build:
+    name: ${{ matrix.os }} / build
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -22,25 +22,17 @@ jobs:
     - uses: actions/checkout@v3
 
     - uses: haskell-actions/setup@v2
-      name: Setup Haskell Stack
       with:
         ghc-version: '9.2.7'
-        enable-stack: true
-
-    - uses: actions/cache@v3
-      name: Cache ~/.stack
-      with:
-        path: ~/.stack
-        key: ${{ runner.os }}-${{ matrix.os }}-stack
 
     - name: Install dependencies
       run: |
-        stack build --system-ghc --test --bench --no-run-tests --no-run-benchmarks --only-dependencies
+        cabal build --only-dependencies
 
     - name: Build
       run: |
-        stack build --system-ghc --test --bench --no-run-tests --no-run-benchmarks
+        cabal build
 
     - name: Test
       run: |
-        stack test --system-ghc
+        cabal test
