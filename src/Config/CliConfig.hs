@@ -9,7 +9,6 @@ import Data.Version (showVersion)
 import Hledger (getCurrentDay)
 import Options.Applicative (Parser, ParserInfo, eitherReader, fullDesc, help, helper, info, long, metavar, option, optional, progDesc, short, showDefault, showDefaultWith, simpleVersioner, strOption, switch, value, (<**>))
 import Paths_fints2ledger (version)
-import Data.Time (localDay, getZonedTime, zonedTimeToLocalTime)
 import Dates.Parser (parseDate)
 
 data CliConfig = CliConfig

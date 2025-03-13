@@ -2,18 +2,15 @@ module Dates.Parser (parseDate) where
 import Data.Maybe (listToMaybe)
 import Text.ParserCombinators.ReadP
   ( ReadP,
-    choice,
-    get,
     many1,
     optional,
-    pfail,
     readP_to_S,
     string,
-    satisfy, eof, char, manyTill
+    satisfy, eof
   )
 import Data.Char (isNumber)
 import Control.Applicative ((<|>))
-import Data.Time (parseTimeM, defaultTimeLocale, readPTime, getZonedTime, LocalTime (localDay), ZonedTime (..), addDays)
+import Data.Time (defaultTimeLocale, readPTime, addDays)
 import Data.Time.Calendar (Day)
 
 parseDate :: Day -> String -> Either String Day
