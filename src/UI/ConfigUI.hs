@@ -91,7 +91,7 @@ attributeMap :: AttrMap
 attributeMap =
   attrMap
     V.defAttr
-    [ (E.editAttr, V.white `on` V.black)
+    [ (E.editAttr, V.white `on` V.brightBlack)
     , (E.editFocusedAttr, V.black `on` V.yellow)
     , (invalidFormInputAttr, V.white `on` V.red)
     , (focusedFormInputAttr, V.black `on` V.yellow)
