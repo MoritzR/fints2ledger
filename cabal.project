@@ -1,3 +1,8 @@
 packages: ./fints2ledger.cabal
 ignore-project: False
 tests: True
+
+source-repository-package
+  type: git
+  location: https://github.com/MoritzR/text-format-heavy.git
+  tag: d7de69f3e2e931ed56a67bbbd2608f778c714302
