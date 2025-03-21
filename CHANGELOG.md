@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.0
+* The yaml config now supports a new property `ledger.journalFile` which can be used in place of the cli config `--journal-file` to specify the path to the journal file that the transactions are written to
+
 ## 1.1.0
 * Added `--to-csv-file` and `from-csv-file` flags, which can be used to either read transaction from a csv file instead of a FinTS API, or to write them to a csv file instead of a ledger journal
 
