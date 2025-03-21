@@ -16,9 +16,9 @@ import Data.Text (Text)
 import Data.Text qualified as T (null)
 import GHC.Generics (Generic)
 import Graphics.Vty qualified as V
+import Graphics.Vty.Config qualified
+import Graphics.Vty.CrossPlatform qualified
 import UI.ConfigFields qualified as Fields
-import qualified Graphics.Vty.CrossPlatform
-import qualified Graphics.Vty.Config
 import Utils ((??))
 
 runConfigUI :: YamlConfig -> ConfigDirectory -> IO (Maybe FintsConfig)
