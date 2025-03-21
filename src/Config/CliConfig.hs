@@ -6,14 +6,14 @@ module Config.CliConfig (getCliConfig, CliConfig (..)) where
 import Config.Files (ConfigDirectory, getDefaultConfigDirectory)
 import Data.Time (Day, addDays, defaultTimeLocale, formatTime)
 import Data.Version (showVersion)
+import Dates.Parser (parseDate)
 import Hledger (getCurrentDay)
 import Options.Applicative (Parser, ParserInfo, eitherReader, fullDesc, help, helper, info, long, metavar, option, optional, progDesc, short, showDefault, showDefaultWith, simpleVersioner, strOption, switch, value, (<**>))
 import Paths_fints2ledger (version)
-import Dates.Parser (parseDate)
 
 data CliConfig = CliConfig
   { configDirectory :: ConfigDirectory
-  , journalFile :: FilePath
+  , journalFile :: Maybe FilePath
   , startDate :: Day
   , pythonExecutable :: String
   , isDemo :: Bool
@@ -32,15 +32,16 @@ configDirectoryOption defaultDirectory =
       <> showDefault
       <> value defaultDirectory
 
-journalFileOption :: Parser FilePath
+journalFileOption :: Parser (Maybe FilePath)
 journalFileOption =
-  strOption $
-    long "journal-file"
-      <> short 'f'
-      <> help "path to the journal file"
-      <> metavar "FILE"
-      <> showDefault
-      <> value "journal.ledger"
+  optional $
+    strOption $
+      long "journal-file"
+        <> short 'f'
+        <> help "path to the journal file"
+        <> metavar "FILE"
+        <> showDefault
+        <> value "journal.ledger"
 
 startDateOption :: Day -> Day -> Parser Day
 startDateOption currentDay defaultValue =

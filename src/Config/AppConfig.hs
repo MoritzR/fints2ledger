@@ -4,6 +4,7 @@ import Config.CliConfig (CliConfig (..))
 import Config.Files (ConfigDirectory)
 import Config.YamlConfig (FintsConfig, LedgerConfig, YamlConfig (..))
 import Data.Time (Day)
+import Utils ((??))
 
 data AppConfig = Config
   { fintsConfig :: FintsConfig
@@ -23,7 +24,7 @@ makeAppConfig cliConfig yamlConfig =
     { fintsConfig = yamlConfig.fints
     , ledgerConfig = yamlConfig.ledger
     , configDirectory = cliConfig.configDirectory
-    , journalFile = cliConfig.journalFile
+    , journalFile = cliConfig.journalFile ?? "journal.ledger"
     , startDate = cliConfig.startDate
     , pythonExecutable = cliConfig.pythonExecutable
     }

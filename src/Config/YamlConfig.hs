@@ -54,13 +54,28 @@ instance FromJSON FintsConfig where
         { omitNothingFields = True
         }
 
+instance ToJSON LedgerConfig where
+  toJSON =
+    genericToJSON
+      defaultOptions
+        { omitNothingFields = True
+        }
+
+instance FromJSON LedgerConfig where
+  parseJSON =
+    genericParseJSON
+      defaultOptions
+        { omitNothingFields = True
+        }
+
 data LedgerConfig = LedgerConfig
   { defaults :: DefaultsConfig
   , md5 :: [String]
+  , journalFile :: Maybe FilePath
   , prompts :: [Text]
   , fills :: [Filling]
   }
-  deriving (Show, Eq, Generic, FromJSON, ToJSON)
+  deriving (Show, Eq, Generic)
 
 data Filling = Filling
   { match :: Match
@@ -127,6 +142,7 @@ defaultYamlConfig =
     , ledger =
         LedgerConfig
           { prompts = ["credit_account"]
+          , journalFile = Nothing
           , defaults = Map.fromList [("debit_account", "assets:bank:checking")]
           , md5 = ["date", "payee", "purpose", "amount"]
           , fills = []
