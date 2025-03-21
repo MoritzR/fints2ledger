@@ -88,7 +88,7 @@ library fints2ledger-lib
     , regex-tdfa >=1.3.2 && <1.4
     , temporary >=1.3 && <1.4
     , text >=2.0 && <2.2
-    , text-format-heavy >=0.1 && <0.2
+    , text-format-heavy == 0.1.5.3-patched
     , time >=1.11.1 && <1.15
     , transformers >=0.5.6 && <0.7
     , typed-process >=0.2.11 && <0.3
