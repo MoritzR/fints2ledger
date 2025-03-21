@@ -1,17 +1,19 @@
 module Dates.Parser (parseDate) where
-import Data.Maybe (listToMaybe)
-import Text.ParserCombinators.ReadP
-  ( ReadP,
-    many1,
-    optional,
-    readP_to_S,
-    string,
-    satisfy, eof
-  )
-import Data.Char (isNumber)
+
 import Control.Applicative ((<|>))
-import Data.Time (defaultTimeLocale, readPTime, addDays)
+import Data.Char (isNumber)
+import Data.Maybe (listToMaybe)
+import Data.Time (addDays, defaultTimeLocale, readPTime)
 import Data.Time.Calendar (Day)
+import Text.ParserCombinators.ReadP (
+  ReadP,
+  eof,
+  many1,
+  optional,
+  readP_to_S,
+  satisfy,
+  string,
+ )
 
 parseDate :: Day -> String -> Either String Day
 parseDate currentDay toParse = case listToMaybe . map fst . readP_to_S (dateParser currentDay) $ toParse of
