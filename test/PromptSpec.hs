@@ -158,6 +158,7 @@ testConfig =
           { defaults = fromList [("debit_account", "assets:test")]
           , md5 = ["date", "payee", "purpose", "amount"]
           , prompts = ["credit_account"]
+          , journalFile = Nothing
           , fills = []
           }
     , pythonExecutable = "echo \"echo python\""
