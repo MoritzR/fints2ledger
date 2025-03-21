@@ -19,6 +19,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    # Required for static linking
+    - name: Install glibc
+      run: sudo apt install -y glibc
+
+
     - uses: haskell-actions/setup@v2
       id: setup
       with:
