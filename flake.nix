@@ -3,15 +3,18 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
   };
-  outputs = inputs@{ nixpkgs, flake-parts, ... }:
-    flake-parts.lib.mkFlake { inherit inputs; } {
-      systems = [ "aarch64-darwin" "x86_64-darwin" "aarch64-linux" "x86_64-linux" ];
-      imports = [ ];
+  outputs = inputs @ {
+    nixpkgs,
+    flake-parts,
+    ...
+  }:
+    flake-parts.lib.mkFlake {inherit inputs;} {
+      systems = ["aarch64-darwin" "x86_64-darwin" "aarch64-linux" "x86_64-linux"];
+      imports = [];
 
-      perSystem = { pkgs, ... }: 
-        let
-          fints2ledger = pkgs.haskellPackages.developPackage {
+      perSystem = {pkgs, ...}: let
         # packages.default = pkgs.haskell.packages.ghc910.developPackage {
+        fints2ledger = pkgs.haskellPackages.developPackage {
           root = ./.;
           source-overrides = {
             text-format-heavy = pkgs.fetchFromGitHub {
@@ -22,8 +25,17 @@
             };
           };
         };
-        in {
-          packages.default = fints2ledger; 
-        };
+        pythonWithDependencies = pkgs.python3.withPackages (python-pkgs: [
+          python-pkgs.mt-940
+          python-pkgs.fints
+        ]);
+      in {
+        packages.default = fints2ledger.overrideAttrs (old: {
+          nativeBuildInputs = old.nativeBuildInputs ++ [pkgs.makeWrapper];
+          postInstall = ''
+            wrapProgram $out/bin/fints2ledger --add-flags "--python-command ${pythonWithDependencies}/bin/python3"
+          '';
+        });
+      };
     };
 }
