@@ -8,8 +8,9 @@
       systems = [ "aarch64-darwin" "x86_64-darwin" "aarch64-linux" "x86_64-linux" ];
       imports = [ ];
 
-      perSystem = { pkgs, ... }: {
-        packages.default = pkgs.haskellPackages.developPackage {
+      perSystem = { pkgs, ... }: 
+        let
+          fints2ledger = pkgs.haskellPackages.developPackage {
         # packages.default = pkgs.haskell.packages.ghc910.developPackage {
           root = ./.;
           source-overrides = {
@@ -21,6 +22,8 @@
             };
           };
         };
-      };
+        in {
+          packages.default = fints2ledger; 
+        };
     };
 }
