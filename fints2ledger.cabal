@@ -139,12 +139,12 @@ test-suite fints2ledger-test
     -rtsopts
     -with-rtsopts=-N
   build-depends:
-      QuickCheck >= 2.15 && <= 2.16
+      QuickCheck >= 2.14 && <= 2.16
     , aeson
     , base
     , containers
     , fints2ledger-lib
-    , sydtest >= 0.19 && <= 0.20
+    , sydtest >= 0.15 && <= 0.20
     , transformers
     , text
     , time
