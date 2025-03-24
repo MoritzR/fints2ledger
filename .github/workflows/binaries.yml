@@ -11,6 +11,7 @@ jobs:
   build-binaries:
     name: ${{ matrix.os }} / create binary
     runs-on: ${{ matrix.os }}
+    container: alpine:latest
     strategy:
       fail-fast: false
       matrix:
@@ -18,10 +19,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-
-    # Required for static linking
-    - name: Install glibc
-      run: sudo apt-get update && sudo apt install -y libc6-dev
+    
+    - name: Install general tools with system package manager
+      run: |
+        apk --no-cache add binutils-gold curl gcc g++ git gmp-dev ncurses-dev ncurses-static libffi-dev make xz tar perl zlib-dev zlib-static
 
     - uses: haskell-actions/setup@v2
       id: setup
