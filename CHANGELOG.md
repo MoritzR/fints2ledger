@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.1
+* Fixes `ledger.journalFile` in the yaml config not being used
+* Adds an entry for the journalFile in the config UI (accessible via `--config`)
+* Updates the config UI help text spacing to fit better on larger screens
+
 ## 1.3.0
 * The yaml config now supports a new property `ledger.journalFile` which can be used in place of the cli config `--journal-file` to specify the path to the journal file that the transactions are written to
 
