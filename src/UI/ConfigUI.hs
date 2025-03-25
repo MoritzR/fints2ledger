@@ -68,6 +68,16 @@ updateYamlWithUiConfig uiConfig yamlConfig =
     & #fints . #password .~ uiConfig.password
     & #ledger . #journalFile .~ uiConfig.journalFile
 
+mkForm :: UiConfig -> Form UiConfig e Fields.Field
+mkForm =
+  newForm
+    [ textInput Fields.Account #account
+    , textInput Fields.Blz #blz
+    , textInput Fields.Endpoint #endpoint
+    , passwordInput Fields.Password (#password . maybePasswordToPassword . #get)
+    , textInput Fields.JournalFile (#journalFile . defaultValueToMaybe "" . textToString)
+    ]
+
 data FormAppState e = FormAppState
   { form :: Form UiConfig e Fields.Field
   , aborted :: Bool
@@ -150,16 +160,6 @@ buildVty = do
   v <- Graphics.Vty.CrossPlatform.mkVty Graphics.Vty.Config.defaultConfig
   V.setMode (V.outputIface v) V.Mouse True
   return v
-
-mkForm :: UiConfig -> Form UiConfig e Fields.Field
-mkForm =
-  newForm
-    [ textInput Fields.Account #account
-    , textInput Fields.Blz #blz
-    , textInput Fields.Endpoint #endpoint
-    , passwordInput Fields.Password (#password . maybePasswordToPassword . #get)
-    , textInput Fields.JournalFile (#journalFile . defaultValueToMaybe "" . textToString)
-    ]
 
 maybePasswordToPassword :: Iso' (Maybe Password) Password
 maybePasswordToPassword =
