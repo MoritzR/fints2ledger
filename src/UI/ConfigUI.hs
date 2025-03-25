@@ -2,7 +2,7 @@
 
 module UI.ConfigUI (runConfigUI) where
 
-import Brick (AttrMap, BrickEvent (VtyEvent), Padding (Pad), Widget, attrMap, attrName, customMain, emptyWidget, fill, hLimit, hLimitPercent, halt, on, padBottom, str, strWrap, vLimit, withAttr, zoom, (<+>), (<=>))
+import Brick (AttrMap, BrickEvent (VtyEvent), Padding (Pad), Widget, attrMap, attrName, customMain, emptyWidget, fill, hLimit, hLimitPercent, halt, on, padBottom, str, txt, txtWrap, vLimit, withAttr, zoom, (<+>), (<=>))
 import Brick.Focus (focusGetCurrent, focusRingCursor)
 import Brick.Forms (Form (formFocus, formState), FormFieldState, editPasswordField, editTextField, focusedFormInputAttr, handleFormEvent, invalidFormInputAttr, newForm, renderForm, (@@=))
 import Brick.Main qualified as Brick (App (..))
@@ -71,11 +71,11 @@ updateYamlWithUiConfig uiConfig yamlConfig =
 mkForm :: UiConfig -> Form UiConfig e Fields.Field
 mkForm =
   newForm
-    [ textInput Fields.Account #account
-    , textInput Fields.Blz #blz
-    , textInput Fields.Endpoint #endpoint
-    , passwordInput Fields.Password (#password . maybePasswordToPassword . #get)
-    , textInput Fields.JournalFile (#journalFile . defaultValueToMaybe "" . textToString)
+    [ textInput Fields.account #account
+    , textInput Fields.blz #blz
+    , textInput Fields.endpoint #endpoint
+    , passwordInput Fields.password (#password . maybePasswordToPassword . #get)
+    , textInput Fields.journalFile (#journalFile . defaultValueToMaybe "" . textToString)
     ]
 
 data FormAppState e = FormAppState
@@ -103,7 +103,7 @@ draw configDirectory state = [mainLayer]
 
 -- Renders help text for the currently focused field
 renderHelpText :: Maybe Fields.Field -> Widget Fields.Field
-renderHelpText focus = (strWrap . helpText <$> focus) ?? emptyWidget
+renderHelpText focus = (txtWrap . (.helpText) <$> focus) ?? emptyWidget
 
 -- Shows the config file path
 renderConfigFilePath :: ConfigDirectory -> Widget Fields.Field
@@ -122,22 +122,6 @@ renderControlsBar =
  where
   primaryCtrl = withAttr $ attrName "primary"
   secondaryCtrl = withAttr $ attrName "secondary"
-
-showFieldForUser :: Fields.Field -> String
-showFieldForUser field = case field of
-  Fields.Account -> "Account"
-  Fields.Blz -> "BLZ"
-  Fields.Password -> "Password"
-  Fields.Endpoint -> "FinTS Endpoint"
-  Fields.JournalFile -> "Journal File"
-
-helpText :: Fields.Field -> String
-helpText field = case field of
-  Fields.Account -> "The account number you use to log into your banking account."
-  Fields.Blz -> "Your banks BLZ"
-  Fields.Password -> "Your banking password.\nLeave empty if you don't want to store it."
-  Fields.Endpoint -> "Your banks FinTS endpoint.\nFor example for ING this is: https://fints.ing.de/fints"
-  Fields.JournalFile -> "The path to the ledger file where the transactions should be stored.\nFor example 'journal.ledger' (the default) or '~/journal.ledger'"
 
 -- Define color themes for the UI
 attributeMap :: AttrMap
@@ -193,7 +177,7 @@ textToString = iso T.pack T.unpack
 label :: Fields.Field -> Widget n -> Widget n
 label field widgetToModify =
   padBottom (Pad 1) $
-    vLimit 1 (hLimit 15 $ str (showFieldForUser field) <+> fill ' ') <+> widgetToModify
+    vLimit 1 (hLimit 15 $ txt field.label <+> fill ' ') <+> widgetToModify
 
 textInput :: Fields.Field -> TextLens -> UiConfig -> FintsFormFieldState e
 textInput field lens = label field @@= editTextField lens field (Just 1)
