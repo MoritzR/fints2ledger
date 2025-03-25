@@ -33,8 +33,6 @@ data UiConfig = UiConfig
 
 runConfigUI :: YamlConfig -> ConfigDirectory -> IO (Maybe YamlConfig)
 runConfigUI initialConfig configDirectory = do
-  initialVty <- buildVty
-
   let initialForm =
         mkForm $
           UiConfig
@@ -45,6 +43,7 @@ runConfigUI initialConfig configDirectory = do
             , journalFile = initialConfig.ledger.journalFile
             }
 
+  initialVty <- buildVty
   updatedForm <-
     customMain
       initialVty
@@ -68,6 +67,7 @@ updateYamlWithUiConfig uiConfig yamlConfig =
     & #fints . #password .~ uiConfig.password
     & #ledger . #journalFile .~ uiConfig.journalFile
 
+-- Create a form with all configuration fields
 mkForm :: UiConfig -> Form UiConfig e Fields.Field
 mkForm =
   newForm
@@ -84,29 +84,44 @@ data FormAppState e = FormAppState
   }
   deriving (Generic)
 
+-- Main UI layout drawing function
 draw :: ConfigDirectory -> FormAppState e -> [Widget Fields.Field]
-draw configDirectory state =
-  [ form
-      <+> vBorder
-      <+> hLimitPercent 30 help
-      <=> configText
-      <=> controls
-  ]
+draw configDirectory state = [mainLayer]
  where
-  form = renderForm state.form
-  help = (strWrap . helpText <$> currentFocus) ?? emptyWidget
-  configText =
-    str $
-      "The full config with more options is available at:\n"
-        <> getConfigFilePath configDirectory
-  controls =
-    controlsPrimary (str " Ctrl+C ")
-      <+> controlSecondary (str " Quit without saving ")
-      <+> controlsPrimary (str " Esc ")
-      <+> controlSecondary (str " Save and quit ")
+  mainLayer =
+    (formSection <+> vBorder <+> helpSection)
+      <=> infoSection
+      <=> controlsSection
+
+  -- Core sections of the UI
+  formSection = renderForm state.form
+  helpSection = hLimitPercent 30 (renderHelpText $ currentFocus)
+  infoSection = renderConfigFilePath configDirectory
+  controlsSection = renderControlsBar
+
   currentFocus = focusGetCurrent $ formFocus state.form
-  controlsPrimary = withAttr $ attrName "primary"
-  controlSecondary = withAttr $ attrName "secondary"
+
+-- Renders help text for the currently focused field
+renderHelpText :: Maybe Fields.Field -> Widget Fields.Field
+renderHelpText focus = (strWrap . helpText <$> focus) ?? emptyWidget
+
+-- Shows the config file path
+renderConfigFilePath :: ConfigDirectory -> Widget Fields.Field
+renderConfigFilePath configDir =
+  str $
+    "The full config with more options is available at:\n"
+      <> getConfigFilePath configDir
+
+-- Renders the controls bar at the bottom of the UI
+renderControlsBar :: Widget Fields.Field
+renderControlsBar =
+  primaryCtrl (str " Ctrl+C ")
+    <+> secondaryCtrl (str " Quit without saving ")
+    <+> primaryCtrl (str " Esc ")
+    <+> secondaryCtrl (str " Save and quit ")
+ where
+  primaryCtrl = withAttr $ attrName "primary"
+  secondaryCtrl = withAttr $ attrName "secondary"
 
 showFieldForUser :: Fields.Field -> String
 showFieldForUser field = case field of
@@ -124,6 +139,7 @@ helpText field = case field of
   Fields.Endpoint -> "Your banks FinTS endpoint.\nFor example for ING this is: https://fints.ing.de/fints"
   Fields.JournalFile -> "The path to the ledger file where the transactions should be stored.\nFor example 'journal.ledger' (the default) or '~/journal.ledger'"
 
+-- Define color themes for the UI
 attributeMap :: AttrMap
 attributeMap =
   attrMap
