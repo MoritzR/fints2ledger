@@ -2,7 +2,7 @@
 
 module UI.ConfigUI (runConfigUI) where
 
-import Brick (AttrMap, BrickEvent (VtyEvent), Padding (Pad), Widget, attrMap, attrName, customMain, emptyWidget, fill, hLimit, halt, on, padBottom, str, strWrap, vLimit, withAttr, zoom, (<+>), (<=>))
+import Brick (AttrMap, BrickEvent (VtyEvent), Padding (Pad), Widget, attrMap, attrName, customMain, emptyWidget, fill, hLimit, hLimitPercent, halt, on, padBottom, str, strWrap, vLimit, withAttr, zoom, (<+>), (<=>))
 import Brick.Focus (focusGetCurrent, focusRingCursor)
 import Brick.Forms (Form (formFocus, formState), FormFieldState, editPasswordField, editTextField, focusedFormInputAttr, handleFormEvent, invalidFormInputAttr, newForm, renderForm, (@@=))
 import Brick.Main qualified as Brick (App (..))
@@ -78,7 +78,7 @@ draw :: ConfigDirectory -> FormAppState e -> [Widget Fields.Field]
 draw configDirectory state =
   [ form
       <+> vBorder
-      <+> hLimit 20 help
+      <+> hLimitPercent 30 help
       <=> configText
       <=> controls
   ]
@@ -113,7 +113,7 @@ helpText field = case field of
   Fields.Blz -> "Your banks BLZ"
   Fields.Password -> "Your banking password.\nLeave empty if you don't want to store it."
   Fields.Endpoint -> "Your banks FinTS endpoint.\nFor example for ING this is: https://fints.ing.de/fints"
-  Fields.JournalFile -> "The path to the ledger file where the transactions should be stored. For example 'journal.ledger' (the default) or '~/journal.ledger'"
+  Fields.JournalFile -> "The path to the ledger file where the transactions should be stored.\nFor example 'journal.ledger' (the default) or '~/journal.ledger'"
   _otherwise -> "<missing help text>"
 
 attributeMap :: AttrMap
