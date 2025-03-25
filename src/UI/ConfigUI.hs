@@ -115,7 +115,6 @@ showFieldForUser field = case field of
   Fields.Password -> "Password"
   Fields.Endpoint -> "FinTS Endpoint"
   Fields.JournalFile -> "Journal File"
-  _otherwise -> "<missing field name>"
 
 helpText :: Fields.Field -> String
 helpText field = case field of
@@ -124,7 +123,6 @@ helpText field = case field of
   Fields.Password -> "Your banking password.\nLeave empty if you don't want to store it."
   Fields.Endpoint -> "Your banks FinTS endpoint.\nFor example for ING this is: https://fints.ing.de/fints"
   Fields.JournalFile -> "The path to the ledger file where the transactions should be stored.\nFor example 'journal.ledger' (the default) or '~/journal.ledger'"
-  _otherwise -> "<missing help text>"
 
 attributeMap :: AttrMap
 attributeMap =
