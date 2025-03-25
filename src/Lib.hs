@@ -9,7 +9,7 @@ import Config.AppConfig (AppConfig (..), makeAppConfig)
 import Config.CliConfig (CliConfig (..), getCliConfig)
 import Config.Files (getConfigFilePath)
 import Config.StartupChecks (runStartupChecks)
-import Config.YamlConfig (YamlConfig (..), defaultYamlConfig, getYamlConfig, writeYamlConfig)
+import Config.YamlConfig (defaultYamlConfig, getYamlConfig, writeYamlConfig)
 import Control.Concurrent (threadDelay)
 import Control.Exception (Exception)
 import Control.Monad (unless)
@@ -58,9 +58,9 @@ run cliConfig appConfig = getTransactions >>= convertTransactions
 editConfig :: AppConfig -> IO ()
 editConfig appConfig = do
   yamlConfig <- getYamlConfig appConfig.configDirectory
-  maybeConfig <- runConfigUI yamlConfig appConfig.configDirectory
-  for_ maybeConfig \fintsConfig ->
-    writeYamlConfig (getConfigFilePath appConfig.configDirectory) yamlConfig{fints = fintsConfig}
+  maybeUiConfig <- runConfigUI yamlConfig appConfig.configDirectory
+  for_ maybeUiConfig do
+    writeYamlConfig (getConfigFilePath appConfig.configDirectory)
 
 convertTransactionsForConfig :: AppConfig -> [Transaction] -> IO ()
 convertTransactionsForConfig appConfig transactions = do

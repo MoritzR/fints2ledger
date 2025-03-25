@@ -9,11 +9,12 @@ import Brick.Main qualified as Brick (App (..))
 import Brick.Widgets.Border (vBorder)
 import Brick.Widgets.Edit qualified as E
 import Config.Files (ConfigDirectory, getConfigFilePath)
-import Config.YamlConfig (FintsConfig (..), Password (..), YamlConfig (..))
-import Control.Lens (Iso', Lens', iso, (.=))
+import Config.YamlConfig (FintsConfig (..), LedgerConfig (..), Password (..), YamlConfig (..))
+import Control.Lens (Iso', Lens', iso, (.=), (.~))
+import Data.Function ((&))
 import Data.Generics.Labels ()
 import Data.Text (Text)
-import Data.Text qualified as T (null)
+import Data.Text qualified as T (null, pack, unpack)
 import GHC.Generics (Generic)
 import Graphics.Vty qualified as V
 import Graphics.Vty.Config qualified
@@ -21,11 +22,28 @@ import Graphics.Vty.CrossPlatform qualified
 import UI.ConfigFields qualified as Fields
 import Utils ((??))
 
-runConfigUI :: YamlConfig -> ConfigDirectory -> IO (Maybe FintsConfig)
+data UiConfig = UiConfig
+  { account :: Text
+  , blz :: Text
+  , endpoint :: Text
+  , password :: Maybe Password
+  , journalFile :: Maybe FilePath
+  }
+  deriving (Show, Generic)
+
+runConfigUI :: YamlConfig -> ConfigDirectory -> IO (Maybe YamlConfig)
 runConfigUI initialConfig configDirectory = do
   initialVty <- buildVty
 
-  let initialForm = mkForm initialConfig.fints
+  let initialForm =
+        mkForm $
+          UiConfig
+            { account = initialConfig.fints.account
+            , blz = initialConfig.fints.blz
+            , endpoint = initialConfig.fints.endpoint
+            , password = initialConfig.fints.password
+            , journalFile = initialConfig.ledger.journalFile
+            }
 
   updatedForm <-
     customMain
@@ -34,15 +52,24 @@ runConfigUI initialConfig configDirectory = do
       Nothing -- not using custom events
       (formApp configDirectory) -- the UI App
       (FormAppState initialForm False) -- initial state
-  let newFintsConfig = formState updatedForm.form
+  let uiConfig = formState updatedForm.form
 
   return $
     if updatedForm.aborted
       then Nothing
-      else Just newFintsConfig
+      else Just (updateYamlWithUiConfig uiConfig initialConfig)
+
+updateYamlWithUiConfig :: UiConfig -> YamlConfig -> YamlConfig
+updateYamlWithUiConfig uiConfig yamlConfig =
+  yamlConfig
+    & #fints . #account .~ uiConfig.account
+    & #fints . #blz .~ uiConfig.blz
+    & #fints . #endpoint .~ uiConfig.endpoint
+    & #fints . #password .~ uiConfig.password
+    & #ledger . #journalFile .~ uiConfig.journalFile
 
 data FormAppState e = FormAppState
-  { form :: Form FintsConfig e Fields.Field
+  { form :: Form UiConfig e Fields.Field
   , aborted :: Bool
   }
   deriving (Generic)
@@ -77,6 +104,7 @@ showFieldForUser field = case field of
   Fields.Blz -> "BLZ"
   Fields.Password -> "Password"
   Fields.Endpoint -> "FinTS Endpoint"
+  Fields.JournalFile -> "Journal File"
   _otherwise -> "<missing field name>"
 
 helpText :: Fields.Field -> String
@@ -85,6 +113,7 @@ helpText field = case field of
   Fields.Blz -> "Your banks BLZ"
   Fields.Password -> "Your banking password.\nLeave empty if you don't want to store it."
   Fields.Endpoint -> "Your banks FinTS endpoint.\nFor example for ING this is: https://fints.ing.de/fints"
+  Fields.JournalFile -> "The path to the ledger file where the transactions should be stored. For example 'journal.ledger' (the default) or '~/journal.ledger'"
   _otherwise -> "<missing help text>"
 
 attributeMap :: AttrMap
@@ -122,13 +151,14 @@ buildVty = do
   V.setMode (V.outputIface v) V.Mouse True
   return v
 
-mkForm :: FintsConfig -> Form FintsConfig e Fields.Field
+mkForm :: UiConfig -> Form UiConfig e Fields.Field
 mkForm =
   newForm
     [ textInput Fields.Account #account
     , textInput Fields.Blz #blz
     , textInput Fields.Endpoint #endpoint
     , passwordInput Fields.Password (#password . maybePasswordToPassword . #get)
+    , textInput Fields.JournalFile (#journalFile . defaultValueToMaybe "" . textToString)
     ]
 
 maybePasswordToPassword :: Iso' (Maybe Password) Password
@@ -137,16 +167,25 @@ maybePasswordToPassword =
     (?? Password "")
     (\password -> if T.null password.get then Nothing else Just password)
 
+defaultValueToMaybe :: (Eq a) => a -> Iso' (Maybe a) a
+defaultValueToMaybe defaultValue =
+  iso
+    (?? defaultValue)
+    (\value -> if value == defaultValue then Nothing else Just value)
+
+textToString :: Iso' String Text
+textToString = iso T.pack T.unpack
+
 label :: Fields.Field -> Widget n -> Widget n
 label field widgetToModify =
   padBottom (Pad 1) $
     vLimit 1 (hLimit 15 $ str (showFieldForUser field) <+> fill ' ') <+> widgetToModify
 
-textInput :: Fields.Field -> TextLens -> FintsConfig -> FintsFormFieldState e
+textInput :: Fields.Field -> TextLens -> UiConfig -> FintsFormFieldState e
 textInput field lens = label field @@= editTextField lens field (Just 1)
 
-passwordInput :: Fields.Field -> TextLens -> FintsConfig -> FintsFormFieldState e
+passwordInput :: Fields.Field -> TextLens -> UiConfig -> FintsFormFieldState e
 passwordInput field lens = label field @@= editPasswordField lens field
 
-type FintsFormFieldState e = FormFieldState FintsConfig e Fields.Field
-type TextLens = Lens' FintsConfig Text
+type FintsFormFieldState e = FormFieldState UiConfig e Fields.Field
+type TextLens = Lens' UiConfig Text
