@@ -40,8 +40,6 @@ journalFileOption =
         <> short 'f'
         <> help "path to the journal file"
         <> metavar "FILE"
-        <> showDefault
-        <> value "journal.ledger"
 
 startDateOption :: Day -> Day -> Parser Day
 startDateOption currentDay defaultValue =

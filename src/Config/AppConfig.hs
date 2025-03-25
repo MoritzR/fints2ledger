@@ -2,7 +2,8 @@ module Config.AppConfig (AppConfig (..), makeAppConfig) where
 
 import Config.CliConfig (CliConfig (..))
 import Config.Files (ConfigDirectory)
-import Config.YamlConfig (FintsConfig, LedgerConfig, YamlConfig (..))
+import Config.YamlConfig (FintsConfig, LedgerConfig (..), YamlConfig (..))
+import Control.Applicative ((<|>))
 import Data.Time (Day)
 import Utils ((??))
 
@@ -24,7 +25,7 @@ makeAppConfig cliConfig yamlConfig =
     { fintsConfig = yamlConfig.fints
     , ledgerConfig = yamlConfig.ledger
     , configDirectory = cliConfig.configDirectory
-    , journalFile = cliConfig.journalFile ?? "journal.ledger"
+    , journalFile = cliConfig.journalFile <|> yamlConfig.ledger.journalFile ?? "journal.ledger"
     , startDate = cliConfig.startDate
     , pythonExecutable = cliConfig.pythonExecutable
     }

@@ -21,6 +21,7 @@ byteStringToString = TL.unpack . TL.decodeUtf8
 encodeAsString :: (ToJSON a) => a -> String
 encodeAsString = byteStringToString . encode
 
+infix 2 ?? -- same infix as (||)
 (??) :: Maybe a -> a -> a
 Nothing ?? a = a
 Just a ?? _ = a
