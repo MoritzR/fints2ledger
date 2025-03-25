@@ -16,15 +16,23 @@ There is a pure python implementation available on the [python branch](https://g
 - [Contributing](#contributing)
 
 ## Install
-You need Python version 3.6 or higher. Install the Python dependencies using:
+You can skip the next step if you used [Nix](https://nixos.org/) to install fints2ledger.
+
+Make sure you have Python installed at version 3.6 or higher. Install the Python dependencies using:
 ```
 pip3 install "fints>=4,<5" "mt-940>=4.11,<5"
 ```
 
-Next, you can install fints2ledger either from a pre-built binary or from source.
+Next, you can install fints2ledger.
+
+### using Nix
+```
+nix profile install github:MoritzR/fints2ledger
+```
+
 
 ### from a pre-built binary
-Simply grab the package from the [releases page](https://github.com/MoritzR/fints2ledger/releases).
+Grab the package for your system from the [releases page](https://github.com/MoritzR/fints2ledger/releases).
 On Unix, don't forget to make the binary executable with `chmod +x fints2ledger`.
 
 ### from source
