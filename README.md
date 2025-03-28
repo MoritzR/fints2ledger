@@ -16,7 +16,7 @@ There is a pure python implementation available on the [python branch](https://g
 - [Contributing](#contributing)
 
 ## Install
-You can skip the next step if you used [Nix](https://nixos.org/) to install fints2ledger.
+You can skip the next step if you are using [Nix](https://nixos.org/) to install fints2ledger.
 
 Make sure you have Python installed at version 3.6 or higher. Install the Python dependencies using:
 ```
