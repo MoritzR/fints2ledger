@@ -60,8 +60,7 @@ transactionsToCsv = Csv.encodeDefaultOrderedByNameWith Csv.defaultEncodeOptions{
 
 getTransactionsFromFinTS :: AppConfig -> IO [Transaction]
 getTransactionsFromFinTS config = do
-  when (isNothing config.fintsConfig.password) do
-    throwIO $ MissingPasswordError "for the --unattended mode, a password is required. Run 'fints2ledger --config' to set one."
+  assertPasswordIsSet config
 
   currentDay <- getCurrentDay
   password <- maybe getPassword return config.fintsConfig.password
@@ -105,6 +104,11 @@ getPassword = do
 
 formatDayForPython :: Day -> String
 formatDayForPython = formatTime defaultTimeLocale "%Y/%m/%d"
+
+assertPasswordIsSet :: AppConfig -> IO ()
+assertPasswordIsSet config =
+  when (isNothing config.fintsConfig.password) do
+    throwIO $ MissingPasswordError "for the --unattended mode, a password is required. Run 'fints2ledger --config' to set one."
 
 data PyFintsArguments = PyFintsArguments
   { account :: String
