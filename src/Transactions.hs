@@ -16,11 +16,13 @@ import Config.AppConfig (AppConfig (..))
 import Config.Files (exampleFile, pyfintsFile)
 import Config.YamlConfig (FintsConfig (..), Password (..))
 import Control.Exception (Exception, throwIO)
+import Control.Monad (when)
 import Data.Aeson (FromJSON, ToJSON)
 import Data.Aeson qualified as Aeson
 import Data.ByteString.Lazy qualified as BS
 import Data.Csv (DefaultOrdered, FromField, FromNamedRecord, ToField, ToNamedRecord)
 import Data.Csv qualified as Csv
+import Data.Maybe (isNothing)
 import Data.Text (Text)
 import Data.Text qualified as T
 import Data.Text.Encoding qualified as T
@@ -58,6 +60,9 @@ transactionsToCsv = Csv.encodeDefaultOrderedByNameWith Csv.defaultEncodeOptions{
 
 getTransactionsFromFinTS :: AppConfig -> IO [Transaction]
 getTransactionsFromFinTS config = do
+  when (isNothing config.fintsConfig.password) do
+    throwIO $ MissingPasswordError "for the --unattended mode, a password is required. Run 'fints2ledger --config' to set one."
+
   currentDay <- getCurrentDay
   password <- maybe getPassword return config.fintsConfig.password
 
@@ -148,3 +153,7 @@ instance Exception PyFintsError
 newtype CsvDecodeError = CsvDecodeError String deriving (Show)
 
 instance Exception CsvDecodeError
+
+newtype MissingPasswordError = MissingPasswordError String deriving (Show)
+
+instance Exception MissingPasswordError
