@@ -18,6 +18,7 @@ data CliConfig = CliConfig
   , pythonExecutable :: String
   , isDemo :: Bool
   , shouldEditConfig :: Bool
+  , unattended :: Bool
   , fromCsvFile :: Maybe FilePath
   , toCsvFile :: Maybe FilePath
   }
@@ -57,6 +58,12 @@ demoOption =
   switch $
     long "demo"
       <> help "runs with a sample set of transactions, without actually calling a FinTS endpoint"
+
+unattendedOption :: Parser Bool
+unattendedOption =
+  switch $
+    long "unattended"
+      <> help "Runs without any prompting for input. Will apply automatic transaction matching and report number of transactions that need to be manually matched."
 
 configOption :: Parser Bool
 configOption =
@@ -102,6 +109,7 @@ getCliParser = do
     shouldEditConfig <- configOption
     toCsvFile <- toCsvFileOption
     fromCsvFile <- fromCsvFileOption
+    unattended <- unattendedOption
     pure CliConfig{..}
 
 getCliConfig :: IO (ParserInfo CliConfig)
