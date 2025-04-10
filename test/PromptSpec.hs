@@ -106,6 +106,21 @@ spec = do
 
       promptedFor `shouldBe` []
 
+
+    it "doesn't prompt for entries when running in unattended mode" do
+      ioRef <- newIORef []
+      let env =
+            testEnv
+              { config = testConfig { unattended = True }
+              , promptForEntry = \_templateMap key -> do
+                  liftIO $ modifyIORef ioRef (++ [key])
+                  return $ Result "test input"
+              }
+      runReaderT (transactionsToLedger [testTransaction]) env
+      promptedFor <- readIORef ioRef
+
+      promptedFor `shouldBe` []
+
     it "prompts for entries that are autofilled but have an empty fill key" do
       ioRef <- newIORef []
       let env =
@@ -162,6 +177,7 @@ testConfig =
           , fills = []
           }
     , pythonExecutable = "echo \"echo python\""
+    , unattended = False
     }
 
 testTransaction :: Transaction

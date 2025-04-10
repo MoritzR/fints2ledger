@@ -12,7 +12,7 @@ import Config.StartupChecks (runStartupChecks)
 import Config.YamlConfig (defaultYamlConfig, getYamlConfig, writeYamlConfig)
 import Control.Concurrent (threadDelay)
 import Control.Exception (Exception)
-import Control.Monad (unless)
+import Control.Monad (unless, when)
 import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Trans.Reader (ReaderT (runReaderT), ask)
 import Data.Foldable (for_)
@@ -45,6 +45,9 @@ runFints2Ledger = do
   if cliConfig.shouldEditConfig
     then editConfig appConfig
     else run cliConfig appConfig
+
+  when cliConfig.unattended do
+    putStrLn "completed unnattended run"
 
 run :: CliConfig -> AppConfig -> IO ()
 run cliConfig appConfig = getTransactions >>= convertTransactions

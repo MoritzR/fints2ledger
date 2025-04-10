@@ -60,7 +60,7 @@ transactionToLedger existingMd5Sums template transaction = do
           Just filling -> getPromptResultForMatchingEntry filling.fill
           Nothing -> getPromptResultForManualEntry
 
-    maybeResult <- prompter templateMapToShow
+    maybeResult <- if config.unattended then return Skip else prompter templateMapToShow
     case maybeResult of
       Skip -> return ()
       Result templateMapWithUserInputs -> do

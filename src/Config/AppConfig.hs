@@ -16,6 +16,7 @@ data AppConfig = Config
   , -- the start date to pull the FinTS entries from (format YYYY/MM/DD)
     startDate :: Day
   , pythonExecutable :: String
+  , unattended :: Bool
   }
   deriving (Show)
 
@@ -28,4 +29,5 @@ makeAppConfig cliConfig yamlConfig =
     , journalFile = cliConfig.journalFile <|> yamlConfig.ledger.journalFile ?? "journal.ledger"
     , startDate = cliConfig.startDate
     , pythonExecutable = cliConfig.pythonExecutable
+    , unattended = cliConfig.unattended
     }
