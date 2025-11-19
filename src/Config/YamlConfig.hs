@@ -24,6 +24,7 @@ import Data.Set qualified as Set
 import Data.Text (Text)
 import Data.Yaml qualified as Yaml
 import GHC.Generics (Generic)
+import Hledger.Utils.IO (expandHomePath)
 
 data YamlConfig = YamlConfig
   { fints :: FintsConfig
@@ -108,8 +109,11 @@ instance Show Password where
 getYamlConfig :: ConfigDirectory -> IO YamlConfig
 getYamlConfig configDirectory = do
   config <- Yaml.decodeFileThrow $ getConfigFilePath configDirectory
+  -- need so that ~/ledger.journal get expanded to /home/<user>/ledger.journal
+  -- The app will fail without this
+  journalFilePath <- mapM expandHomePath config.ledger.journalFile
   case validateYamlConfig config of
-    Nothing -> return config
+    Nothing -> return $ config{ledger = config.ledger{journalFile = journalFilePath}}
     Just err -> throwIO $ ValidationException err
 
 allowedKeySet :: Set String
