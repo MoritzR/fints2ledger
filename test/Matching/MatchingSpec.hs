@@ -60,6 +60,19 @@ spec = do
 
       result `shouldBe` Just filling
 
+    it "finds a match for amount comparison (<=) when the amount is lower (for negative numbers)" do
+      let filling =
+            Filling
+              { match = fromList [("amount", "<= -10")]
+              , fill = empty
+              }
+      let result =
+            findMatch
+              (fromList [("amount", "-25.25")])
+              [filling]
+
+      result `shouldBe` Just filling
+
     it "finds no match for amount comparison (<=) when the amount is higher" do
       let filling =
             Filling
