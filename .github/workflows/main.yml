@@ -10,13 +10,23 @@ on:
   #   - cron: '0 0 * * 0'
 
 jobs:
+  nix-build:
+    name: Nix build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v5
+    - uses: DeterminateSystems/determinate-nix-action@v3
+    - name: build flake
+      run: |
+        nix build .#
+
   build:
     name: GHC ${{ matrix.ghc-version }} on ${{ matrix.os }} / build
     runs-on: ubuntu-latest
     strategy:
       matrix:
         os: [ubuntu-latest]
-        ghc-version: ['9.10', '9.8', '9.4']
+        ghc-version: ['9.10', '9.8', '9.6']
 
         include:
           - os: windows-latest
@@ -25,7 +35,7 @@ jobs:
             ghc-version: '9.8'
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     - name: Set up GHC ${{ matrix.ghc-version }}
       id: setup
