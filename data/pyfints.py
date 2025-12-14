@@ -37,7 +37,8 @@ def transaction_to_object(transaction):
     date = hbci_data["date"].strftime(date_format)
     amount = str(hbci_data["amount"].amount)
     currency = hbci_data["amount"].currency
-    posting_text = hbci_data["posting_text"]
+    # GLS bank provides no "posting_text", "AdditionalEntryInformation" seems to be equivalent
+    posting_text = hbci_data.get("posting_text", hbci_data.get("AdditionalEntryInformation", None))
     applicant_name = hbci_data["applicant_name"]
     purpose = hbci_data["purpose"]
     return {
