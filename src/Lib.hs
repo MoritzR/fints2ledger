@@ -7,6 +7,7 @@ import App (App, Env (..), PromptResult (..))
 import Completion (runCompletion)
 import Config.AppConfig (AppConfig (..), makeAppConfig)
 import Config.CliConfig (CliConfig (..), getCliConfig)
+import Config.EnvConfig (parseEnvConfig)
 import Config.Files (getConfigFilePath)
 import Config.StartupChecks (runStartupChecks)
 import Config.YamlConfig (defaultYamlConfig, getYamlConfig, writeYamlConfig)
@@ -31,14 +32,15 @@ import Utils (createFile)
 runFints2Ledger :: IO ()
 runFints2Ledger = do
   cliConfig <- execParser =<< getCliConfig
+  envConfig <- parseEnvConfig
 
   appConfig <-
     if cliConfig.isDemo
-      then return $ makeAppConfig cliConfig defaultYamlConfig
+      then return $ makeAppConfig cliConfig defaultYamlConfig envConfig
       else do
         runStartupChecks cliConfig
         yamlConfig <- getYamlConfig cliConfig.configDirectory
-        return $ makeAppConfig cliConfig yamlConfig
+        return $ makeAppConfig cliConfig yamlConfig envConfig
 
   ensureFileExists appConfig.journalFile
 

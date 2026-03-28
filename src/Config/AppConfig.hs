@@ -1,8 +1,9 @@
 module Config.AppConfig (AppConfig (..), makeAppConfig) where
 
 import Config.CliConfig (CliConfig (..))
+import Config.EnvConfig qualified as Env (EnvConfig (..))
 import Config.Files (ConfigDirectory)
-import Config.YamlConfig (FintsConfig, LedgerConfig (..), YamlConfig (..))
+import Config.YamlConfig (FintsConfig (..), LedgerConfig (..), YamlConfig (..))
 import Control.Applicative ((<|>))
 import Data.Time (Day)
 import Utils ((??))
@@ -19,10 +20,10 @@ data AppConfig = Config
   }
   deriving (Show)
 
-makeAppConfig :: CliConfig -> YamlConfig -> AppConfig
-makeAppConfig cliConfig yamlConfig =
+makeAppConfig :: CliConfig -> YamlConfig -> Env.EnvConfig -> AppConfig
+makeAppConfig cliConfig yamlConfig envConfig =
   Config
-    { fintsConfig = yamlConfig.fints
+    { fintsConfig = yamlConfig.fints{password = envConfig.password <|> yamlConfig.fints.password}
     , ledgerConfig = yamlConfig.ledger
     , configDirectory = cliConfig.configDirectory
     , journalFile = cliConfig.journalFile <|> yamlConfig.ledger.journalFile ?? "journal.ledger"
