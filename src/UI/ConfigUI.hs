@@ -85,7 +85,7 @@ draw configDirectory state = [mainLayer]
 
   -- Core sections of the UI
   formSection = renderForm state.form
-  helpSection = hLimitPercent 30 (renderHelpText $ currentFocus)
+  helpSection = hLimitPercent 30 $ renderHelpText currentFocus
   infoSection = renderConfigFilePath configDirectory
   controlsSection = renderControlsBar
 
