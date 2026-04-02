@@ -44,6 +44,7 @@ library fints2ledger-lib
       Matching.Parser
       Prompt
       Transactions
+      UI.BankSelectionUI
       UI.ConfigFields
       UI.ConfigUI
       Utils
