@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.3
+* Add support for `FINTS_PASSWORD` as an environment variable for users that don't want to put there password in the config.yml and also don't want to input it manually on each run.
+
 ## 1.3.2
 * Fixes an issue where `~` in the yaml configs `journalFile` setting was not expanded, causing it to fail to find the journal file
 * Adds a fallback for the `posting_text` field because the GLS bank doesn't provide this field with the switch to fints 5 anymore
