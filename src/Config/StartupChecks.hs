@@ -11,7 +11,6 @@ import Control.Lens ((.~))
 import Control.Monad (unless)
 import Data.Function ((&))
 import Data.Generics.Labels ()
-import Data.Text (pack)
 import System.Directory (createDirectoryIfMissing, doesFileExist)
 import UI.BankSelectionUI (runBankSelectionUI)
 import UI.ConfigUI (runConfigUI)
@@ -27,8 +26,9 @@ runStartupChecks cliConfig = do
 
   let configFilePath = getConfigFilePath cliConfig.configDirectory
   configFileExists <- doesFileExist configFilePath
+
   unless configFileExists do
     bank <- runBankSelectionUI <?!> ConfigSetupAborted "Please select a bank before continuing."
-    let initialConfig = defaultYamlConfig & #fints . #endpoint .~ pack (fintsEndpoint bank)
+    let initialConfig = defaultYamlConfig & #fints . #endpoint .~ fintsEndpoint bank
     config <- runConfigUI initialConfig cliConfig.configDirectory <?!> ConfigSetupAborted "Please fill out and save the config form before continuing."
     writeYamlConfig configFilePath config
