@@ -15,6 +15,7 @@ import Data.Text (pack)
 import System.Directory (createDirectoryIfMissing, doesFileExist)
 import UI.BankSelectionUI (runBankSelectionUI)
 import UI.ConfigUI (runConfigUI)
+import Utils ((<?!>))
 
 newtype ConfigSetupAborted = ConfigSetupAborted String deriving (Show)
 
@@ -27,12 +28,7 @@ runStartupChecks cliConfig = do
   let configFilePath = getConfigFilePath cliConfig.configDirectory
   configFileExists <- doesFileExist configFilePath
   unless configFileExists do
-    maybeBank <- runBankSelectionUI
-    case maybeBank of
-      Nothing -> throwIO $ ConfigSetupAborted "Please select a bank before continuing."
-      Just bank -> do
-        let initialConfig = defaultYamlConfig & #fints . #endpoint .~ pack (fintsEndpoint bank)
-        maybeConfig <- runConfigUI initialConfig cliConfig.configDirectory
-        case maybeConfig of
-          Just config -> writeYamlConfig configFilePath config
-          Nothing -> throwIO $ ConfigSetupAborted "Please fill out and save the config form before continuing."
+    bank <- runBankSelectionUI <?!> ConfigSetupAborted "Please select a bank before continuing."
+    let initialConfig = defaultYamlConfig & #fints . #endpoint .~ pack (fintsEndpoint bank)
+    config <- runConfigUI initialConfig cliConfig.configDirectory <?!> ConfigSetupAborted "Please fill out and save the config form before continuing."
+    writeYamlConfig configFilePath config
