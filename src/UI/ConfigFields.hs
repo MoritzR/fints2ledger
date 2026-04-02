@@ -6,8 +6,8 @@ data Field = Field {label :: Text, helpText :: Text} deriving (Ord, Eq, Show)
 
 account =
   Field
-    { label = "Account"
-    , helpText = "The account number you use to log into your banking account."
+    { label = "Username"
+    , helpText = "The account number / username you use to log into your banking account."
     }
 blz =
   Field
