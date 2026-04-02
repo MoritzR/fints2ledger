@@ -47,6 +47,7 @@ library fints2ledger-lib
       UI.BankSelectionUI
       UI.ConfigFields
       UI.ConfigUI
+      UI.Helper
       Utils
   other-modules:
       Paths_fints2ledger

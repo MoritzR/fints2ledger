@@ -2,10 +2,10 @@
 
 module UI.BankSelectionUI (runBankSelectionUI) where
 
-import Brick (AttrMap, BrickEvent (VtyEvent), Padding (Pad), Widget, attrMap, customMain, hLimit, halt, on, padAll, padTop, str, vLimit, zoom, (<=>))
+import Brick (BrickEvent (VtyEvent), Padding (Pad), Widget, customMain, hLimit, halt, padAll, padTop, str, vLimit, zoom, (<=>))
 import Brick.Main qualified as Brick (App (..))
 import Brick.Widgets.Center (center)
-import Brick.Widgets.List (List, handleListEvent, list, listSelectedElement, listSelectedFocusedAttr, renderList)
+import Brick.Widgets.List (List, handleListEvent, list, listSelectedElement, renderList)
 import Config.Banks (Bank (..))
 import Control.Lens ((.=))
 import Data.Generics.Labels ()
@@ -14,6 +14,7 @@ import GHC.Generics (Generic)
 import Graphics.Vty qualified as V
 import Graphics.Vty.Config qualified
 import Graphics.Vty.CrossPlatform qualified
+import UI.Helper (attributeMap)
 
 data BankSelectionState = BankSelectionState
   { bankList :: List () Bank
@@ -59,12 +60,6 @@ draw state =
   ]
  where
   renderItem _isSelected bank = str (displayName bank)
-
-attributeMap :: AttrMap
-attributeMap =
-  attrMap
-    V.defAttr
-    [(listSelectedFocusedAttr, V.black `on` V.yellow)]
 
 bankSelectionApp :: Brick.App BankSelectionState e ()
 bankSelectionApp =
