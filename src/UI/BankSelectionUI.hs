@@ -22,7 +22,7 @@ data BankSelectionState = BankSelectionState
   deriving (Generic)
 
 allBanks :: [Bank]
-allBanks = [ING, GLS, OTHER]
+allBanks = enumerate
 
 displayName :: Bank -> String
 displayName ING = "ING"
@@ -85,3 +85,7 @@ buildVty = do
   v <- Graphics.Vty.CrossPlatform.mkVty Graphics.Vty.Config.defaultConfig
   V.setMode (V.outputIface v) V.Mouse True
   return v
+
+-- can be removed once on base-4.22.0
+enumerate :: (Enum a, Bounded a) => [a]
+enumerate = [minBound .. maxBound]

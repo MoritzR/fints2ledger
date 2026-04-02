@@ -1,6 +1,6 @@
-module Config.Banks (Bank(..), fintsEndpoint) where
+module Config.Banks (Bank (..), fintsEndpoint) where
 
-data Bank = ING | GLS | OTHER deriving (Eq, Show, Enum)
+data Bank = ING | GLS | OTHER deriving (Eq, Show, Enum, Bounded)
 
 fintsEndpoint :: Bank -> String
 fintsEndpoint = \case
