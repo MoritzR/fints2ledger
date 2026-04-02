@@ -12,6 +12,7 @@ There is a pure python implementation available on the [python branch](https://g
 ## Contents
 - [Install](#install)
 - [Usage](#usage)
+- [Configuration](#configuration)
 - [Changelog](#changelog)
 - [Contributing](#contributing)
 
@@ -94,6 +95,53 @@ ledger:
       fill:
         credit_account: "expenses:monthly:rent"
         purpose:
+```
+
+## Configuration
+
+The configuration file is located at `~/.config/fints2ledger/config.yml` (XDG config dir on Linux/macOS, `%APPDATA%\fints2ledger\config.yml` on Windows). Running `fints2ledger` for the first time will prompt you to create it, or use `fints2ledger --config` to open the editor UI.
+
+### CLI flags
+
+| Flag | Description | YAML equivalent |
+|------|-------------|-----------------|
+| `--files-path PATH` | Directory where fints2ledger stores its config files | — |
+| `-f`, `--journal-file FILE` | Path to the ledger journal file | `ledger.journalFile` |
+| `--date DATE` | Start date for fetching transactions (e.g. `25.01.2023`, `90 days ago`, `last monday`). Default: 90 days ago | — |
+| `--python-command CMD` | Python executable to use. Default: `python3` | — |
+| `--demo` | Run with sample transactions, without calling a FinTS endpoint | — |
+| `--config` | Open the config editor UI | — |
+| `--from-csv-file FILE` | Read transactions from a CSV file instead of a FinTS endpoint | — |
+| `--to-csv-file FILE` | Write transactions to a CSV file instead of the ledger journal | — |
+
+### Environment variables
+
+| Variable | Description | YAML equivalent |
+|----------|-------------|-----------------|
+| `FINTS_PASSWORD` | Banking password. Takes precedence over the config file value. | `fints.password` |
+
+### YAML config reference
+
+```yaml
+fints:
+  blz: "<bank code (Bankleitzahl)>"
+  account: "<account number>"       # This is what you use to login
+  endpoint: "<FinTS endpoint URL>"
+  selectedAccount: "<IBAN>"         # This should be the account number where the transactions are downloaded from. Required if this doesn't match your login.
+  password: "<password>"            # optional: leave empty to be prompted for a password, or use the FINTS_PASSWORD environment variable
+
+ledger:
+  journalFile: "~/finances/journal.ledger"
+  defaults:                         # pre-filled values for any transaction field
+    debit_account: "assets:bank:checking"
+  prompts:                          # fields to interactively prompt for
+    - credit_account
+  md5:                              # fields used for deduplication
+    - date
+    - payee
+    - purpose
+    - amount
+  fills: []                         # auto-fill rules (see "Automatically matching transactions")
 ```
 
 ## Changelog

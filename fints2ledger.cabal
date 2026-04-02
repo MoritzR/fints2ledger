@@ -35,6 +35,7 @@ library fints2ledger-lib
       Config.Files
       Config.StartupChecks
       Config.YamlConfig
+      Config.EnvConfig
       Dates.Parser
       Ledger
       Lib
