@@ -27,13 +27,12 @@ Nothing ?? a = a
 Just a ?? _ = a
 
 infix 2 ?!
-(?!) :: Exception e => Maybe a -> e -> IO a
+(?!) :: (Exception e) => Maybe a -> e -> IO a
 Nothing ?! e = throwIO e
 Just a ?! _ = return a
 
-
 infix 2 <?!>
-(<?!>) :: Exception e => IO (Maybe a) -> e -> IO a
+(<?!>) :: (Exception e) => IO (Maybe a) -> e -> IO a
 action <?!> e = do
   result <- action
   result ?! e

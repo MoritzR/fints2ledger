@@ -2,9 +2,9 @@
 
 module UI.BankSelectionUI (runBankSelectionUI) where
 
-import Brick (AttrMap, BrickEvent (VtyEvent), Padding (Pad), Widget, attrMap, customMain, halt, hLimit, on, padAll, padTop, str, vLimit, zoom, (<=>))
-import Brick.Widgets.Center (center)
+import Brick (AttrMap, BrickEvent (VtyEvent), Padding (Pad), Widget, attrMap, customMain, hLimit, halt, on, padAll, padTop, str, vLimit, zoom, (<=>))
 import Brick.Main qualified as Brick (App (..))
+import Brick.Widgets.Center (center)
 import Brick.Widgets.List (List, handleListEvent, list, listSelectedElement, listSelectedFocusedAttr, renderList)
 import Config.Banks (Bank (..))
 import Control.Lens ((.=))
@@ -50,10 +50,12 @@ runBankSelectionUI = do
 
 draw :: BankSelectionState -> [Widget ()]
 draw state =
-  [ center $ hLimit 50 $ padAll 1 $
-      str "Select your bank:"
-        <=> vLimit (length allBanks) (renderList renderItem True state.bankList)
-        <=> padTop (Pad 1) (str "[↑↓] Navigate  [Enter] Select  [Ctrl+C] Quit")
+  [ center $
+      hLimit 50 $
+        padAll 1 $
+          str "Select your bank:"
+            <=> vLimit (length allBanks) (renderList renderItem True state.bankList)
+            <=> padTop (Pad 1) (str "[↑↓] Navigate  [Enter] Select  [Ctrl+C] Quit")
   ]
  where
   renderItem _isSelected bank = str (displayName bank)
@@ -69,12 +71,12 @@ bankSelectionApp =
   Brick.App
     { appDraw = draw
     , appHandleEvent = \case
-          VtyEvent (V.EvKey (V.KChar 'c') [V.MCtrl]) -> do
-            #aborted .= True
-            halt
-          VtyEvent (V.EvKey V.KEnter []) -> halt
-          VtyEvent vtyEvent -> zoom #bankList $ handleListEvent vtyEvent
-          _otherwise -> return ()
+        VtyEvent (V.EvKey (V.KChar 'c') [V.MCtrl]) -> do
+          #aborted .= True
+          halt
+        VtyEvent (V.EvKey V.KEnter []) -> halt
+        VtyEvent vtyEvent -> zoom #bankList $ handleListEvent vtyEvent
+        _otherwise -> return ()
     , appChooseCursor = \_ _ -> Nothing
     , appStartEvent = return ()
     , appAttrMap = const attributeMap
