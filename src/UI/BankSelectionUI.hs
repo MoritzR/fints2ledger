@@ -2,7 +2,8 @@
 
 module UI.BankSelectionUI (runBankSelectionUI) where
 
-import Brick (AttrMap, BrickEvent (VtyEvent), Padding (Pad), Widget, attrMap, customMain, halt, on, padAll, padTop, str, zoom, (<=>))
+import Brick (AttrMap, BrickEvent (VtyEvent), Padding (Pad), Widget, attrMap, customMain, halt, hLimit, on, padAll, padTop, str, vLimit, zoom, (<=>))
+import Brick.Widgets.Center (center)
 import Brick.Main qualified as Brick (App (..))
 import Brick.Widgets.List (List, handleListEvent, list, listSelectedElement, listSelectedFocusedAttr, renderList)
 import Config.Banks (Bank (..))
@@ -49,9 +50,9 @@ runBankSelectionUI = do
 
 draw :: BankSelectionState -> [Widget ()]
 draw state =
-  [ padAll 1 $
+  [ center $ hLimit 50 $ padAll 1 $
       str "Select your bank:"
-        <=> renderList renderItem True state.bankList
+        <=> vLimit (length allBanks) (renderList renderItem True state.bankList)
         <=> padTop (Pad 1) (str "[↑↓] Navigate  [Enter] Select  [Ctrl+C] Quit")
   ]
  where
