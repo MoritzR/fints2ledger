@@ -36,6 +36,7 @@ library fints2ledger-lib
       Config.StartupChecks
       Config.YamlConfig
       Config.EnvConfig
+      Config.Banks
       Dates.Parser
       Ledger
       Lib
@@ -43,8 +44,10 @@ library fints2ledger-lib
       Matching.Parser
       Prompt
       Transactions
+      UI.BankSelectionUI
       UI.ConfigFields
       UI.ConfigUI
+      UI.Helper
       Utils
   other-modules:
       Paths_fints2ledger
@@ -58,6 +61,7 @@ library fints2ledger-lib
       OverloadedStrings
       NoFieldSelectors
       BlockArguments
+      LambdaCase
   ghc-options:
     -Wall
     -Wcompat

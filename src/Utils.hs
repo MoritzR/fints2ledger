@@ -1,4 +1,4 @@
-module Utils (encodeAsString, toLazyTemplateMap, byteStringToString, (??), orElseThrow, createFile, calculateMd5Value, formatDouble) where
+module Utils (encodeAsString, toLazyTemplateMap, byteStringToString, (??), (?!), (<?!>), orElseThrow, createFile, calculateMd5Value, formatDouble) where
 
 import Control.Exception (Exception, throwIO)
 import Crypto.Hash.MD5 qualified as MD5
@@ -25,6 +25,17 @@ infix 2 ?? -- same infix as (||)
 (??) :: Maybe a -> a -> a
 Nothing ?? a = a
 Just a ?? _ = a
+
+infix 2 ?!
+(?!) :: (Exception e) => Maybe a -> e -> IO a
+Nothing ?! e = throwIO e
+Just a ?! _ = return a
+
+infix 2 <?!>
+(<?!>) :: (Exception e) => IO (Maybe a) -> e -> IO a
+action <?!> e = do
+  result <- action
+  result ?! e
 
 orElseThrow :: (Exception e) => Either String a -> (String -> e) -> IO a
 orElseThrow eitherAB toException = case eitherAB of

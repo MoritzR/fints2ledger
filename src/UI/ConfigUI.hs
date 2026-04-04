@@ -2,12 +2,11 @@
 
 module UI.ConfigUI (runConfigUI) where
 
-import Brick (AttrMap, BrickEvent (VtyEvent), Padding (Pad), Widget, attrMap, attrName, customMain, emptyWidget, fill, hLimit, hLimitPercent, halt, on, padBottom, str, txt, txtWrap, vLimit, withAttr, zoom, (<+>), (<=>))
+import Brick (BrickEvent (VtyEvent), Padding (Pad), Widget, attrName, emptyWidget, fill, hLimit, hLimitPercent, halt, padBottom, str, txt, txtWrap, vLimit, withAttr, zoom, (<+>), (<=>))
 import Brick.Focus (focusGetCurrent, focusRingCursor)
-import Brick.Forms (Form (formFocus, formState), FormFieldState, editPasswordField, editTextField, focusedFormInputAttr, handleFormEvent, invalidFormInputAttr, newForm, renderForm, (@@=))
+import Brick.Forms (Form (formFocus, formState), FormFieldState, editPasswordField, editTextField, handleFormEvent, newForm, renderForm, (@@=))
 import Brick.Main qualified as Brick (App (..))
 import Brick.Widgets.Border (vBorder)
-import Brick.Widgets.Edit qualified as E
 import Config.Files (ConfigDirectory, getConfigFilePath)
 import Config.YamlConfig (FintsConfig (..), LedgerConfig (..), Password (..), YamlConfig (..))
 import Control.Lens (Iso', Lens', iso, (.=), (.~))
@@ -17,9 +16,8 @@ import Data.Text (Text)
 import Data.Text qualified as T (null, pack, unpack)
 import GHC.Generics (Generic)
 import Graphics.Vty qualified as V
-import Graphics.Vty.Config qualified
-import Graphics.Vty.CrossPlatform qualified
 import UI.ConfigFields qualified as Fields
+import UI.Helper (attributeMap, main)
 import Utils ((??))
 
 data UiConfig = UiConfig
@@ -43,16 +41,8 @@ runConfigUI initialConfig configDirectory = do
             , journalFile = initialConfig.ledger.journalFile
             }
 
-  initialVty <- buildVty
-  updatedForm <-
-    customMain
-      initialVty
-      buildVty
-      Nothing -- not using custom events
-      (formApp configDirectory) -- the UI App
-      (FormAppState initialForm False) -- initial state
+  updatedForm <- main (formApp configDirectory) (FormAppState initialForm False)
   let uiConfig = formState updatedForm.form
-
   return $
     if updatedForm.aborted
       then Nothing
@@ -95,7 +85,7 @@ draw configDirectory state = [mainLayer]
 
   -- Core sections of the UI
   formSection = renderForm state.form
-  helpSection = hLimitPercent 30 (renderHelpText $ currentFocus)
+  helpSection = hLimitPercent 30 $ renderHelpText currentFocus
   infoSection = renderConfigFilePath configDirectory
   controlsSection = renderControlsBar
 
@@ -123,19 +113,6 @@ renderControlsBar =
   primaryCtrl = withAttr $ attrName "primary"
   secondaryCtrl = withAttr $ attrName "secondary"
 
--- Define color themes for the UI
-attributeMap :: AttrMap
-attributeMap =
-  attrMap
-    V.defAttr
-    [ (E.editAttr, V.white `on` V.brightBlack)
-    , (E.editFocusedAttr, V.black `on` V.yellow)
-    , (invalidFormInputAttr, V.white `on` V.red)
-    , (focusedFormInputAttr, V.black `on` V.yellow)
-    , (attrName "primary", V.white `on` V.brightBlue)
-    , (attrName "secondary", V.white `on` V.blue)
-    ]
-
 formApp :: ConfigDirectory -> Brick.App (FormAppState e) e Fields.Field
 formApp configDirectory =
   Brick.App
@@ -152,12 +129,6 @@ formApp configDirectory =
     , appStartEvent = return ()
     , appAttrMap = const attributeMap
     }
-
-buildVty :: IO V.Vty
-buildVty = do
-  v <- Graphics.Vty.CrossPlatform.mkVty Graphics.Vty.Config.defaultConfig
-  V.setMode (V.outputIface v) V.Mouse True
-  return v
 
 maybePasswordToPassword :: Iso' (Maybe Password) Password
 maybePasswordToPassword =
