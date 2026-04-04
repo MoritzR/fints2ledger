@@ -1,5 +1,5 @@
 fints:
-  account: <your account number>
+  account: <your username>
   blz: <your banks BLZ>
   endpoint: <your bank fints endpoint>
 ledger:
