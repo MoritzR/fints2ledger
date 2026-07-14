@@ -11,3 +11,6 @@ devenv.local.nix
 
 # pre-commit
 .pre-commit-config.yaml
+
+# for testing things with pyfints
+test.py
