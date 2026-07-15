@@ -108,7 +108,7 @@ The configuration file is located at `~/.config/fints2ledger/config.yml` (XDG co
 | `--files-path PATH` | Directory where fints2ledger stores its config files | — |
 | `-f`, `--journal-file FILE` | Path to the ledger journal file | `ledger.journalFile` |
 | `--date DATE` | Start date for fetching transactions (e.g. `25.01.2023`, `90 days ago`, `last monday`). Default: 90 days ago | — |
-| `--python-command CMD` | Python executable to use. Default: `python3` | — |
+| `--python-command PATH` | Python executable to use. Default: `python3` | — |
 | `--demo` | Run with sample transactions, without calling a FinTS endpoint | — |
 | `--config` | Open the config editor UI | — |
 | `--from-csv-file FILE` | Read transactions from a CSV file instead of a FinTS endpoint | — |
