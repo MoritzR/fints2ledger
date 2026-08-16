@@ -7,6 +7,14 @@ import os
 import sys
 import tempfile
 
+SIMULATED_TAN_METHODS = [
+    {"id": "900", "name": "Simulated pushTAN"},
+    {"id": "901", "name": "Simulated photoTAN"},
+]
+SIMULATED_PHOTOTAN_PNG = base64.b64decode(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+)
+
 
 def send(message_type, **values):
     print(json.dumps({"type": message_type, **values}), flush=True)
@@ -56,6 +64,30 @@ def store_state(path, data):
 
 
 def choose_tan_settings(client):
+    if os.environ.get("FINTS2LEDGER_SIMULATE_TAN") == "1":
+        send("tan_methods", methods=SIMULATED_TAN_METHODS)
+        selected = receive("tan_method")["id"]
+        if selected not in {method["id"] for method in SIMULATED_TAN_METHODS}:
+            raise RuntimeError(f"Unknown simulated TAN method selected: {selected!r}")
+        if selected == "901":
+            send(
+                "tan_challenge",
+                challenge="Simulated photoTAN challenge",
+                decoupled=False,
+                hhduc=None,
+                matrix={
+                    "mimeType": "image/png",
+                    "data": base64.b16encode(SIMULATED_PHOTOTAN_PNG).decode("ascii"),
+                    "base64Data": base64.b64encode(SIMULATED_PHOTOTAN_PNG).decode(
+                        "ascii"
+                    ),
+                },
+            )
+            receive("tan")
+        # The simulated method is deliberately not passed to pyfints: the bank
+        # did not advertise it and would reject it. Continue as a TAN-less bank.
+        return
+
     if not client.get_current_tan_mechanism():
         client.fetch_tan_mechanisms()
         mechanisms = list(client.get_tan_mechanisms().items())
@@ -111,6 +143,7 @@ def send_tan(client, response):
             matrix = {
                 "mimeType": mime_type,
                 "data": base64.b16encode(image_data).decode("ascii"),
+                "base64Data": base64.b64encode(image_data).decode("ascii"),
             }
 
         send(

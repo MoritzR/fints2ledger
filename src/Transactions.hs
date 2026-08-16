@@ -16,7 +16,7 @@ import Config.AppConfig (AppConfig (..))
 import Config.Files (ConfigDirectory (..), exampleFile, pyfintsFile)
 import Config.YamlConfig (FintsConfig (..), Password (..))
 import Control.Exception (Exception, throwIO)
-import Control.Monad (forM_)
+import Control.Monad (forM_, when)
 import Data.Aeson (FromJSON, ToJSON, (.:))
 import Data.Aeson qualified as Aeson
 import Data.Aeson.Types qualified as Aeson
@@ -39,7 +39,7 @@ import GHC.Generics (Generic)
 import Hledger (getCurrentDay)
 import System.Console.Haskeline qualified as Haskeline
 import System.Exit (ExitCode (..))
-import System.IO (Handle, hFlush, hIsEOF)
+import System.IO (Handle, hFlush, hIsEOF, stdout)
 import System.IO.Temp (withSystemTempFile)
 import System.Process.Typed (createPipe, getStdin, getStdout, inherit, proc, setStderr, setStdin, setStdout, waitExitCode, withProcessWait)
 import Utils (formatDouble, orElseThrow, (??))
@@ -154,7 +154,31 @@ withPhotoTanFile matrix action =
       Right image -> StrictBS.hPut handle image
     hFlush handle
     TIO.putStrLn $ "photoTAN image: " <> T.pack path
+    when (matrix.mimeType == "image/png") $ displayKittyPng matrix.base64Data
     action
+
+-- The Kitty graphics protocol uses base64 payload chunks of at most 4096
+-- bytes. Unsupported terminals ignore the APC escape sequences, while the
+-- temporary file path above remains available as a fallback.
+displayKittyPng :: Text -> IO ()
+displayKittyPng encodedImage = do
+  forM_ (zip [(0 :: Int) ..] chunks) \(index, chunk) -> do
+    let firstChunk = index == 0
+        finalChunk = index == length chunks - 1
+        metadata = if firstChunk then "a=T,f=100,c=40,q=2," else "q=2,"
+        moreData = if finalChunk then "0" else "1"
+    TIO.putStr $ "\x1b_G" <> metadata <> "m=" <> moreData <> ";" <> chunk <> "\x1b\\"
+  TIO.putStrLn ""
+  hFlush stdout
+ where
+  chunks = chunksOf 4096 encodedImage
+
+chunksOf :: Int -> Text -> [Text]
+chunksOf size text
+  | T.null text = []
+  | otherwise = chunk : chunksOf size rest
+ where
+  (chunk, rest) = T.splitAt size text
 
 matrixExtension :: Text -> String
 matrixExtension "image/png" = ".png"
@@ -207,7 +231,7 @@ data PyFintsArguments = PyFintsArguments
 
 data TanMethod = TanMethod {identifier :: Text, name :: Text}
 data TanMedium = TanMedium {index :: Int, name :: Text, mobile :: Maybe Text}
-data TanMatrix = TanMatrix {mimeType :: Text, encodedData :: Text}
+data TanMatrix = TanMatrix {mimeType :: Text, encodedData :: Text, base64Data :: Text}
 data TanChallengeDetails = TanChallengeDetails {message :: Text, decoupled :: Bool, hhduc :: Maybe Text, matrix :: Maybe TanMatrix}
 
 data WorkerMessage
@@ -224,21 +248,23 @@ instance FromJSON TanMedium where
   parseJSON = Aeson.withObject "TAN medium" \object -> TanMedium <$> object .: "index" <*> object .: "name" <*> object .: "mobile"
 
 instance FromJSON TanMatrix where
-  parseJSON = Aeson.withObject "TAN matrix" \object -> TanMatrix <$> object .: "mimeType" <*> object .: "data"
+  parseJSON = Aeson.withObject "TAN matrix" \object -> TanMatrix <$> object .: "mimeType" <*> object .: "data" <*> object .: "base64Data"
 
 instance FromJSON TanChallengeDetails where
   parseJSON = Aeson.withObject "TAN challenge" \object -> TanChallengeDetails <$> object .: "challenge" <*> object .: "decoupled" <*> object .: "hhduc" <*> object .: "matrix"
 
 instance FromJSON WorkerMessage where
-  parseJSON = Aeson.withObject "FinTS worker message" \object -> do
-    messageType <- object .: "type" :: Aeson.Parser Text
-    case messageType of
-      "tan_methods" -> TanMethods <$> object .: "methods"
-      "tan_media" -> TanMedia <$> object .: "media"
-      "tan_challenge" -> TanChallenge <$> object .: "challenge"
-      "transactions" -> Transactions <$> object .: "transactions"
-      "error" -> WorkerError <$> object .: "message"
-      unknown -> fail $ "Unknown FinTS worker message: " <> T.unpack unknown
+  parseJSON value = Aeson.withObject "FinTS worker message" parseMessage value
+   where
+    parseMessage object = do
+      messageType <- object .: "type" :: Aeson.Parser Text
+      case messageType of
+        "tan_methods" -> TanMethods <$> object .: "methods"
+        "tan_media" -> TanMedia <$> object .: "media"
+        "tan_challenge" -> TanChallenge <$> Aeson.parseJSON value
+        "transactions" -> Transactions <$> object .: "transactions"
+        "error" -> WorkerError <$> object .: "message"
+        unknown -> fail $ "Unknown FinTS worker message: " <> T.unpack unknown
 
 newtype Amount = Amount {amount :: Double}
   deriving newtype (Num, Show, Eq, FromField)
