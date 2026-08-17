@@ -125,23 +125,23 @@ The configuration file is located at `~/.config/fints2ledger/config.yml` (XDG co
 ```yaml
 fints:
   blz: "<bank code (Bankleitzahl)>"
-  account: "<account number>"       # This is what you use to login
+  account: "<account number>"           # This is what you use to login
   endpoint: "<FinTS endpoint URL>"
-  selectedAccount: "<IBAN>"         # This should be the account number where the transactions are downloaded from. Required if this doesn't match your login.
-  password: "<password>"            # optional: leave empty to be prompted for a password, or use the FINTS_PASSWORD environment variable
+  selectedAccount: "<account number>"   # This should be the account number where the transactions are downloaded from. Required if this doesn't match your login.
+  password: "<password>"                # optional: leave empty to be prompted for a password, or use the FINTS_PASSWORD environment variable
 
 ledger:
   journalFile: "~/finances/journal.ledger"
-  defaults:                         # pre-filled values for any transaction field
+  defaults:                             # pre-filled values for any transaction field
     debit_account: "assets:bank:checking"
-  prompts:                          # fields to interactively prompt for
+  prompts:                              # fields to interactively prompt for
     - credit_account
-  md5:                              # fields used for deduplication
+  md5:                                  # fields used for deduplication
     - date
     - payee
     - purpose
     - amount
-  fills: []                         # auto-fill rules (see "Automatically matching transactions")
+  fills: []                             # auto-fill rules (see "Automatically matching transactions")
 ```
 
 ## Changelog
