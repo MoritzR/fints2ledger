@@ -1,0 +1,11 @@
+#!/bin/sh
+IFS= read -r request
+case "$request" in
+  *'"type":"start"'*)
+    printf '%s\n' '{"type":"transactions","transactions":[{"date":"2022/03/23","amount":"0.01","currency":"EUR","posting":"Test","payee":"Test Payee","purpose":"Protocol test"}]}'
+    ;;
+  *)
+    printf '%s\n' '{"type":"error","message":"Expected start message"}'
+    exit 1
+    ;;
+esac
