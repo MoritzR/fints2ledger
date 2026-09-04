@@ -26,10 +26,11 @@ allBanks :: [Bank]
 allBanks = enumerate
 
 displayName :: Bank -> String
-displayName ING = "ING"
-displayName GLS = "GLS"
-displayName DKB = "DKB"
-displayName OTHER = "Other (enter endpoint manually)"
+displayName = \case
+  ING -> "ING"
+  GLS -> "GLS"
+  DKB -> "DKB"
+  OTHER -> "Other (enter endpoint manually)"
 
 runBankSelectionUI :: IO (Maybe Bank)
 runBankSelectionUI = do
