@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.4.0
+* Adds support for TAN based authentication, which is required by some banks. Tested with DKB. Users will be prompted to select a TAN method and complete a TAN challenge for these cases.
+
 ## 1.3.3
 * Add support for `FINTS_PASSWORD` as an environment variable for users that don't want to put there password in the config.yml and also don't want to input it manually on each run.
 
